@@ -1,0 +1,118 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Phone, Search, X } from "lucide-react";
+
+import { MENU_GROUPS, SITE } from "@/lib/site";
+import { cn } from "@/lib/utils";
+
+export function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  // 히어로 위에서는 흰 글자, 스크롤하거나 메뉴를 열면 흰 배경 + 딥그린 글자
+  const solid = scrolled || menuOpen;
+
+  return (
+    <header
+      className={cn(
+        "fixed inset-x-0 top-(--banner-h) z-50 h-(--header-h) transition-colors duration-300",
+        solid ? "bg-white/95 text-forest backdrop-blur" : "bg-transparent text-white"
+      )}
+    >
+      <div className="relative flex h-full items-center justify-between px-(--gutter)">
+        <Link
+          href="/"
+          onClick={() => setMenuOpen(false)}
+          className="serif text-[26px] leading-none tracking-tight lg:text-[34px]"
+        >
+          {SITE.name}
+        </Link>
+
+        <nav className="serif absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 text-[22px] lg:flex">
+          <button
+            type="button"
+            onClick={() => setMenuOpen((v) => !v)}
+            className="transition-opacity hover:opacity-60"
+          >
+            Menu
+          </button>
+          <a href="#program" className="transition-opacity hover:opacity-60">
+            Program
+          </a>
+        </nav>
+
+        <div className="flex items-center gap-4">
+          <a
+            href={`tel:${SITE.phone.replace(/-/g, "")}`}
+            aria-label="전화 문의"
+            className="transition-opacity hover:opacity-60"
+          >
+            <Phone className="size-[18px]" strokeWidth={1.4} />
+          </a>
+          <button type="button" aria-label="검색" className="transition-opacity hover:opacity-60">
+            <Search className="size-[18px]" strokeWidth={1.4} />
+          </button>
+          <a href="#consult" className="serif text-[20px] leading-none lg:text-[26px]">
+            Consult
+          </a>
+          <button
+            type="button"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={menuOpen ? "메뉴 닫기" : "메뉴 열기"}
+            aria-expanded={menuOpen}
+            className="serif text-[20px] leading-none lg:hidden"
+          >
+            {menuOpen ? <X className="size-5" strokeWidth={1.4} /> : "Menu"}
+          </button>
+        </div>
+      </div>
+
+      {menuOpen && (
+        <div className="max-h-[calc(100vh-var(--banner-h)-var(--header-h))] overflow-y-auto border-t border-ink-10 bg-white text-forest">
+          <div className="grid gap-10 px-(--gutter) py-10 lg:grid-cols-3 lg:gap-16 lg:py-14">
+            {MENU_GROUPS.map((group) => (
+              <div key={group.title}>
+                <p className="c1 mb-5 tracking-[0.2em] text-stem uppercase">{group.title}</p>
+                <ul className="space-y-3.5">
+                  {group.items.map((item) => (
+                    <li key={item.label}>
+                      <a
+                        href={item.href}
+                        onClick={() => setMenuOpen(false)}
+                        className="serif text-[22px] leading-none transition-opacity hover:opacity-50 lg:text-[26px]"
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="border-t border-ink-10 px-(--gutter) py-6">
+            <p className="b3 text-ink-60">
+              {SITE.hours} · {SITE.phone}
+            </p>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}

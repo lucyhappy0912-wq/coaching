@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+@theme {
+  /* Forest Green — 브랜드 기본 색 */
+  --color-forest: #003a40;
+  --color-forest-90: #1a4e53;
+  --color-forest-80: #336166;
+  --color-forest-70: #4d7579;
+  --color-forest-50: #809c9f;
+  --color-forest-30: #b3c4c6;
+  --color-forest-20: #ccd8d9;
+  --color-forest-10: #e6ebec;
+
+  /* Forest Stem / Grass — 보조 색 */
+  --color-stem: #6b8b8d;
+  --color-stem-40: #c4d1d1;
+  --color-stem-20: #e1e8e8;
+  --color-grass: #9db4ab;
+  --color-grass-90: #a7bcb3;
+  --color-grass-50: #ced9d5;
+  --color-grass-30: #e2e9e6;
+  --color-grass-20: #ebf0ee;
+  --color-grass-10: #f5f7f7;
+
+  --color-sky: #9bcbeb;
+  --color-sky-20: #ebf5fb;
+
+  /* Black scale — 숫자는 검정 농도(%) */
+  --color-ink: #212121;
+  --color-ink-90: #353535;
+  --color-ink-70: #636363;
+  --color-ink-60: #797979;
+  --color-ink-50: #8f8f8f;
+  --color-ink-30: #bbbbbb;
+  --color-ink-15: #dddddd;
+  --color-ink-10: #eaeaea;
+  --color-ink-05: #f4f4f4;
+  --color-ink-02: #f9f9f9;
+}
+
+@theme inline {
+  --font-serif: var(--font-cormorant), "Times New Roman", Times, Batang, serif;
+  --font-sans: var(--font-mulish), var(--font-noto-sans-kr), "Apple SD Gothic Neo",
+    "Malgun Gothic", sans-serif;
+}
+
+:root {
+  /* 상단 띠 배너 + 헤더 높이 (히어로 높이 계산에 사용) */
+  --banner-h: 40px;
+  --header-h: 62px;
+  --gutter: 20px;
+}
+
+@media (min-width: 1025px) {
+  :root {
+    --banner-h: 60px;
+    --header-h: 84px;
+    --gutter: 40px;
+  }
+}
+
+body {
+  background-color: #fff;
+  color: var(--color-forest);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 타이포 스케일 — 데스크톱 기준, 1024px 이하에서 축소 */
+.t1,
+.t2,
+.t3,
+.t4 {
+  line-height: 120%;
+  font-weight: 400;
+  font-family: var(--font-serif);
+}
+
+.t1 {
+  font-size: 32px;
+}
+.t2 {
+  font-size: 26px;
+}
+.t3 {
+  font-size: 20px;
+}
+.t4 {
+  font-size: 18px;
+}
+
+.b1,
+.b2,
+.b3 {
+  line-height: 160%;
+}
+
+.b1 {
+  font-size: 16px;
+}
+.b2 {
+  font-size: 15px;
+}
+.b3 {
+  font-size: 12px;
+}
+.c1 {
+  font-size: 11px;
+  line-height: 120%;
+}
+
+@media (min-width: 1025px) {
+  .t1 {
+    font-size: 40px;
+  }
+  .t2 {
+    font-size: 34px;
+  }
+  .t3 {
+    font-size: 28px;
+  }
+  .t4 {
+    font-size: 22px;
+  }
+  .b1 {
+    font-size: 18px;
+  }
+  .b2 {
+    font-size: 16px;
+  }
+  .b3 {
+    font-size: 14px;
+  }
+  .c1 {
+    font-size: 12px;
+  }
+}
+
+.serif {
+  font-family: var(--font-serif);
+}
+
+/* 밑줄 텍스트 링크 — 히녹의 btn_line.lined */
+.lined {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 3px;
+}
+
+.lined::after {
+  content: "";
+  display: block;
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: currentColor;
+}
+
+/* 가로 스크롤 슬라이더에서 스크롤바 숨기기 */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+:target {
+  scroll-margin-top: calc(var(--header-h) + 24px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
