@@ -36,7 +36,8 @@ export function HeroSlider() {
           )}
         >
           <Photo src={slide.image} tone={slide.tone} priority={i === 0} />
-          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/15 to-black/25" />
+          {/* 아래쪽은 카피, 위쪽은 헤더 글자 가독성을 위한 스크림 */}
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-black/40" />
 
           <div className="absolute bottom-14 left-(--gutter) max-w-xl text-white lg:bottom-16">
             <p className="c1 tracking-[0.2em] uppercase opacity-90">{slide.eyebrow}</p>

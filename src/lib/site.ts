@@ -70,7 +70,7 @@ export const HERO_SLIDES = [
     title: "The Plan",
     body: "무엇을 어떻게 공부할지 매주 함께 정합니다. 지킬 수 있는 계획부터 만들어 드립니다.",
     cta: { label: "프로그램 보기", href: "#program" },
-    tone: "sage" as const,
+    tone: "dusk" as const,
     image: "",
   },
 ] as const;
