@@ -18,7 +18,7 @@ export function CoachBand() {
         <div className="lg:flex-1 lg:pb-6">
           <p className="c1 tracking-[0.2em] text-stem uppercase">Coach</p>
           <h2 className="t2 mt-3">{COACH.name}</h2>
-          <p className="b3 mt-2 text-ink-60">{COACH.role}</p>
+          <p className="b3 mt-2 text-ink-70">{COACH.role}</p>
           <p className="b2 mt-8 max-w-xl text-ink-90">{COACH.intro}</p>
 
           <ul className="mt-8 space-y-2 border-t border-ink-10 pt-6">

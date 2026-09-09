@@ -81,11 +81,11 @@ export function ConsultForm() {
         <textarea id="message" name="message" rows={3} className={cn(inputClass, "resize-none")} />
       </Field>
 
-      <label className="b3 mt-8 flex items-start gap-3 text-ink-60">
+      <label className="b3 mt-8 flex items-start gap-3 text-ink-70">
         <input
           type="checkbox"
           name="agree"
-          className="mt-1 size-3.5 shrink-0 rounded-none border-ink-30 accent-forest"
+          className="mt-1 size-3.5 shrink-0 rounded-none border-ink-50 accent-forest"
         />
         <span>
           상담 진행을 위한 개인정보(이름·연락처) 수집·이용에 동의합니다. 상담 종료 후 6개월 이내
@@ -100,14 +100,14 @@ export function ConsultForm() {
         disabled={submitting}
         className="serif mt-8 h-12 w-full rounded-sm bg-forest text-base text-white shadow-[0_4px_4px_0_rgba(0,58,64,0.1)] transition-colors hover:bg-forest-90 disabled:opacity-60"
       >
-        {submitting ? "Sending..." : "Send"}
+        {submitting ? "신청 중..." : "무료 상담 신청하기"}
       </button>
     </form>
   );
 }
 
 const inputClass =
-  "b2 w-full rounded-none border-0 border-b border-ink-30 bg-transparent pb-2 text-forest outline-none transition-colors placeholder:text-ink-30 focus:border-forest";
+  "b2 w-full rounded-none border-0 border-b border-ink-50 bg-transparent pb-2 text-forest outline-none transition-colors placeholder:text-ink-70 focus:border-forest";
 
 function Field({
   label,
@@ -122,7 +122,7 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label htmlFor={htmlFor} className="c1 mb-3 block tracking-[0.15em] text-stem uppercase">
+      <label htmlFor={htmlFor} className="c1 mb-3 block tracking-[0.15em] text-forest-70 uppercase">
         {label}
       </label>
       {children}

@@ -107,7 +107,7 @@ export function Header() {
           </div>
 
           <div className="border-t border-ink-10 px-(--gutter) py-6">
-            <p className="b3 text-ink-60">
+            <p className="b3 text-ink-70">
               {SITE.hours} · {SITE.phone}
             </p>
           </div>

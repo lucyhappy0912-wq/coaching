@@ -25,7 +25,10 @@
   --color-sky: #9bcbeb;
   --color-sky-20: #ebf5fb;
 
-  /* Black scale — 숫자는 검정 농도(%) */
+  /* Black scale — 숫자는 검정 농도(%)
+   * 흰 배경 대비: ink-70 6.0:1 · ink-60 4.35:1 · ink-50 3.0:1
+   * 본문(.b1~.b3)에는 ink-70 이 하한이다. ink-60 은 WCAG AA(4.5:1)에 미달하므로
+   * 읽는 문장에 쓰지 않는다. ink-50 이하는 취소선 가격처럼 장식용만. */
   --color-ink: #212121;
   --color-ink-90: #353535;
   --color-ink-70: #636363;
@@ -66,7 +69,24 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 타이포 스케일 — 데스크톱 기준, 1024px 이하에서 축소 */
+/* 타이포 스케일 — 데스크톱 기준, 1024px 이하에서 축소
+ *
+ * 2026-09-09 시니어 가독성 개편.
+ * 히녹 원본 스케일(.b3 12/14)은 라틴 위주 라이프스타일 브랜드 기준이라 본문이 과하게 작았다.
+ * 시니어가 주요 타깃에 들어와 본문 하한을 올렸다. 근거는 아래.
+ *
+ * - 본문 하한: 모바일 15px / 데스크톱 16px. 고령 사용자 본문 권장 하한은 16px이고,
+ *   한글은 글리프가 em 박스를 거의 채워 같은 px에서 라틴보다 크게 보인다.
+ *   그래서 모바일 15px는 라틴 16px에 준하는 체감 크기를 낸다.
+ * - .t1 / .t2 는 건드리지 않았다. 페이지의 실루엣은 이 두 단계가 만들고,
+ *   여기를 키우면 히녹의 절제된 톤이 무너진다.
+ * - .t3 / .t4 는 본문이 올라온 만큼만 올려 위계 역전을 막았다(.t4 > .b1 유지).
+ *   현재 .t4 는 미사용, .t3 는 ProgramTabs·ConsultForm 탭/제목에만 쓴다.
+ * - 결과 사다리 (모바일 / 데스크톱), 모든 단계가 두 폭에서 서로 구분된다:
+ *   t1 32/40 · t2 26/34 · t3 22/28 · t4 20/24 · b1 18/20 · b2 16/18 · b3 15/16 · c1 12/13
+ * - 카드 제목은 컴포넌트에 19/22 · 20/24 · 22/26 으로 하드코딩되어 있다.
+ *   본문 15/16 대비 최소 1.26배라 카드 안에서도 제목이 먼저 읽힌다.
+ */
 .t1,
 .t2,
 .t3,
@@ -83,10 +103,10 @@ body {
   font-size: 26px;
 }
 .t3 {
-  font-size: 20px;
+  font-size: 22px;
 }
 .t4 {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .b1,
@@ -96,16 +116,16 @@ body {
 }
 
 .b1 {
-  font-size: 16px;
+  font-size: 18px;
 }
 .b2 {
-  font-size: 15px;
+  font-size: 16px;
 }
 .b3 {
-  font-size: 12px;
+  font-size: 15px;
 }
 .c1 {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 120%;
 }
 
@@ -120,19 +140,19 @@ body {
     font-size: 28px;
   }
   .t4 {
-    font-size: 22px;
+    font-size: 24px;
   }
   .b1 {
-    font-size: 18px;
+    font-size: 20px;
   }
   .b2 {
-    font-size: 16px;
+    font-size: 18px;
   }
   .b3 {
-    font-size: 14px;
+    font-size: 16px;
   }
   .c1 {
-    font-size: 12px;
+    font-size: 13px;
   }
 }
 

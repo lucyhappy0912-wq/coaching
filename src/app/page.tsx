@@ -1,3 +1,4 @@
+import { AudienceRows } from "@/components/sections/AudienceRows";
 import { BrandStory } from "@/components/sections/BrandStory";
 import { CoachBand } from "@/components/sections/CoachBand";
 import { ConsultSection } from "@/components/sections/ConsultSection";
@@ -13,6 +14,7 @@ export default function Home() {
   return (
     <>
       <HeroSlider />
+      <AudienceRows />
       <ProgramTabs />
       <MidBanner />
       <StoryTabs />

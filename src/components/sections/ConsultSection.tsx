@@ -15,7 +15,7 @@ export function ConsultSection() {
 
           <dl className="serif mt-10 space-y-4 text-[15px] text-forest">
             <div>
-              <dt className="text-ink-60">Tel.</dt>
+              <dt className="text-ink-70">Tel.</dt>
               <dd>
                 <a href={`tel:${SITE.phone.replace(/-/g, "")}`} className="lined">
                   {SITE.phone}
@@ -23,7 +23,7 @@ export function ConsultSection() {
               </dd>
             </div>
             <div>
-              <dt className="text-ink-60">Email.</dt>
+              <dt className="text-ink-70">Email.</dt>
               <dd>
                 <a href={`mailto:${SITE.email}`} className="lined">
                   {SITE.email}
@@ -31,7 +31,7 @@ export function ConsultSection() {
               </dd>
             </div>
             <div>
-              <dt className="text-ink-60">Hours.</dt>
+              <dt className="text-ink-70">Hours.</dt>
               <dd>
                 {SITE.hours} / {SITE.lunch}
               </dd>

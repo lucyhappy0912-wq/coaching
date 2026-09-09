@@ -5,15 +5,19 @@
  */
 
 export const SITE = {
+  // TODO(미확정): 브랜드명·연락처·주소·사업자 정보 모두 플레이스홀더. 대표 확인 필요.
   name: "coaching",
   nameKo: "코칭",
-  tagline: "스스로 공부하는 힘을 길러주는 1:1 학습코칭",
+  tagline: "다음 방향을 스스로 정하는 성인·시니어·리더십 1:1 코칭",
   description:
-    "학습 진단부터 주간 코칭까지, 아이가 스스로 공부하는 습관을 만드는 1:1 학습코칭 브랜드입니다.",
+    "성인·시니어·리더를 위한 1:1 코칭 브랜드입니다. 진단 세션부터 주간 코칭까지, 지금 서 있는 자리에서 다음 한 걸음을 스스로 정하도록 함께 정리합니다. 첫 상담은 무료입니다.",
   phone: "070-0000-0000",
   email: "hello@example.com",
   addressLine: "3F, 00, ○○-ro, ○○-gu, Seoul",
-  hours: "Mon-Fri 13:00-22:00",
+  // TODO(미확정): 임시값. 기존 13시 시작은 방과후 전제였어서 오전 포함으로 바꿔 둠. 실제 운영시간 확인 필요.
+  hours: "Mon-Fri 10:00-20:00",
+  // NOTE: 키 이름은 `lunch` 지만 값은 토요일 운영시간이다. ConsultSection·Header 가 이 키를 참조하고 있어
+  // 이름을 바꾸면 컴포넌트가 깨지므로 그대로 둔다. 컴포넌트 정리 시 `satHours` 등으로 함께 개명 필요.
   lunch: "Sat 10:00-18:00",
   owner: "○○○",
   company: "coaching Inc.",
@@ -23,17 +27,24 @@ export const SITE = {
 /** 상단 띠 배너 — 순환 노출 */
 export const TOP_MESSAGES = [
   "첫 상담 무료 · 하루 안에 연락드립니다",
-  "주 1회 1:1 코칭 · 학부모 주간 리포트 제공",
+  "성인 · 시니어 · 리더십 1:1 코칭 · 온라인 진행 가능",
 ] as const;
 
 /** 헤더 메가메뉴 */
 export const MENU_GROUPS = [
   {
+    title: "COACHING",
+    items: [
+      { label: "Adult", href: "#audience-adult" },
+      { label: "Senior", href: "#audience-senior" },
+      { label: "Leadership", href: "#audience-leader" },
+    ],
+  },
+  {
     title: "PROGRAM",
     items: [
       { label: "Diagnosis", href: "#program" },
       { label: "Weekly Coaching", href: "#program" },
-      { label: "Daily Planner", href: "#program" },
       { label: "Online Coaching", href: "#program" },
     ],
   },
@@ -58,28 +69,62 @@ export const MENU_GROUPS = [
 
 export const HERO_SLIDES = [
   {
-    eyebrow: "2026 Spring Class",
-    title: "The Habit",
-    body: "성적은 하루의 선택이 쌓인 결과입니다. 매일의 선택을 바꾸는 12주 학습코칭을 시작해 보세요.",
-    cta: { label: "상담 신청", href: "#consult" },
+    eyebrow: "Adult · Senior · Leadership",
+    title: "The Direction",
+    body: "답을 드리는 대신, 스스로 답을 정할 수 있는 질문과 구조를 함께 만듭니다. 성인·시니어·리더를 위한 1:1 코칭.",
+    cta: { label: "무료 상담 신청", href: "#consult" },
     tone: "forest" as const,
     image: "",
   },
   {
     eyebrow: "1:1 Coaching",
-    title: "The Plan",
-    body: "무엇을 어떻게 공부할지 매주 함께 정합니다. 지킬 수 있는 계획부터 만들어 드립니다.",
-    cta: { label: "프로그램 보기", href: "#program" },
+    title: "The Next Step",
+    body: "커리어 전환, 은퇴 이후의 설계, 조직을 이끄는 일. 지금 서 있는 자리에 맞춰 다음 한 걸음을 정합니다.",
+    cta: { label: "내게 맞는 코칭 찾기", href: "#audience" },
     tone: "dusk" as const,
+    image: "",
+  },
+] as const;
+
+/**
+ * 대상별 코칭 섹션.
+ * 섹션 래퍼 id 는 `audience`, 각 항목 앵커는 `audience-{id}` 로 맞춘다(헤더 COACHING 메뉴가 참조).
+ */
+export const AUDIENCES = [
+  {
+    id: "adult",
+    label: "Adult Coaching",
+    title: "다음 방향을 스스로 정하는 시간",
+    body: "이직, 창업, 커리어 전환. 결정을 미루는 이유는 정보가 부족해서가 아니라 기준이 정리되지 않아서입니다. 지금의 상황을 함께 펼쳐 놓고 무엇을 우선할지부터 정합니다. 코치가 답을 드리는 대신, 스스로 답을 말할 수 있을 때까지 질문합니다.",
+    link: { label: "내 방향 상담 신청하기", href: "#consult" },
+    tone: "sage" as const,
+    image: "",
+  },
+  {
+    id: "senior",
+    label: "Senior Coaching",
+    title: "경험을 다음 시간에 쓰는 법",
+    body: "은퇴는 끝이 아니라 역할이 바뀌는 지점입니다. 지금까지 해온 일에서 무엇이 남고 무엇을 놓아도 되는지 함께 정리합니다. 속도는 본인이 정하고, 코치는 매 세션 그 속도를 확인합니다.",
+    link: { label: "시니어 코칭 상담 신청하기", href: "#consult" },
+    tone: "paper" as const,
+    image: "",
+  },
+  {
+    id: "leader",
+    label: "Leadership Coaching",
+    title: "성과가 아니라 사람을 이끄는 훈련",
+    body: "팀을 맡는 순간 필요한 능력이 바뀝니다. 실무에서 통했던 방식이 사람 앞에서는 통하지 않습니다. 위임, 피드백, 갈등 대화처럼 매일 마주치는 장면을 하나씩 다룹니다. 회사를 거치지 않고 개인이 직접 신청할 수 있습니다.",
+    link: { label: "리더십 코칭 상담 신청하기", href: "#consult" },
+    tone: "forest" as const,
     image: "",
   },
 ] as const;
 
 /** 프로그램 탭 + 카드 */
 export const PROGRAM_TABS = [
-  { id: "new", label: "Coaching" },
-  { id: "best", label: "Best" },
-  { id: "event", label: "Online" },
+  { id: "start", label: "Start" },
+  { id: "core", label: "1:1" },
+  { id: "online", label: "Online" },
 ] as const;
 
 export type ProgramCard = {
@@ -93,96 +138,75 @@ export type ProgramCard = {
   tabs: string[];
 };
 
+/**
+ * TODO(미확정): 실제 프로그램 가격이 확정되지 않았다. 이전 값(₩90,000~320,000)은 학생 대상 플레이스홀더였고
+ * 성인·시니어·리더십 기준으로 다시 정해야 한다. 확정 전까지 `price` 는 "상담 후 안내" 로 노출한다.
+ * 금액 확정 후 각 카드의 `price` 를 교체할 것. 할인가(`salePrice`)·배지는 검증된 근거가 생길 때만 다시 넣는다.
+ */
 export const PROGRAM_CARDS: ProgramCard[] = [
   {
-    name: "Diagnosis Report",
-    price: "₩ 90,000",
-    summary: "학습 성향과 과목별 취약 단원을 진단하고 3개월 로드맵으로 정리해 드리는 첫 단계",
-    badge: "New",
+    name: "Diagnosis Session",
+    price: "상담 후 안내",
+    summary:
+      "지금의 상황과 원하는 방향을 정리하고, 앞으로의 코칭 로드맵으로 만들어 드리는 첫 단계",
+    badge: "First Step",
     tone: "sage",
     image: "",
-    tabs: ["new", "best"],
+    tabs: ["start", "core"],
   },
   {
     name: "Weekly Coaching",
-    price: "₩ 320,000",
-    summary: "주 1회 60분 1:1 코칭 · 주간 실행률 점검과 과목별 공부법 피드백, 학부모 리포트 포함",
-    badge: "Best",
+    price: "상담 후 안내",
+    summary: "주 1회 60분 1:1 세션 · 세션 사이의 실행을 점검하고 다음 목표를 함께 조정합니다",
     tone: "paper",
     image: "",
-    tabs: ["new", "best"],
-  },
-  {
-    name: "Daily Planner Care",
-    price: "₩ 180,000",
-    summary: "주 5일 매일의 학습 기록을 코치가 확인하고 흐트러질 때 바로 잡아 주는 온라인 관리",
-    tone: "mist",
-    image: "",
-    tabs: ["new", "event"],
-  },
-  {
-    name: "Exam 4 Weeks",
-    price: "₩ 240,000",
-    summary: "시험 4주 전, 과목별 우선순위와 시간표를 다시 짜고 매일 실행을 점검하는 집중 관리",
-    tone: "forest",
-    image: "",
-    tabs: ["best", "event"],
+    tabs: ["start", "core"],
   },
   {
     name: "Online Coaching",
-    price: "₩ 260,000",
-    salePrice: "₩ 208,000",
-    summary: "지역과 상관없이 화상으로 진행하는 1:1 주간 코칭 · 첫 4주 체험 할인",
-    badge: "Event",
+    price: "상담 후 안내",
+    summary: "지역과 상관없이 화상으로 진행하는 1:1 세션 · 출장과 이주 일정에도 끊기지 않습니다",
     tone: "sage",
     image: "",
-    tabs: ["event", "new"],
-  },
-  {
-    name: "Parent Consulting",
-    price: "₩ 60,000",
-    summary: "아이와의 대화 방식부터 학원 선택까지, 학부모만을 위한 1회 상담",
-    tone: "paper",
-    image: "",
-    tabs: ["best"],
+    tabs: ["online", "core"],
   },
 ];
 
 /** 중간 풀블리드 배너 */
 export const MID_BANNER = {
-  title: "The Study Room",
-  body: "집중이 어려운 아이를 위한 코칭 공간. 조용한 환경과 코치의 관찰 아래에서 스스로 공부하는 시간을 만들어 갑니다.",
-  cta: { label: "More", href: "#service" },
+  title: "The Coaching Room",
+  body: "말이 정리되는 데는 방해받지 않는 한 시간이 필요합니다. 조용한 공간에서 지금의 상황을 소리 내어 펼쳐 놓는 것부터 시작합니다.",
+  cta: { label: "코칭 진행 방식 보기", href: "#story" },
   tone: "forest" as const,
   image: "",
 } as const;
 
-/** 스토리 탭 섹션 */
+/** 스토리 탭 섹션 — 코칭 진행 방식 3단계 */
 export const STORY_TABS = [
   {
-    id: "habit",
-    tab: "Habit Care",
-    title: "습관을 만드는 12주",
-    body: "계획을 지키는 경험이 쌓이면 공부를 대하는 태도가 달라집니다. 12주 동안 실행률을 함께 관리합니다.",
-    link: { label: "더 알아보기", href: "#program" },
+    id: "clarify",
+    tab: "Clarify",
+    title: "질문으로 정리하는 첫 세션",
+    body: "무엇이 문제인지부터 다시 정의합니다. 스스로 설명해 보는 과정에서 실제로 걸려 있는 지점이 드러납니다.",
+    link: { label: "첫 세션 상담 신청하기", href: "#consult" },
     tone: "sage" as const,
     image: "",
   },
   {
-    id: "subject",
-    tab: "Subject Care",
-    title: "과목마다 다른 공부법",
-    body: "국어는 지문 분석, 수학은 오답 재풀이. 과목의 성격에 맞는 방법을 하나씩 손에 익혀 드립니다.",
-    link: { label: "더 알아보기", href: "#program" },
+    id: "practice",
+    tab: "Practice",
+    title: "생각을 행동으로 옮기는 주간",
+    body: "세션에서 정한 것을 실제로 해봅니다. 크게 바꾸지 않습니다. 다음 세션까지 지킬 수 있는 크기로 잘라 드립니다.",
+    link: { label: "주간 코칭 살펴보기", href: "#program" },
     tone: "mist" as const,
     image: "",
   },
   {
-    id: "mind",
-    tab: "Mind Care",
-    title: "흔들릴 때 잡아주는 대화",
-    body: "성적이 떨어진 주에도 다시 앉을 수 있도록, 코치가 먼저 상태를 묻고 계획을 조정합니다.",
-    link: { label: "더 알아보기", href: "#coach" },
+    id: "review",
+    tab: "Review",
+    title: "돌아보고 다시 정하는 대화",
+    body: "안 된 주에도 그대로 이야기합니다. 왜 막혔는지 확인하고 계획을 현실에 맞게 다시 맞춥니다.",
+    link: { label: "코치 소개 보기", href: "#coach" },
     tone: "paper" as const,
     image: "",
   },
@@ -198,23 +222,24 @@ export const SERVICES = [
     image: "",
   },
   {
-    title: "Weekly Report",
-    body: "이번 주 실행률과 다음 주 계획을 학부모님께 리포트로 보내드립니다.",
-    link: { label: "리포트 예시 보기", href: "#story" },
+    title: "Session Note",
+    body: "세션에서 정리한 내용과 다음까지 할 일을 기록으로 남겨 드립니다.",
+    link: { label: "진행 방식 살펴보기", href: "#story" },
     tone: "paper" as const,
     image: "",
   },
   {
-    title: "Group Class",
-    body: "친구와 함께라면 조금 더 부담 없는 제안을 드릴 수 있습니다.",
-    link: { label: "그룹 코칭 문의하기", href: "#consult" },
+    // TODO(미확정): 그룹 세션 실제 운영 여부·정원·주기 확인 필요.
+    title: "Group Session",
+    body: "비슷한 시기를 지나는 분들과 함께 이야기하는 소규모 세션도 있습니다.",
+    link: { label: "그룹 세션 문의하기", href: "#consult" },
     tone: "mist" as const,
     image: "",
   },
   {
-    title: "School Partnership",
-    body: "학교와 기관을 위한 학습코칭 프로그램을 함께 설계합니다.",
-    link: { label: "제휴 문의하기", href: "#consult" },
+    title: "After Care",
+    body: "프로그램이 끝난 뒤에도 정한 방향을 지키고 있는지 한 번 더 점검합니다.",
+    link: { label: "이후 관리 문의하기", href: "#consult" },
     tone: "forest" as const,
     image: "",
   },
@@ -222,24 +247,26 @@ export const SERVICES = [
 
 /** 브랜드 스토리 (풀블리드 다크) */
 export const BRAND_STORY = {
-  tagline: "아이와 부모, 그리고 매일의 공부를 위한 학습 코칭 브랜드",
+  tagline: "삶의 방향을 스스로 정하는 사람을 위한 1:1 코칭 브랜드",
   link: { label: "브랜드 스토리 확인하기", href: "#story" },
   image: "",
 } as const;
 
-/** 하단 3분할 원칙 카드 */
+/** 하단 3분할 원칙 카드 — 그리드가 3열 고정이므로 개수를 3개로 유지한다 */
 export const PRINCIPLES = [
-  { title: "Clear Method", body: "방법을 명확히 알려줍니다.", tone: "forest" as const, image: "" },
-  { title: "Fact & Record", body: "기록으로 증명합니다.", tone: "mist" as const, image: "" },
-  { title: "Own Pace", body: "아이의 속도를 존중합니다.", tone: "sage" as const, image: "" },
+  { title: "Your Answer", body: "답은 당신 안에서 찾습니다.", tone: "forest" as const, image: "" },
+  { title: "Fact & Record", body: "대화를 기록으로 남깁니다.", tone: "mist" as const, image: "" },
+  { title: "Own Pace", body: "각자의 속도를 존중합니다.", tone: "sage" as const, image: "" },
 ] as const;
 
 export const COACH = {
+  // TODO(미확정): 코치 실명과 이력 확인 필요. 아래 credentials 는 코칭 브랜드 맥락의 중립 플레이스홀더이며
+  // 실제 학위·자격·경력이 아니다. 확인 전까지 대외 공개하지 말 것.
   name: "김○○",
-  role: "대표 코치 · 학습코칭 10년",
+  role: "대표 코치",
   intro:
-    "성적은 결국 매일의 선택이 쌓인 결과입니다. 학생이 스스로 선택할 수 있을 때까지 방법을 알려 주고 끝까지 함께 점검합니다.",
-  credentials: ["○○대학교 교육학 석사", "전 ○○학원 학습관리 총괄", "중·고등 학습코칭 개발"],
+    "방향은 결국 본인이 정합니다. 그 결정을 대신하지 않고, 스스로 말할 수 있을 때까지 질문하고 끝까지 함께 점검합니다.",
+  credentials: ["○○ 코칭 자격 보유", "성인·시니어 코칭 ○○년", "리더십 코칭 프로그램 운영"],
   tone: "paper" as const,
   image: "",
 } as const;
@@ -251,11 +278,11 @@ export const FAQS = [
   },
   {
     q: "어떤 분들이 받을 수 있나요?",
-    a: "커리어 전환을 준비하는 성인, 은퇴 이후를 설계하는 시니어, 조직을 이끄는 리더까지 목표를 스스로 정하고 싶은 분이면 됩니다.",
+    a: "커리어 전환을 준비하는 성인, 은퇴 이후를 설계하는 시니어, 조직을 이끄는 리더까지 목표를 스스로 정하고 싶은 분이면 됩니다. 리더십 코칭도 회사를 거치지 않고 개인이 직접 신청할 수 있습니다.",
   },
   {
     q: "온라인으로도 진행되나요?",
-    a: "주간 코칭은 대면과 화상 중 선택할 수 있고, 데일리 플래너 관리는 온라인으로 진행됩니다.",
+    a: "대면과 화상 중 선택할 수 있고, 진행 중에 바꾸셔도 됩니다. 지역과 출장 일정에 맞춰 화상으로만 진행하는 분도 있습니다.",
   },
   {
     q: "상담은 비용이 드나요?",
@@ -268,6 +295,7 @@ export const FOOTER_LINKS = [
     title: "Brand",
     items: [
       { label: "Story", href: "#story" },
+      { label: "Coaching", href: "#audience" },
       { label: "Coach", href: "#coach" },
       { label: "Program", href: "#program" },
       { label: "Service", href: "#service" },
