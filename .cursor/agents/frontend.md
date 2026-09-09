@@ -22,7 +22,7 @@ model: inherit
 2. 기존 컴포넌트에 같은 역할이 있는지 먼저 찾는다. 중복 생성하지 않는다
 3. 서버 컴포넌트를 기본으로 두고, 상태·이벤트가 필요한 경계에서만 `"use client"` 를 붙인다
 4. 모바일 폭부터 작성하고 `md:` / `lg:` 로 확장한다
-5. 끝나면 `npx tsc --noEmit` 과 `npx next lint` 로 검증한다
+5. 끝나면 `npx tsc --noEmit` 과 `npm run lint` 로 검증한다 (`next lint` 는 Next 16에서 제거됐다)
 
 ## 지켜야 할 것
 

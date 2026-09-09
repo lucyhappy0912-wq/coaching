@@ -27,7 +27,7 @@ readonly: true
 - 320px에서 넘치는 요소, 모바일 미검증 섹션
 
 **빌드·타입**
-- `npx tsc --noEmit`, `npx next lint` 결과
+- `npx tsc --noEmit`, `npm run lint` 결과 (`next lint` 는 Next 16에서 제거됐다)
 - 참고: Cursor 브라우저가 주입하는 `data-cursor-ref` 로 인한 hydration 경고는 IDE 환경 문제이며 코드 결함이 아니다
 
 **미완성 추적**

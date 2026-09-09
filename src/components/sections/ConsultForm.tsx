@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { GRADE_OPTIONS } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 // 전송 처리(DB·알림)는 아직 연결되지 않았다. 현재는 입력 검증과 완료 화면까지만 동작한다.
@@ -68,20 +67,7 @@ export function ConsultForm() {
           />
         </Field>
 
-        <Field label="학년" htmlFor="grade">
-          <select id="grade" name="grade" defaultValue="" className={cn(inputClass, "appearance-none")}>
-            <option value="" disabled>
-              선택해 주세요
-            </option>
-            {GRADE_OPTIONS.map((grade) => (
-              <option key={grade} value={grade}>
-                {grade}
-              </option>
-            ))}
-          </select>
-        </Field>
-
-        <Field label="상담 희망 시간" htmlFor="preferredTime">
+        <Field label="상담 희망 시간" htmlFor="preferredTime" className="sm:col-span-2">
           <input
             id="preferredTime"
             name="preferredTime"
