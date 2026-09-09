@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeMCPExecution": [
+      {
+        "command": "node .cursor/hooks/block-external-accounts.js",
+        "failClosed": true,
+        "timeout": 10
+      }
+    ]
+  }
+}

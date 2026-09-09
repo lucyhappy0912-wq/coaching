@@ -18,6 +18,10 @@ model: inherit
 - Next.js 16 App Router. **Route Handler / Server Action 시그니처는 `node_modules/next/dist/docs/` 를 먼저 읽고 확인한다.** 이 버전은 학습 데이터와 다르다
 - 서버 전용 코드가 클라이언트 번들에 새지 않게 경계를 명확히 한다
 
+## 계정 (절대)
+
+배포·원격·DB는 전부 새 계정으로만 간다. 기존 Supabase/Vercel/GitHub 계정에 연결하는 명령을 실행하지 마라. **Supabase MCP 도구를 호출하지 마라** — 기존 계정 프로젝트에 인증된 상태다. 필요하면 명령어만 제시하고 대표가 실행하게 한다.
+
 ## 필수 점검
 
 - 시크릿은 `.env.local` 에만 둔다. 코드·저장소·`NEXT_PUBLIC_*` 에 넣지 않는다

@@ -154,6 +154,28 @@ Hero → **Audience(성인·시니어·리더십)** → Program 탭 → Mid Bann
 | 운영시간 | 임시값 | `Mon-Fri 10:00-20:00` 은 로보가 정한 임시값 |
 | 상담 트랙 구분 | 미구현 | 대상별 CTA가 전부 `#consult` 로만 간다. 폼 전송 붙일 때 hidden 필드로 처리 |
 | B2B / 기업 문의 | **보류** | 사용자 요청으로 이번 범위 제외 |
+| 작업 드라이브 | **F 고정** | C 여유 24GB(10%). npm 캐시는 `F:\_npm-cache`(1GB)로 이미 이전됨 |
+| 계정 전략 | **전면 신규** | GitHub·Vercel·Supabase 모두 새로 가입. 기존 계정 연결 금지 (2026-09-09 지시) |
+
+### 계정·드라이브 감사 (2026-09-09)
+
+강제 규칙은 `AGENTS.md` 에 있다. 여기에는 배경만 남긴다.
+
+**드라이브** — 걱정했던 것과 달리 이 프로젝트가 C에 쓰는 양은 1MB 미만이다. npm 캐시(1GB)와 `node_modules`(449MB)·`.next`(276MB)는 전부 이미 F에 있다. 남은 C 유출 경로는 셋뿐이다.
+
+- `%TEMP%` 가 여전히 `C:\Users\sungh\AppData\Local\Temp`(현재 4.82GB)를 가리킨다. `npm install` 과 `next build` 가 여기를 스크래치로 쓴다. `F:\_tmp` 는 존재하지만 연결돼 있지 않다
+- **Cursor 터미널이 `npm_config_cache` 환경변수를 `%TEMP%\cursor-sandbox-cache\<해시>\npm` 으로 설정한다.** 환경변수가 `.npmrc` 보다 우선하므로 사용자·프로젝트 `.npmrc` 의 F 경로가 **Cursor 안에서는 무력화된다.** `npm config list` 에 `overridden by env` 로 표시된다. Cursor 터미널에서 설치할 때는 `npm install --cache F:\_npm-cache` 로 명시해야 한다 (`AGENTS.md` 에 규칙으로 박아뒀다)
+- npm 전역 prefix가 C다. 이 프로젝트는 전역 설치를 안 쓰므로 급하지 않다
+- `~/.cursor` 는 Cursor가 홈 디렉터리를 강제해서 **옮길 수 없다.** 이 프로젝트 몫은 1MB 미만이라 문제 없다
+
+**계정 연결 잔재** — 실제 위험은 드라이브가 아니라 이쪽이었다.
+
+- **Supabase MCP**가 사용자 전역 설정(`~/.cursor/mcp.json`)에 기존 계정 프로젝트로 인증된 채 살아 있다. 이 저장소는 Supabase 패키지를 제거했지만 MCP 통로는 열려 있었고, 서브에이전트가 그대로 상속한다. Cursor에는 전역 MCP를 프로젝트 단위로 끄는 설정이 없어서, `.cursor/hooks.json` 의 `beforeMCPExecution` 훅(`failClosed: true`)으로 호출을 차단했다. 서버 로딩 자체를 막는 건 아니라 도구 목록은 여전히 보인다
+- Vercel CLI 설정(`%APPDATA%\com.vercel.cli\Data\config.json`)에 이전 팀 포인터 `currentTeam` 이 남아 있다. `auth.json` 은 없어 로그인 상태는 아니다. 새 계정 첫 배포 전에 제거해야 한다
+- git 전역 정체성은 의도적으로 비어 있다. 커밋은 `-c user.name=... -c user.email=...` 주입으로 해 왔고 author는 전부 `sungh <sungh@local>` 이다. 새 계정 확정 후 **로컬에만** 설정한다
+- `gh` CLI는 미설치, git 원격 없음, `.env*` 없음, 관련 환경변수 없음
+
+**미확인**: Windows 자격증명 관리자의 GitHub 항목. `cmdkey /list` 가 샌드박스에 막혀 확인하지 못했다. 남아 있으면 새 계정 push 시 옛 자격증명이 자동으로 붙는다.
 | 브랜드명·연락처·가격 | 임시값 | `site.ts` 전체가 플레이스홀더 |
 
 ### 관리자 페이지를 시작할 때
