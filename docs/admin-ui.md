@@ -524,3 +524,533 @@ aria-current="page"
 동작: 스크림 클릭·`Esc`·항목 선택 시 닫힘. 열려 있을 때 `body` 스크롤 잠금. 열릴 때 첫 항목에 포커스, 닫힐 때 햄버거로 포커스 복귀. 햄버거는 40px(모바일 터치 대상).
 
 `Header.tsx`의 메가메뉴 개폐 로직(`document.body.style.overflow`)과 같은 패턴이라 참고할 수 있지만, framer-motion 없이 CSS transition으로 구현한다.
+
+---
+
+## 4. 폼 프리미티브 — 정확한 클래스
+
+이 절의 클래스 문자열은 그대로 복사해서 쓸 수 있다. 모든 상태를 명시했다.
+
+### 4.1 Field (라벨 + 컨트롤 + 도움말 + 에러)
+
+```jsx
+<div className="min-w-0">
+  <div className="mb-1.5 flex items-baseline justify-between gap-2">
+    <label htmlFor={id} className="adm-label text-forest-70">
+      {label}
+      {required && <span className="ml-1 text-danger" aria-hidden>*</span>}
+    </label>
+    {counter && <span className={cn("adm-meta tabular-nums",
+      over ? "text-warn" : "text-ink-70")}>{len}/{soft}자</span>}
+  </div>
+
+  {children}
+
+  {help && !error && <p className="adm-body mt-1.5 text-ink-70">{help}</p>}
+  {error && (
+    <p id={`${id}-error`} className="adm-body mt-1.5 flex items-start gap-1.5 text-danger">
+      <AlertCircle className="mt-[3px] size-3.5 shrink-0" strokeWidth={2} aria-hidden />
+      {error}
+    </p>
+  )}
+</div>
+```
+
+- 컨트롤에 `aria-invalid={!!error}` + `aria-describedby={error ? id-error : id-help}`
+- 필수 표시 `*`는 `aria-hidden`. 스크린리더에는 `required` 속성이 전달된다
+- 에러 텍스트는 `.adm-body` 15px. **에러는 문장이므로 본문 하한을 지킨다**(§1.2)
+- 글자수 카운터는 라벨 줄 오른쪽에 둔다. 필드 아래에 두면 에러 메시지와 자리를 다툰다
+- `tabular-nums`: 숫자가 바뀔 때 폭이 흔들리지 않게
+
+### 4.2 TextInput
+
+```js
+const input = cn(
+  "adm-input h-10 w-full rounded-[4px] border bg-white px-3 text-forest",
+  "placeholder:text-ink-70",
+  "transition-colors",
+  "focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-forest",
+  "disabled:cursor-not-allowed disabled:bg-ink-05 disabled:text-ink-70",
+  invalid ? "border-danger bg-danger-tint" : "border-ink-50"
+);
+```
+
+| 상태 | 스타일 | 근거 |
+| --- | --- | --- |
+| 기본 | `border-ink-50` (3.2:1) | UI 경계선 하한. `ink-30`(1.9:1)·`ink-15`(1.4:1)는 컨트롤 경계로 못 쓴다 |
+| 포커스 | 2px `forest` outline, offset 1 | 12.5:1. 테두리 색만 바꾸지 않는다 — 색 변화 단독은 지각적으로 약하다 |
+| 무효 | `border-danger` + `bg-danger-tint` | 색 + 배경 + 아이콘 + 텍스트 4채널. 색각 이상 대응 |
+| 비활성 | `bg-ink-05` + `text-ink-70` | 6.0:1 유지. 비활성이라고 읽을 수 없게 만들지 않는다 |
+| 플레이스홀더 | `text-ink-70` (6.0:1) | `ink-60`(4.35:1)은 AA 미달. 공개 `ConsultForm`도 `ink-70`이라 일관 |
+
+**높이 40px 근거.** 16px 값 + 상하 패딩 10px + 테두리 2px = 38px가 최소이고, 40px이 그중 4px 배수다. 터치 최소 44px보다 작지만 편집 화면은 데스크톱 전용(§3.7)이다. 예외: 로그인 버튼과 모바일 상담 신청 행은 44px.
+
+### 4.3 TextArea
+
+```js
+const textarea = cn(
+  input.replace("h-10", "min-h-24 py-2.5"),
+  "resize-y leading-[1.6]"
+);
+```
+
+- `leading-[1.6]`: 여러 줄 문장은 공개 페이지와 같은 160% 행간으로 본다. 대표가 줄바꿈 감각을 잡는 곳이다
+- `min-h-24`(96px) = 3줄. `resize-y` 허용
+- 자동 높이 확장은 넣지 않는다. 입력 중 레이아웃이 움직이면 아래 필드가 밀린다
+
+### 4.4 ToneSelect
+
+`tone`은 절대 텍스트 입력이 아니다. `Photo`의 5개 값(`sage`/`paper`/`mist`/`dusk`/`forest`)만 유효하다.
+
+라디오 그룹으로 만들고 **각 옵션이 실제 그라디언트를 렌더한다.** `Photo`를 그대로 써서 `TONE_CLASS`를 재구현하지 않는다.
+
+```jsx
+<div role="radiogroup" aria-label="사진 없을 때 표시할 색" className="flex gap-2">
+  {TONES.map((t) => (
+    <button type="button" role="radio" aria-checked={value === t} key={t}
+      className={cn(
+        "group relative size-14 overflow-hidden rounded-[4px] transition-shadow",
+        "focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-forest",
+        value === t ? "ring-2 ring-forest ring-offset-2" : "ring-1 ring-ink-30 hover:ring-ink-50"
+      )}>
+      <Photo tone={t} />
+      {value === t && <Check className="absolute inset-0 m-auto size-5 text-white
+        drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]" strokeWidth={2.5} />}
+      <span className="sr-only">{TONE_LABEL[t]}</span>
+    </button>
+  ))}
+</div>
+<p className="adm-body mt-1.5 text-ink-70">사진을 넣지 않았을 때 그 자리에 표시되는 색입니다.</p>
+```
+
+도움말 문구가 중요하다. `tone`이 뭔지 대표는 모른다. "사진이 없을 때 뜨는 색"이라고 말해줘야 한다.
+
+`sage`/`paper`/`mist`/`dusk`/`forest` 라벨은 한글로: `연한 초록` / `따뜻한 회색` / `연한 하늘` / `어두운 청록` / `진한 초록`.
+
+### 4.5 AnchorSelect — 링크 필드는 자유 입력이 아니다
+
+링크 필드가 11개 있다(`HERO_SLIDES.cta`, `AUDIENCES.link` ×3, `STORY_TABS.link` ×3, `SERVICES.link` ×4, `MID_BANNER.cta`, `BRAND_STORY.link`, `MENU_GROUPS.items` ×11, `FOOTER_LINKS.items` ×9). 전부 `#anchor` 형식이고, 오타 하나면 클릭해도 아무 일이 없는 링크가 된다. 자유 텍스트로 두면 안 된다.
+
+**유효한 내부 앵커 전체 목록** (컴포넌트에서 확인):
+
+| 앵커 | 위치 |
+| --- | --- |
+| `#hero` | `HeroSlider.tsx:26` |
+| `#audience` | `AudienceRows.tsx:19` |
+| `#audience-adult` / `#audience-senior` / `#audience-leader` | `AudienceRows.tsx:25` (`AUDIENCES[].id` 파생) |
+| `#program` | `ProgramTabs.tsx:14` |
+| `#story` | `StoryTabs.tsx:15` |
+| `#service` | `Services.tsx:8` |
+| `#coach` | `CoachBand.tsx:7` |
+| `#faq` | `Faq.tsx` |
+| `#consult` | `ConsultSection.tsx:6` |
+
+**중간 배너 · 브랜드 스토리 · 원칙 카드에는 `id`가 없다.** 이 세 섹션은 링크 대상이 될 수 없고, §5.7의 "이 섹션 보기" 딥링크도 동작하지 않는다. `id="banner"` / `id="brand"` / `id="principles"` 추가가 필요하다. → §10
+
+UI:
+
+```jsx
+<div className="flex gap-2">
+  <select className={cn(input, "flex-1")}>
+    <optgroup label="페이지 안 위치">
+      <option value="#consult">상담 신청 섹션</option>
+      ...
+    </optgroup>
+    <optgroup label="연락">
+      <option value="__tel">전화 걸기 (사이트 정보의 전화번호)</option>
+      <option value="__mail">메일 보내기 (사이트 정보의 이메일)</option>
+    </optgroup>
+    <option value="__url">외부 주소 직접 입력…</option>
+  </select>
+</div>
+{mode === "url" && (
+  <input className={cn(input, "mt-2")} placeholder="https://" inputMode="url" />
+)}
+```
+
+`__tel` / `__mail`을 고르면 값은 `SITE.phone`/`SITE.email`에서 파생시킨다(현재 `FOOTER_LINKS`가 하는 방식과 동일). 대표가 번호를 두 곳에 적지 않게 한다.
+
+`AUDIENCES`의 순서·id가 바뀌면 옵션 목록도 따라 바뀌어야 하므로, 이 목록은 **하드코딩 상수 + `AUDIENCES`에서 동적 생성**을 합쳐서 만든다.
+
+### 4.6 Panel / Card
+
+```jsx
+<section className="rounded-[6px] border border-ink-15 bg-white p-5">
+  <h2 className="adm-h text-forest">{title}</h2>
+  {desc && <p className="adm-body mt-1 text-ink-70">{desc}</p>}
+  <div className="mt-4 space-y-5">{children}</div>
+</section>
+```
+
+`border-ink-15`는 흰 배경 대비 1.4:1로 약하지만, 캔버스가 `ink-05`이므로 카드 경계가 배경 차이로도 드러난다. 카드는 컨트롤이 아니므로 WCAG 1.4.11 대상이 아니다. 표 행 구분선은 `ink-10`(더 약하게 — 행 구분은 정렬로도 읽힌다).
+
+### 4.7 버튼
+
+```js
+const btn = "adm-body inline-flex items-center justify-center gap-1.5 rounded-[4px] font-medium " +
+  "transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-forest " +
+  "disabled:cursor-not-allowed disabled:opacity-45";
+
+const primary   = "bg-forest text-white hover:bg-forest-90";                    // 12.5:1
+const secondary = "border border-ink-50 bg-white text-forest hover:bg-ink-05";  // 경계 3.2:1
+const ghost     = "text-forest hover:bg-ink-05";
+const destruct  = "bg-danger text-white hover:brightness-90";                   // 7.0:1
+const destructGhost = "text-danger hover:bg-danger-tint";                       // 7.0:1
+
+const h = { md: "h-9 px-4", lg: "h-10 px-5", icon: "size-8 p-0", touch: "h-11 px-5" };
+```
+
+- 기본 `h-9`(36px). **입력과 나란히 놓일 때만 `h-10`** — 40px 입력 옆의 36px 버튼은 어긋나 보인다
+- 표 행 액션은 `size-8` 아이콘 버튼. 반드시 `aria-label` 부여
+- `touch`(44px)는 로그인 버튼과 모바일 카드 액션 전용
+- `font-medium`(500): 15px 버튼 라벨이 본문과 같은 무게면 클릭 가능해 보이지 않는다
+- 아이콘은 `size-4` `strokeWidth={1.8}`. 공개 페이지의 `strokeWidth={1}~1.4`(장식용 얇은 선)보다 굵게 — 16px에서 1.4는 흐려 보인다
+
+**`disabled:opacity-45`가 대비를 깨는 문제.** `forest` 12.5:1 × 0.45 → 약 3.4:1. WCAG는 비활성 컨트롤을 대비 요건에서 제외하므로 위반은 아니다. 다만 비활성 버튼이 화면에 오래 머무는 곳은 저장 버튼 하나뿐이고, 거기는 옆의 상태 텍스트가 이유를 말해준다(§5.8).
+
+### 4.8 확인 대화상자 — 언제 띄우는가
+
+**규칙: 확인 대화상자는 서버에 되돌릴 수 없는 변경을 일으킬 때만 띄운다.**
+
+| 동작 | 확인 | 근거 |
+| --- | --- | --- |
+| 배열 항목 삭제(저장 전) | **없음** | 아직 서버에 없다. 저장 바의 `되돌리기`로 복구된다. 대화상자는 소음 |
+| 배열 항목 순서 변경 | 없음 | 동일 |
+| 저장하지 않고 이동 | **있음** (§5.6) | 작업 손실 |
+| 이미지 삭제 | **있음** | 서버 파일·경로가 즉시 바뀐다 |
+| 상담 신청 삭제 | **있음** + 문구 재입력 | 개인정보. 복구 불가 |
+| 저장 | 없음 | 저장은 사용자가 의도한 것이다. 저장에 확인을 붙이면 저장을 두 번 누르게 만든다 |
+
+대화상자 본문은 `.adm-body` 15px, 파괴적 액션 버튼은 `destruct`, 취소는 `secondary`이며 **취소가 기본 포커스**다.
+
+---
+
+## 5. 편집 화면 패턴
+
+### 5.1 저장 — 섹션별 · 명시적
+
+**자동 저장을 쓰지 않는다.** 이 콘텐츠는 곧 공개 페이지다. 저장 계층에 초안/발행 구분이 없으므로(데이브의 어댑터는 콘텐츠 문서 하나다) **자동 저장 = 즉시 발행**이다. 반쯤 쓴 히어로 제목이 사이트에 뜨는 걸 감수할 수 없다.
+
+**전체 저장을 쓰지 않는다.** 17개 섹션을 한 페이로드로 묶으면 어느 한 곳의 검증 실패가 전부를 막고, 무엇이 바뀌었는지 대표가 알 수 없다.
+
+**섹션 = 저장 단위다.** 섹션보다 작게(슬라이드 1개만 저장) 쪼개지 않는 이유: 배열 인덱스 정합성과 상호 참조(`PROGRAM_CARDS[].tabs` → `PROGRAM_TABS[].id`, `MENU_GROUPS[].items[].href` → `AUDIENCES[].id`)는 섹션 전체를 봐야 검증된다.
+
+### 5.2 저장 바
+
+콘텐츠 영역 하단에 고정된다.
+
+```jsx
+<div className="sticky bottom-0 z-20 -mx-6 mt-8 flex h-15 items-center justify-between gap-4
+                border-t border-ink-15 bg-white/95 px-6 backdrop-blur">
+  <div className="min-w-0">{상태 텍스트}</div>
+  <div className="flex shrink-0 gap-2">
+    <button className={cn(btn, ghost, h.md)} disabled={!dirty}>되돌리기</button>
+    <button className={cn(btn, primary, h.md)} disabled={!dirty || saving || hasError}>
+      {saving ? "저장 중…" : "저장"}
+    </button>
+  </div>
+</div>
+```
+
+`-mx-6`로 좌우 여백을 상쇄해 콘텐츠 폭 전체를 덮는다. `sticky bottom-0`이므로 페이지가 길어도 항상 보인다.
+
+### 5.3 저장 상태 — 5가지
+
+| 상태 | 왼쪽 텍스트 | 저장 버튼 | 그 외 |
+| --- | --- | --- | --- |
+| **깨끗함** | `.adm-meta text-ink-70` — `마지막 저장 09-09 14:22` | 비활성 | — |
+| **변경됨** | `.adm-body text-warn` + `AlertCircle size-4` — `저장하지 않은 변경 3곳` | 활성 | 사이드바 항목에 `danger` 점, `beforeunload` 등록 |
+| **저장 중** | `.adm-body text-ink-70` — `저장 중…` | `Loader2 animate-spin` + 비활성 | 폼 전체 `pointer-events-none opacity-70`. 저장 중 편집을 허용하면 어느 값이 저장됐는지 알 수 없다 |
+| **성공** | `.adm-body text-forest` + `Check size-4` — `저장했습니다` (3초 후 `깨끗함`으로) | 비활성 | 토스트 + 공개 페이지 링크. 초안 `sessionStorage` 삭제 |
+| **실패** | `.adm-body text-danger` + `AlertCircle` — 서버 메시지 | **활성 유지** | 토스트(자동 소멸 없음). **입력값 절대 유지** |
+
+**저장 버튼이 비활성일 때 활성으로 바뀌는 조건 세 개**: 변경 있음 + 저장 중 아님 + 검증 에러 없음. 검증 에러가 있으면 저장 버튼 옆에 `.adm-body text-danger`로 `입력 확인이 필요한 항목이 1개 있습니다`를 띄우고, 클릭하면 첫 에러 필드로 스크롤 + 포커스한다.
+
+**실패 시 입력값을 절대 버리지 않는다.** 300자 본문을 다시 쓰게 만드는 것이 이 화면에서 일어날 수 있는 최악의 일이다.
+
+### 5.4 세 가지 콘텐츠 종류
+
+하나의 `Repeater` 컴포넌트로 세 경우를 다 덮는다. 차이는 props뿐이다.
+
+| 종류 | `min` / `max` | 추가·삭제 | 순서 변경 |
+| --- | --- | --- | --- |
+| 단일 객체 | — | Repeater 안 씀 | — |
+| 고정 개수 배열 | `min === max` | **버튼 자체를 렌더하지 않는다** | 허용 |
+| 가변 배열 | `min < max` | 허용 | 허용 |
+
+#### (a) 단일 객체 — `SITE`, `MID_BANNER`, `BRAND_STORY`, `COACH`, `CONSULT`
+
+Repeater 없이 Panel 안에 필드를 나열한다. 의미별로 Panel을 나눈다.
+
+`SITE`(12필드) 예시:
+
+```
+Panel「브랜드」      name · nameKo · tagline · description
+Panel「연락처」      phone · email · addressLine
+Panel「운영시간」    hours · lunch(라벨: 토요일 운영시간)
+Panel「사업자 정보」 owner · company · bizNo
+```
+
+12개를 한 Panel에 세로로 쌓으면 스크롤 480px에 아무 구조가 없다. 4개 Panel로 나누면 각 3~4필드이고, 대표가 "연락처 고치러 왔다"는 목적으로 바로 찾는다.
+
+2열 배치(`md:grid-cols-2`)를 쓰는 기준: **짧고 서로 독립된 값만.** `phone`+`email`은 나란히, `tagline`·`description`은 전폭. 서로 비교하며 읽어야 하는 값(`name`/`nameKo`)도 나란히.
+
+`COACH.credentials`는 단일 객체 안의 가변 문자열 배열이다. Panel 안에 축소판 Repeater(입력 1개 + 삭제 + ↑↓)를 둔다.
+
+#### (b) 고정 개수 배열 — `AUDIENCES`(3), `SERVICES`(4), `PRINCIPLES`(3), `PROGRAM_TABS`(3), `FOOTER_LINKS`(2)
+
+**추가·삭제 버튼을 비활성으로 렌더하지 않고, 아예 렌더하지 않는다.** 비활성 버튼은 "왜 안 눌려요?"를 만든다. 대신 페이지 헤더 아래 한 줄로 이유를 말한다.
+
+```jsx
+<p className="adm-body flex items-start gap-2 rounded-[4px] bg-ink-05 px-3 py-2 text-ink-70">
+  <Info className="mt-[3px] size-4 shrink-0 text-forest-70" strokeWidth={1.8} aria-hidden />
+  이 섹션은 3칸 고정입니다. 공개 페이지가 3열 그리드라서 칸 수를 바꿀 수 없습니다.
+  칸을 늘리거나 줄여야 하면 개발자에게 문의해 주세요.
+</p>
+```
+
+섹션별 문구:
+
+| 섹션 | 문구 근거 |
+| --- | --- |
+| `AUDIENCES` 3 | 좌우 교차 3행. 개수 자체는 유연하지만 DEVNOTE에서 "성인·시니어·리더십 3트랙"이 브랜드 정의다 |
+| `SERVICES` 4 | `Services.tsx:11` `lg:grid-cols-4` |
+| `PRINCIPLES` 3 | `Principles.tsx:7` `lg:grid-cols-3` |
+| `PROGRAM_TABS` 3 | `PROGRAM_CARDS[].tabs`가 id를 참조. 탭 삭제 시 카드가 사라진다 |
+| `FOOTER_LINKS` 2 | `Footer.tsx:6` `lg:grid-cols-[1.6fr_1fr_1fr]` (§2.2) |
+
+**개수는 잠그고 순서는 푼다.** `AUDIENCES` 순서는 DEVNOTE에 따라 "우선순위를 순서로만 표현"하는 의도적 설계다. 순서 변경은 그리드를 깨지 않는다. 이 구분이 중요하다.
+
+#### (c) 가변 배열 — `HERO_SLIDES`, `PROGRAM_CARDS`, `STORY_TABS`, `FAQS`, `TOP_MESSAGES`, `MENU_GROUPS`
+
+| 배열 | min | max | max 근거 |
+| --- | --- | --- | --- |
+| `HERO_SLIDES` | 1 | 5 | 6초 자동 순환(`HeroSlider.tsx:11`). 5장이면 한 바퀴 30초로 이미 아무도 끝까지 안 본다 |
+| `PROGRAM_CARDS` | 1 | 8 | 가로 슬라이더라 개수 제약은 없다. 8은 관리 가능성 상한 |
+| `STORY_TABS` | 2 | 5 | 탭이 세로 목록(`.t2` 26/34px)이라 6개부터 38% 컬럼 높이를 넘긴다 |
+| `FAQS` | 1 | 20 | 아코디언. 제약 없음 |
+| `TOP_MESSAGES` | 1 | 5 | 4초 순환. 0개면 배너 높이만 남는다 |
+| `MENU_GROUPS` | 1 | 3 또는 4 | `Header.tsx:88` `lg:grid-cols-3` → §2.2, §10 |
+
+#### 항목 카드 구조
+
+```jsx
+<li className="rounded-[6px] border border-ink-15 bg-white">
+  {/* 헤더 — 고정 44px */}
+  <div className="flex h-11 items-center gap-2 border-b border-ink-10 px-3">
+    <span className="adm-mono w-6 shrink-0 text-center text-ink-70">{i + 1}</span>
+    <span className="adm-h min-w-0 flex-1 truncate text-forest">
+      {itemTitle(item) || <span className="text-ink-70">(제목 없음)</span>}
+    </span>
+    <div className="flex shrink-0 items-center gap-0.5">
+      <button aria-label={`${i + 1}번째 항목을 위로`} disabled={i === 0}
+        className={cn(btn, ghost, h.icon)}><ArrowUp className="size-4" /></button>
+      <button aria-label={`${i + 1}번째 항목을 아래로`} disabled={i === last}
+        className={cn(btn, ghost, h.icon)}><ArrowDown className="size-4" /></button>
+      {canDelete && <button aria-label={`${i + 1}번째 항목 삭제`}
+        className={cn(btn, destructGhost, h.icon)}><Trash2 className="size-4" /></button>}
+    </div>
+  </div>
+
+  {/* 본문 */}
+  <div className="space-y-5 p-4">{fields}</div>
+</li>
+```
+
+- **`itemTitle`은 그 배열의 대표 필드다**: `HERO_SLIDES` → `title`, `FAQS` → `q`, `PROGRAM_CARDS` → `name`, `STORY_TABS` → `tab`, `MENU_GROUPS` → `title`, `TOP_MESSAGES` → 문자열 자체. 접혀 있을 때 무엇인지 알아야 한다
+- **↑↓는 첫/마지막에서 비활성이지 숨기지 않는다.** 숨기면 버튼 위치가 행마다 달라져서 ↓를 연속으로 누르는 리듬이 깨진다
+- `aria-label`에 순서를 넣는다. 스크린리더에서 "위로" 버튼이 12개면 구분이 안 된다
+- 순서 변경 후 `aria-live="polite"` 영역에 `3번째 → 2번째로 이동했습니다` 안내. 이동 후 같은 항목의 ↑ 버튼에 포커스 유지
+
+#### 접기 — 배열마다 다르게
+
+| 배열 | 기본 상태 | 근거 |
+| --- | --- | --- |
+| `HERO_SLIDES`(2×7필드) | 전부 펼침 | 2개뿐이고 서로 비교하며 쓴다 |
+| `PROGRAM_CARDS`(3×8) | 전부 펼침 | 가격·요약을 나란히 봐야 균형이 잡힌다 |
+| `STORY_TABS`(3×8) | 전부 펼침 | 3단계 흐름이라 같이 봐야 한다 |
+| `AUDIENCES`(3×8) | 전부 펼침 | 동일 |
+| `SERVICES`(4×6) | 전부 펼침 | 동일 |
+| `FAQS`(N×2) | **전부 접힘** | 답변이 300자다. 20개 펼치면 6000자 스크롤. 질문 목록으로 훑고 하나만 펼친다 |
+| `MENU_GROUPS` | 그룹 펼침, 항목 표 형태 | 아래 별도 |
+| `TOP_MESSAGES` | 카드 없이 한 줄씩 | 필드가 1개다. 카드 껍데기가 내용보다 크다 |
+
+`TOP_MESSAGES` 전용 축소 행:
+
+```jsx
+<li className="flex items-center gap-2">
+  <span className="adm-mono w-6 shrink-0 text-center text-ink-70">{i+1}</span>
+  <input className={cn(input, "flex-1")} />
+  <button className={cn(btn, ghost, h.icon)} aria-label="위로">…</button>
+  <button className={cn(btn, ghost, h.icon)} aria-label="아래로">…</button>
+  <button className={cn(btn, destructGhost, h.icon)} aria-label="삭제">…</button>
+</li>
+```
+
+#### `MENU_GROUPS` — 유일한 2단 중첩
+
+가장 복잡한 화면이다. 그룹 카드 안에 항목 표를 넣는다.
+
+```
+┌ 1  COACHING                            ↑ ↓ 🗑 ┐
+│  그룹 제목  [COACHING            ]              │
+│                                                │
+│  항목                                          │
+│  ┌──────────────────┬────────────────┬───────┐ │
+│  │ 표시할 글자       │ 이동할 위치     │       │ │
+│  ├──────────────────┼────────────────┼───────┤ │
+│  │ [Adult        ]  │ [성인 코칭 ▾]   │ ↑↓🗑  │ │
+│  │ [Senior       ]  │ [시니어 코칭 ▾] │ ↑↓🗑  │ │
+│  │ [Leadership   ]  │ [리더십 코칭 ▾] │ ↑↓🗑  │ │
+│  └──────────────────┴────────────────┴───────┘ │
+│  + 항목 추가                                    │
+└────────────────────────────────────────────────┘
++ 그룹 추가
+```
+
+- 항목 행은 `grid grid-cols-[1fr_1fr_auto] gap-2 items-center`, 헤더 라벨은 `.adm-label text-forest-70` 한 번만
+- 768px 미만에서는 각 항목이 카드로 쌓인다(`grid-cols-1`)
+- 이동할 위치는 `AnchorSelect`(§4.5)
+- 그룹 추가는 `max`에 도달하면 렌더하지 않고 그 자리에 이유를 표시
+
+### 5.5 검증
+
+**타이밍**: `blur` 시 + 저장 시. **입력 중에는 검증하지 않는다** — 두 글자 쳤을 때 "너무 짧습니다"가 뜨면 방해다.
+
+| 규칙 | 대상 | 메시지 |
+| --- | --- | --- |
+| 필수 비어 있음 | 제목·본문·라벨 등 렌더에 필요한 값 | `이 항목은 비워 둘 수 없습니다.` |
+| 이메일 형식 | `SITE.email` | `이메일 형식이 아닙니다.` |
+| 전화 형식 | `SITE.phone` | `숫자와 하이픈만 넣어 주세요. 예: 070-1234-5678` |
+| 링크 형식 | 모든 href | `AnchorSelect`가 구조적으로 방지. 외부 URL 모드만 `^https?://` 검사 |
+| 앵커 존재 | `#xxx` | 존재하지 않는 앵커: `이 위치는 페이지에 없습니다.` (§4.5 목록과 대조) |
+| **중복 값** | §2.4의 key 필드 — `HERO_SLIDES.title`, `PROGRAM_CARDS.name`, `SERVICES.title`, `PRINCIPLES.title`, `MENU_GROUPS.title`, `items[].label`, `FOOTER_LINKS` 동일, `TOP_MESSAGES` 값, `COACH.credentials` 값 | `같은 값이 이미 있습니다. 화면이 잘못 표시될 수 있어 다르게 적어 주세요.` |
+| 배열 최소 개수 | §5.4(c) | `최소 1개는 있어야 합니다.` |
+| `tabs` 참조 | `PROGRAM_CARDS[].tabs` | 유효한 탭 id만. 체크박스 그룹으로 구조적 방지. 최소 1개 |
+| `PROGRAM_TABS` 삭제 | — | 그 탭을 참조하는 카드가 있으면 삭제 차단: `이 탭을 쓰는 카드가 2개 있습니다.` |
+
+**소프트 글자수 — 막지 않고 알린다.** 하드 리밋은 화나게 만들고, 길이 문제는 대부분 "된다/안 된다"가 아니라 "예쁘다/안 예쁘다"다. 그래서 카운터 색만 `warn`으로 바꾼다.
+
+박스가 실제로 좁아서 알려줄 값어치가 있는 것만 표에 넣었다.
+
+| 필드 | 렌더 | 실제 박스 | 권장 | 경고 |
+| --- | --- | --- | --- | --- |
+| `HERO_SLIDES.title` | `.t1` 32/40px 세리프 | `max-w-xl` 576px | 20자 | 28자 |
+| `HERO_SLIDES.body` | `.b3` | `max-w-md` 448px | 90자 | 120자 |
+| `HERO_SLIDES.cta.label` | PillButton | 1줄 고정 | 12자 | 16자 |
+| `PROGRAM_CARDS.summary` | `.b3` 중앙 | **`max-w-[16rem]` 256px** | 60자 | 80자 |
+| `PROGRAM_CARDS.name` | 19/22px 세리프 중앙 | 카드폭 30vw | 20자 | 26자 |
+| `MID_BANNER.title` | `.t2` | 50%폭 | 24자 | 32자 |
+| `MID_BANNER.body` | `.b3` | `max-w-md` | 90자 | 120자 |
+| `STORY_TABS.tab` | `.t2` 26/34 세리프 | 38% 컬럼 세로 목록 | 12자 | 16자 |
+| `STORY_TABS.body` | `.b3` | `max-w-sm` 384px | 70자 | 95자 |
+| `PRINCIPLES.title` | 22/26 세리프, 사진 위 | 카드폭 32vw | 16자 | 22자 |
+| `PRINCIPLES.body` | `.b3` 사진 위 | 동일 | 24자 | 34자 |
+| `AUDIENCES.title` | `.t2` | 46%폭 | 22자 | 30자 |
+| `SERVICES.body` | `.b3` | 24vw | 50자 | 70자 |
+| `BRAND_STORY.tagline` | `.b3` 중앙 | `max-w-md` | 45자 | 60자 |
+| `TOP_MESSAGES[]` | `.c1` 12/13 | **`max-w-md` 448px · 높이 40px 1줄** | 24자 | 32자 |
+| `SITE.description` | meta description | — | 80자 | **160자** (검색결과 잘림) |
+| `SITE.tagline` | `<title>`에 결합 | — | 30자 | 40자 |
+
+`PROGRAM_CARDS.summary`와 `TOP_MESSAGES`가 특히 좁다. 현재 `PROGRAM_CARDS[1].summary`가 45자로 256px 박스에서 이미 3줄이다. 대표가 여기에 80자를 쓰면 카드 높이가 어긋난다.
+
+`TOP_MESSAGES`에는 도움말을 붙인다: `배너 높이가 40px로 고정이라 한 줄을 넘기면 잘립니다. 320px 화면에서는 오른쪽 KR/EN 표기와 겹칠 수 있습니다.` (DEVNOTE §8 미확인 항목)
+
+### 5.6 저장하지 않고 이탈 — 3중 방어
+
+**(1) 앱 내부 이동** — 사이드바 링크·뒤로가기를 가로채 대화상자를 띄운다.
+
+```
+저장하지 않은 변경이 있습니다
+「히어로」 섹션에 저장하지 않은 변경 3곳이 있습니다.
+이동하면 사라집니다.
+
+        [ 취소 ]  [ 버리고 이동 ]  [ 저장하고 이동 ]
+```
+
+버튼 3개인 이유: 90%의 경우 대표가 원하는 것은 "저장하고 이동"이다. 2개(취소/버리기)면 취소 → 저장 → 다시 클릭으로 3번 만들게 된다. 기본 포커스는 `저장하고 이동`, `Esc`는 취소, `버리고 이동`은 `destructGhost`.
+
+**(2) 탭 닫기·새로고침·외부 이동** — `beforeunload`. 브라우저 기본 대화상자는 못생기고 문구도 못 바꾸지만 그 지점에서 작동하는 유일한 수단이다. 변경이 없을 때는 반드시 해제한다(항상 걸려 있으면 대표가 경고를 무시하는 습관이 든다).
+
+**(3) 초안 보존 — 실제 손실은 링크 클릭이 아니라 이쪽에서 난다.**
+
+노트북 절전, 브라우저 크래시, 실수로 창 닫기. 300자 본문을 쓰던 중이면 위 두 방어가 아무 도움이 안 된다.
+
+- 변경 시 300ms 디바운스로 `sessionStorage`에 `admin:draft:<sectionKey>` 기록
+- 마운트 시 초안이 있고 서버 값과 다르면 상단 배너
+
+```jsx
+<div className="mb-4 flex flex-wrap items-center gap-3 rounded-[4px] border border-warn/40
+                bg-warn-tint px-4 py-3">
+  <AlertCircle className="size-4 shrink-0 text-warn" strokeWidth={1.8} aria-hidden />
+  <p className="adm-body min-w-0 flex-1 text-ink-90">
+    저장하지 않은 편집이 남아 있습니다. <span className="text-ink-70">(09-09 14:05)</span>
+  </p>
+  <button className={cn(btn, secondary, h.md)}>편집 내용 복원</button>
+  <button className={cn(btn, ghost, h.md, "text-ink-70")}>버리기</button>
+</div>
+```
+
+- 저장 성공 시 해당 초안 삭제
+- **`localStorage`가 아니라 `sessionStorage`다.** 브라우저를 닫으면 사라진다. 공용 PC에서 콘텐츠 초안이 무기한 남지 않는다
+- **상담 신청 데이터와 비밀번호는 어떤 스토리지에도 기록하지 않는다.** 여기 저장되는 것은 공개될 예정인 마케팅 문구뿐이다. → 보안관 확인 요청
+
+### 5.7 미리보기 — 실시간 미리보기를 만들지 않는다
+
+**결정: 인라인 실시간 미리보기 없음. 새 탭으로 공개 페이지를 여는 것 + 타입 견본 두 가지로 대체한다.**
+
+만들지 않는 근거 셋.
+
+1. **유지보수가 섹션 수에 비례해 늘어난다.** 충실한 미리보기는 실제 섹션 컴포넌트를 관리자 안에서 렌더해야 하고, 방법은 (a) 공개 페이지를 iframe으로 띄우고 미저장 상태를 `postMessage`로 주입, (b) 섹션 컴포넌트를 관리자용으로 복제뿐이다. 둘 다 11개 섹션 × 앞으로의 모든 디자인 변경마다 비용을 낸다. 과제가 경고한 "유지보수 두 배"가 정확히 이것이다.
+2. **축소 미리보기는 정작 중요한 걸 거짓말한다.** 히어로는 `100svh` 풀블리드, 중간 배너·브랜드 스토리도 풀블리드다. 880px(사실상 700px) 패널에 넣으면 "제목이 몇 줄로 꺾이는가", "흰 글자가 사진 위에서 읽히는가"가 실제와 다르게 나온다. 그리고 그 둘이 여기서 실제로 깨지는 항목이다.
+3. **반복 빈도가 낮다.** 대표는 문장을 쓰고 저장하고 확인한다. 한 문장을 20번 다듬는 작업이 아니다.
+
+**대신 이렇게 한다.**
+
+페이지 헤더 오른쪽에 항상 링크를 둔다.
+
+```jsx
+{/* 깨끗할 때 */}
+<a href={`/#${anchor}`} target="admin-preview" rel="noopener"
+   className={cn(btn, secondary, h.md)}>
+  공개 페이지에서 보기 <ArrowUpRight className="size-4" />
+</a>
+
+{/* 변경이 있을 때 — 저장 후 열지 않으면 옛 내용을 보게 된다 */}
+<button className={cn(btn, secondary, h.md)} onClick={saveThenOpen}>
+  저장하고 공개 페이지에서 보기 <ArrowUpRight className="size-4" />
+</button>
+```
+
+- `target="admin-preview"` — **명명된 탭이라 반복 클릭해도 탭이 쌓이지 않고 같은 탭이 갱신된다.** 이름 없는 `_blank`면 열 번 누르면 탭이 열 개다
+- `/#<anchor>`로 해당 섹션까지 스크롤된다. `:target { scroll-margin-top }`이 `globals.css:189`에 이미 있다
+- 저장 성공 토스트에도 같은 링크를 넣는다
+- 앵커가 없는 3개 섹션(중간 배너·브랜드 스토리·원칙 카드)은 `id` 추가가 선행되어야 한다 → §10
+
+**예외 하나 — 타입 견본(`TypeSpecimen`).**
+
+미리보기를 안 만든다고 해서 "흰 글자가 사진 위에서 읽히는가"를 포기할 수는 없다. 이 프로젝트가 이미 한 번 겪은 문제다(DEVNOTE §5).
+
+**흰 글자가 사진 위에 올라가는 4개 섹션에만** 작은 견본을 붙인다: `HERO_SLIDES`, `MID_BANNER`, `BRAND_STORY`, `PRINCIPLES`.
+
+```jsx
+<div className="relative aspect-video overflow-hidden rounded-[4px]">
+  <Photo src={item.image} tone={item.tone} />
+  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-black/40" />
+  {/* ↑ 해당 섹션 컴포넌트의 스크림 클래스를 그대로 복사한다 */}
+  <div className="absolute bottom-4 left-4 text-white">
+    <p className="c1 tracking-[0.2em] uppercase opacity-90">{eyebrow}</p>
+    <h3 className="t1 mt-2">{title}</h3>
+  </div>
+</div>
+<p className="adm-meta mt-1.5 text-ink-70">
+  실제 폰트·글자색·사진 위 어둡기입니다. 화면 폭은 실제와 다르므로 줄바꿈은 다를 수 있습니다.
+</p>
+```
+
+**레이아웃 미리보기가 아니라 타입 견본이다.** 보장하는 것은 두 가지뿐이고, 그 두 가지가 실제로 깨지는 것들이다.
+1. 실제 세리프로 이 문자열이 어떻게 보이는가(공백·특수문자·영문 대소문자)
+2. 이 사진 위에서 흰 글자가 읽히는가
+
+구현 비용은 `Photo` + 기존 `.t1`/`.c1` 클래스 + 스크림 div 하나다. 새 컴포넌트도 새 토큰도 필요 없다. 나머지 7개 섹션에는 붙이지 않는다 — 흰 글자가 사진 위에 없으므로 얻을 게 없다.

@@ -25,7 +25,7 @@
 | --- | --- | --- | --- |
 | 1 | 보안관 | `docs/admin-security.md` | 완료 |
 | 1 | 수진 | `docs/admin-ui.md` | 완료 |
-| 1 | 데이브 | `docs/admin-architecture.md` | **중단 시점에 작성 중.** 파일이 없으면 다시 돌려야 한다 |
+| 1 | 데이브 | `docs/admin-architecture.md` | 완료 |
 | 2 | 데이브 | 서버 구현 — 인증·저장소 어댑터·Server Action·폼 전송 | 미착수 |
 | 2 | 로보 | `site.ts` → 콘텐츠 스키마/시드 데이터 전환 + 개인정보처리방침 | 미착수 |
 | 2 | 선우 | 관리자 UI 구현 — 섹션 편집·이미지 업로드·신청 목록 | 미착수 |
@@ -33,10 +33,21 @@
 
 ### 다시 시작할 때
 
-1. `docs/admin-architecture.md` 가 있는지 확인한다. 없으면 데이브에게 설계부터 다시 시킨다
+1. **`.gitignore` 부터 고친다.** 현재 `.env*` 패턴이 `.env.example` 까지 무시하고, 상담 신청 데이터 파일 제외 규칙이 아예 없다. **개인정보 파일이 만들어지기 전에** 넣어야 되돌릴 수 없는 사고를 막는다
 2. 세 설계 문서를 읽고 **서로 충돌하는 결정이 없는지** 먼저 맞춘다. 특히 상담 신청 목록의 연락처 노출 여부(보안관 ↔ 수진), 저장 방식과 캐시 무효화(데이브 ↔ 수진)
-3. 승인이 필요한 항목이 각 문서 끝에 모여 있다. 대표 확인을 먼저 받는다
-4. 그 다음 2단계 구현으로 넘어간다
+3. 승인 항목을 대표에게 확인받는다. 데이브 문서 7절의 A1~A6(zod 도입 / 알림 수단 / 세션 토큰 구현 / 이미지 재인코딩 / 관리자 저장분의 git 커밋 운영 / 섹션 개수 고정)와 보안관·수진 문서 끝의 확인 항목
+4. 그 다음 데이브 문서의 P0~P8 순서로 구현한다. 파일 소유가 데이브/선우로 갈라져 있고, P3(읽기 전환)만 병렬화하지 않는다 — 14개 컴포넌트를 동시에 만지면 충돌 비용이 더 크다
+
+### 데이브가 Next 16 문서에서 확인한 제약 (기억이 아니라 실제 문서)
+
+- `middleware.ts` → **`proxy.ts`** 로 변경. v16부터 기본 런타임이 Node.js이고 `runtime` 세그먼트 설정을 쓰면 에러가 난다
+- `cacheComponents` 가 꺼져 있어 `use cache`·`cacheTag`·`updateTag` 를 쓸 수 없다. 재검증은 Server Action 안의 `revalidatePath("/", "layout")`. `"layout"` 인 이유는 루트 레이아웃도 콘텐츠를 읽기 때문(`generateMetadata`·Header·Footer)
+- **Server Action 본문은 기본 1MB 제한.** 그래서 상담 폼은 Server Action(프레임워크가 CSRF Origin/Host 대조를 해준다), 이미지 업로드만 Route Handler로 분리했다. `bodySizeLimit` 을 전역으로 올리면 익명 상담 엔드포인트의 DoS 표면까지 커진다
+
+### `as const` 를 잃을 때 깨지는 곳
+
+컴파일 에러로 잡히는 건 `tone` → `PhotoTone` 하나뿐이다(8개 파일). `PROGRAM_CARDS` 가 이미 `ProgramCard[]` 명시 타입으로 해결한 선례가 있다.
+**타입이 안 잡아주는 쪽이 더 위험하다** — `ProgramTabs.tsx:10` 의 `PROGRAM_TABS[0].id` 와 `StoryTabs.tsx:12` 의 `STORY_TABS[active]` 는 지금 튜플이라 존재가 보장되지만 배열이 되면 `noUncheckedIndexedAccess` 가 꺼져 있어 런타임에 터진다. `Principles` 3개·`Services` 4개는 `grid-cols-3/4` 에 묶여 있고, React key로 편집 가능한 제목을 쓰는 곳이 5군데다.
 
 ### 보안관이 이미 찾은 배포 차단급 문제 3가지
 
