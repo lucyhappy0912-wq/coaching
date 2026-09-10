@@ -24,7 +24,7 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return { error: "로그인할 수 없습니다." };
   }
 
-  const hash = process.env.ADMIN_PASSWORD_HASH as string;
+  const hash = process.env.ADMIN_PASSWORD_HASH?.trim() as string;
   const ok = await verifyPassword(password, hash);
   if (!ok) {
     await waitRemaining(started);

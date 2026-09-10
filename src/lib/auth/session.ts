@@ -22,26 +22,24 @@ function b64urlDecode(value: string) {
 }
 
 function sessionSecret() {
-  const raw = process.env.ADMIN_SESSION_SECRET;
+  const raw = process.env.ADMIN_SESSION_SECRET?.trim();
   if (!raw) return null;
-  try {
-    const buf = Buffer.from(raw, "base64");
-    return buf.length >= 32 ? buf : null;
-  } catch {
-    return null;
-  }
+  const decoded = Buffer.from(raw, "base64");
+  if (decoded.length >= 32) return decoded;
+  if (raw.length >= 32) return createHash("sha256").update(raw).digest();
+  return null;
 }
 
 export function passwordEpochStamp() {
-  const hash = process.env.ADMIN_PASSWORD_HASH;
+  const hash = process.env.ADMIN_PASSWORD_HASH?.trim();
   if (!hash) return null;
-  const epoch = process.env.ADMIN_SESSION_EPOCH ?? "0";
+  const epoch = (process.env.ADMIN_SESSION_EPOCH ?? "0").trim();
   return createHash("sha256").update(`${hash}|${epoch}`).digest("hex").slice(0, 16);
 }
 
 export function adminAuthConfigured() {
   return Boolean(
-    process.env.ADMIN_PASSWORD_HASH &&
+    process.env.ADMIN_PASSWORD_HASH?.trim() &&
       parsePasswordHashSafe() &&
       sessionSecret() &&
       passwordEpochStamp(),
@@ -49,7 +47,7 @@ export function adminAuthConfigured() {
 }
 
 function parsePasswordHashSafe() {
-  const hash = process.env.ADMIN_PASSWORD_HASH;
+  const hash = process.env.ADMIN_PASSWORD_HASH?.trim();
   if (!hash) return false;
   const parts = hash.split(/[$:]/);
   return parts.length === 6 && parts[0] === "scrypt";
