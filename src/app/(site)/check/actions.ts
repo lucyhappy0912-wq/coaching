@@ -39,8 +39,15 @@ export async function submitCheck(
   try {
     ({ token } = await saveCheck({ answers, name, phone, email, contactConsent, source }));
   } catch (error) {
-    if (error instanceof Error && error.message === "CHECK_STORE_READONLY") {
-      return { error: "지금은 로컬에서만 제출을 저장합니다. 배포 저장소는 아직 연결되지 않았습니다." };
+    const code = error instanceof Error ? error.message : "";
+    if (code === "CHECK_STORE_READONLY") {
+      return { error: "배포에 저장소 주소와 키가 없습니다. Vercel의 SUPABASE_URL과 SUPABASE_SECRET_KEY를 확인해 주세요." };
+    }
+    if (code === "CHECK_STORE_AUTH") {
+      return { error: "저장소 키가 거부되었습니다. Secret keys의 default를 다시 넣어 주세요." };
+    }
+    if (code === "CHECK_STORE_NO_TABLE") {
+      return { error: "저장 표가 없습니다. Supabase SQL Editor에서 check_responses 마이그레이션을 실행해 주세요." };
     }
     return { error: "제출을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
   }

@@ -6,6 +6,7 @@ import { compute } from "./compute";
 import { maskEmail, maskName, maskPhone } from "./mask";
 import { CONSENT_VERSION, INSTRUMENT_VERSION, RETENTION_DAYS } from "./questions";
 import type { CheckListItem, CheckRecord, NewCheckInput } from "./store-types";
+import { supabaseConfig } from "./store-mode";
 import { hashToken, issueResultToken } from "./token";
 
 type Row = {
@@ -29,9 +30,8 @@ type Row = {
 };
 
 function endpoint() {
-  const url = process.env.SUPABASE_URL?.replace(/\/$/, "").replace(/\/rest\/v1$/i, "");
-  const key = process.env.SUPABASE_SECRET_KEY;
-  if (!url || !key) throw new Error("CHECK_STORE_READONLY");
+  const { url, key, ok } = supabaseConfig();
+  if (!ok) throw new Error("CHECK_STORE_READONLY");
   return { url, key };
 }
 
@@ -55,8 +55,19 @@ async function rest<T>(path: string, init: RequestInit = {}): Promise<T> {
       ...(init.headers ?? {}),
     },
   });
-  if (!res.ok) throw new Error("CHECK_STORE_WRITE_FAILED");
   const text = await res.text();
+  if (!res.ok) {
+    if (res.status === 401 || res.status === 403) throw new Error("CHECK_STORE_AUTH");
+    if (
+      res.status === 404 ||
+      text.includes("PGRST205") ||
+      text.includes("PGRST106") ||
+      text.includes("does not exist")
+    ) {
+      throw new Error("CHECK_STORE_NO_TABLE");
+    }
+    throw new Error("CHECK_STORE_WRITE_FAILED");
+  }
   if (!text) return [] as T;
   return JSON.parse(text) as T;
 }

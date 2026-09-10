@@ -2,11 +2,18 @@ import "server-only";
 
 export type CheckStoreMode = "supabase" | "jsonl" | "readonly";
 
+function readEnv(name: string) {
+  return process.env[name]?.trim() ?? "";
+}
+
+export function supabaseConfig() {
+  const url = readEnv("SUPABASE_URL").replace(/\/$/, "").replace(/\/rest\/v1$/i, "");
+  const key = readEnv("SUPABASE_SECRET_KEY");
+  return { url, key, ok: Boolean(url && key) };
+}
+
 export function checkStoreMode(): CheckStoreMode {
-  if (process.env.CHECK_STORE === "supabase") {
-    if (process.env.SUPABASE_URL && process.env.SUPABASE_SECRET_KEY) return "supabase";
-    return "readonly";
-  }
-  if (process.env.VERCEL) return "readonly";
+  if (supabaseConfig().ok) return "supabase";
+  if (readEnv("VERCEL")) return "readonly";
   return "jsonl";
 }
