@@ -5,7 +5,6 @@ import { appendFile, mkdir, readFile, rename, unlink, writeFile } from "node:fs/
 import path from "node:path";
 
 import { compute } from "./compute";
-import { maskEmail, maskName, maskPhone } from "./mask";
 import { CONSENT_VERSION, INSTRUMENT_VERSION, RETENTION_DAYS } from "./questions";
 import { hashToken, issueResultToken } from "./token";
 import type { CheckListItem, CheckRecord, NewCheckInput } from "./store-types";
@@ -126,9 +125,9 @@ export async function listChecksJsonl(): Promise<CheckListItem[]> {
   return rows.map((row) => ({
     id: row.id,
     createdAt: row.createdAt,
-    nameMasked: maskName(row.identity.name),
-    phoneMasked: maskPhone(row.identity.phone),
-    emailMasked: maskEmail(row.identity.email),
+    name: row.identity.name,
+    phone: row.identity.phone,
+    email: row.identity.email,
     band: row.scores.band,
     total: row.scores.total,
     source: row.source,

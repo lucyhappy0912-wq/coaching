@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AdminShell } from "@/app/admin/_components/AdminShell";
 import { requireAdmin } from "@/lib/auth/dal";
 import { BAND_COPY } from "@/lib/check/copy";
+import { formatPhoneDisplay } from "@/lib/check/mask";
 import { listChecksForAdmin } from "@/lib/check/store";
 
 export const dynamic = "force-dynamic";
@@ -20,11 +21,11 @@ export default async function AdminChecksPage() {
   return (
     <AdminShell title="Founder Transition Check">
       <p className="adm-body text-ink-70">
-        목록은 가린 이름·연락처만 보여 줍니다. 분석지와 원문은 행을 열어 확인합니다.
+        이름·전화·이메일은 관리자만 봅니다. 이름을 누르면 21문항 답과 분석지가 열립니다.
       </p>
       {rows.length === 0 ? (
         <p className="adm-body mt-8 rounded-[6px] border border-ink-15 bg-white p-5 text-ink-70">
-          아직 제출이 없습니다.
+          아직 제출이 없습니다. 공개 문답표에서 제출이 끝나면 여기에 고객과 문항 답이 나타납니다.
         </p>
       ) : (
         <div className="mt-6 overflow-x-auto rounded-[6px] border border-ink-15 bg-white">
@@ -46,11 +47,11 @@ export default async function AdminChecksPage() {
                   <td className="adm-meta px-4 py-3 text-ink-70">{formatWhen(row.createdAt)}</td>
                   <td className="px-4 py-3">
                     <Link href={`/admin/checks/${row.id}`} className="adm-body text-forest underline-offset-2 hover:underline">
-                      {row.nameMasked}
+                      {row.name}
                     </Link>
                   </td>
-                  <td className="adm-body px-4 py-3 text-ink-90">{row.phoneMasked}</td>
-                  <td className="adm-body px-4 py-3 text-ink-90">{row.emailMasked}</td>
+                  <td className="adm-body px-4 py-3 text-ink-90">{formatPhoneDisplay(row.phone)}</td>
+                  <td className="adm-body px-4 py-3 text-ink-90">{row.email}</td>
                   <td className="adm-body px-4 py-3 text-ink-90">{BAND_COPY[row.band].label}</td>
                   <td className="adm-body px-4 py-3 text-ink-90">{row.total}</td>
                   <td className="adm-meta px-4 py-3 text-ink-70">

@@ -3,7 +3,6 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 
 import { compute } from "./compute";
-import { maskEmail, maskName, maskPhone } from "./mask";
 import { CONSENT_VERSION, INSTRUMENT_VERSION, RETENTION_DAYS } from "./questions";
 import type { CheckListItem, CheckRecord, NewCheckInput } from "./store-types";
 import { supabaseConfig } from "./store-mode";
@@ -190,9 +189,9 @@ export async function listChecksSupabase(): Promise<CheckListItem[]> {
     return {
       id: record.id,
       createdAt: record.createdAt,
-      nameMasked: maskName(record.identity.name),
-      phoneMasked: maskPhone(record.identity.phone),
-      emailMasked: maskEmail(record.identity.email),
+      name: record.identity.name,
+      phone: record.identity.phone,
+      email: record.identity.email,
       band: record.scores.band,
       total: record.scores.total,
       source: record.source,

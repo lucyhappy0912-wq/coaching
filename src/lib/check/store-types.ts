@@ -23,9 +23,9 @@ export type CheckRecord = {
 export type CheckListItem = {
   id: string;
   createdAt: string;
-  nameMasked: string;
-  phoneMasked: string;
-  emailMasked: string;
+  name: string;
+  phone: string;
+  email: string;
   band: CheckScores["band"];
   total: number;
   source: string;

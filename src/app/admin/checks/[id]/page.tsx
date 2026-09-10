@@ -6,7 +6,7 @@ import { AdminShell } from "@/app/admin/_components/AdminShell";
 import { CheckReport } from "@/components/check/CheckReport";
 import { requireAdmin } from "@/lib/auth/dal";
 import { formatPhoneDisplay } from "@/lib/check/mask";
-import { QUESTIONS } from "@/lib/check/questions";
+import { AREAS, LIKERT_LABELS, QUESTIONS } from "@/lib/check/questions";
 import { getCheckForAdmin } from "@/lib/check/store";
 
 export const dynamic = "force-dynamic";
@@ -64,16 +64,23 @@ export default async function AdminCheckDetailPage({
       </section>
 
       <section className="mt-6 rounded-[6px] border border-ink-15 bg-white p-5">
-        <h2 className="adm-h text-forest">문항 점수</h2>
-        <ol className="mt-4 space-y-2">
-          {QUESTIONS.map((q) => (
-            <li key={q.key} className="flex items-baseline justify-between gap-4 border-b border-ink-10 py-2">
-              <span className="adm-body text-ink-90">
-                {String(q.no).padStart(2, "0")}. {q.label}
-              </span>
-              <span className="adm-mono text-forest">{record.answers[q.key]}</span>
-            </li>
-          ))}
+        <h2 className="adm-h text-forest">문항별 답</h2>
+        <ol className="mt-4 space-y-5">
+          {QUESTIONS.map((q) => {
+            const score = record.answers[q.key];
+            const choice = LIKERT_LABELS.find((item) => item.value === score)?.label ?? "";
+            return (
+              <li key={q.key} className="border-b border-ink-10 pb-4 last:border-0 last:pb-0">
+                <p className="adm-label text-forest-70">
+                  {String(q.no).padStart(2, "0")} · {AREAS[q.area].title} · {q.label}
+                </p>
+                <p className="adm-body mt-2 text-ink-90">{q.prompt}</p>
+                <p className="adm-body mt-2 font-medium text-forest">
+                  {score}점 · {choice}
+                </p>
+              </li>
+            );
+          })}
         </ol>
       </section>
 
