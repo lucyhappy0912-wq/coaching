@@ -29,7 +29,7 @@ export function CoachBand() {
             ))}
           </ul>
 
-          <LinedLink href="#consult" className="mt-8">
+          <LinedLink href="/consult" className="mt-8">
             코치와 상담하기
           </LinedLink>
         </div>

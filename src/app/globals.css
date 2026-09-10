@@ -39,6 +39,12 @@
   --color-ink-10: #eaeaea;
   --color-ink-05: #f4f4f4;
   --color-ink-02: #f9f9f9;
+
+  /* 관리자 상태색. 공개 페이지에는 쓰지 않는다. */
+  --color-danger: #a8281c;
+  --color-danger-tint: #fdf0ee;
+  --color-warn: #8a5a00;
+  --color-warn-tint: #fdf5e4;
 }
 
 @theme inline {
@@ -189,6 +195,19 @@ body {
 :target {
   /* TopBanner 와 Header 가 둘 다 fixed 다. 배너 높이가 빠지면 앵커 대상이 데스크톱에서 60px 가려진다. */
   scroll-margin-top: calc(var(--banner-h) + var(--header-h) + 24px);
+}
+
+.adm-title { font-size: 20px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; }
+.adm-h     { font-size: 17px; line-height: 1.4;  font-weight: 600; }
+.adm-body  { font-size: 15px; line-height: 1.5;  font-weight: 400; }
+.adm-input { font-size: 16px; line-height: 1.5;  font-weight: 400; }
+.adm-label { font-size: 13px; line-height: 1.3;  font-weight: 500; letter-spacing: 0.02em; }
+.adm-meta  { font-size: 12px; line-height: 1.3;  font-weight: 400; letter-spacing: 0.02em; }
+.adm-mono  { font-size: 13px; line-height: 1.4;  font-family: ui-monospace, "Cascadia Mono",
+             Consolas, "Courier New", monospace; }
+
+@media (min-width: 768px) {
+  .adm-title { font-size: 22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

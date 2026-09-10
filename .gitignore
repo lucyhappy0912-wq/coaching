@@ -32,6 +32,20 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# 개인정보 — 상담·체크 응답은 절대 커밋하지 않는다.
+# 한 번 히스토리에 들어가면 되돌릴 수 없다.
+/data/submissions/
+/data/submissions.json
+*.submissions.json
+/data/leads.jsonl
+/data/checks.jsonl
+/data/check-purge-log.jsonl
+/data/*.jsonl
+
+# 관리자가 업로드한 이미지 (저장소가 아니라 오브젝트 스토리지로 가야 한다)
+/public/uploads/
 
 # vercel
 .vercel

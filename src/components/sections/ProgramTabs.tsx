@@ -64,7 +64,7 @@ export function ProgramTabs() {
               <p className="b3 mx-auto mt-3 max-w-[16rem] text-ink-70">{card.summary}</p>
 
               <a
-                href="#consult"
+                href="/consult"
                 className="serif mt-5 inline-flex h-9 items-center justify-center rounded-sm bg-white px-6 text-sm text-forest shadow-[0_4px_4px_0_rgba(0,58,64,0.1)] ring-1 ring-ink-10 transition-colors hover:bg-grass-20"
               >
                 상담 신청

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Phone, Search, X } from "lucide-react";
 
@@ -8,8 +9,10 @@ import { MENU_GROUPS, SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export function Header() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const onHome = pathname === "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -26,7 +29,7 @@ export function Header() {
   }, [menuOpen]);
 
   // 히어로 위에서는 흰 글자, 스크롤하거나 메뉴를 열면 흰 배경 + 딥그린 글자
-  const solid = scrolled || menuOpen;
+  const solid = !onHome || scrolled || menuOpen;
 
   return (
     <header
@@ -52,9 +55,9 @@ export function Header() {
           >
             Menu
           </button>
-          <a href="#program" className="transition-opacity hover:opacity-60">
+          <Link href="/program" className="transition-opacity hover:opacity-60">
             Program
-          </a>
+          </Link>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -68,9 +71,9 @@ export function Header() {
           <button type="button" aria-label="검색" className="transition-opacity hover:opacity-60">
             <Search className="size-[18px]" strokeWidth={1.4} />
           </button>
-          <a href="#consult" className="serif text-[20px] leading-none lg:text-[26px]">
+          <Link href="/consult" className="serif text-[20px] leading-none lg:text-[26px]">
             Consult
-          </a>
+          </Link>
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
@@ -92,13 +95,23 @@ export function Header() {
                 <ul className="space-y-3.5">
                   {group.items.map((item) => (
                     <li key={item.label}>
-                      <a
-                        href={item.href}
-                        onClick={() => setMenuOpen(false)}
-                        className="serif text-[22px] leading-none transition-opacity hover:opacity-50 lg:text-[26px]"
-                      >
-                        {item.label}
-                      </a>
+                      {item.href.startsWith("tel:") || item.href.startsWith("mailto:") ? (
+                        <a
+                          href={item.href}
+                          onClick={() => setMenuOpen(false)}
+                          className="serif text-[22px] leading-none transition-opacity hover:opacity-50 lg:text-[26px]"
+                        >
+                          {item.label}
+                        </a>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          onClick={() => setMenuOpen(false)}
+                          className="serif text-[22px] leading-none transition-opacity hover:opacity-50 lg:text-[26px]"
+                        >
+                          {item.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>

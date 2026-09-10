@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant, Mulish, Noto_Sans_KR } from "next/font/google";
 
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
-import { TopBanner } from "@/components/layout/TopBanner";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -52,12 +49,7 @@ export default function RootLayout({
       lang="ko"
       className={`${cormorant.variable} ${mulish.variable} ${notoSansKr.variable}`}
     >
-      <body className="flex min-h-svh flex-col">
-        <TopBanner />
-        <Header />
-        <main className="flex-1 pt-(--banner-h)">{children}</main>
-        <Footer />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

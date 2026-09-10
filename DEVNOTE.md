@@ -2,7 +2,28 @@
 
 작업 이력과 결정사항을 기록한다. 새 작업을 시작할 때 이 문서를 먼저 읽는다.
 
-최종 갱신: 2026-09-09
+최종 갱신: 2026-09-10
+
+---
+
+## Founder Transition Check (2026-09-10)
+
+메뉴·푸터는 실제 경로로 연결한다. `/admin` 은 공개 메뉴에 넣지 않는다.
+
+공개 경로: `/` `/coaching` `/coaching/adult` `/coaching/senior` `/coaching/leadership` `/program` `/story` `/coach` `/service` `/faq` `/consult` `/check` `/privacy`
+
+- 공개 URL: `/check` (출처는 `?src=kakao` 처럼 붙일 수 있음)
+- 분석지: `/check/r/[token]` — 토큰은 추측 불가, 디스크에는 SHA-256 해시만, 색인 금지
+- 저장: `data/checks.jsonl` (git 제외). Vercel에서는 쓰지 않는다
+- **대표 결정**: 이름·전화번호·이메일을 먼저 받고 동의한 뒤에만 문답지가 열린다. 프로그램 연락은 선택 동의
+- 보안관 권고는 익명 기본이었으나 대표가 “누가 제출했는지”를 필수로 선택했다
+- 보유 90일. 상담 6개월 문구와 섞지 않는다
+- STABLE 구간 주 버튼은 상담이 아니다
+- 관리자: `/admin/login` → `/admin/checks`. 목록은 이름·전화·이메일 마스킹, 상세에서 원문+분석지
+- 공개 결과 URL(`/check/r/token`)은 관리자가 복원하지 않는다. 토큰 평문 저장·재발급 없음
+- 인증: `ADMIN_PASSWORD_HASH`(scrypt) + `ADMIN_SESSION_SECRET`. 비밀번호 변경은 `npm run admin:password -- 새비밀번호`. 평문은 `.env.local` 에 두지 않는다. 바꾸면 기존 세션은 즉시 끊긴다
+- 90일 지난 건은 조회·제출 시 디스크에서 삭제. 파기 기록은 id만 `data/check-purge-log.jsonl`
+- `/privacy` 는 실제 수집 항목만 적은 초안. 사업자 정보는 플레이스홀더
 
 ---
 
