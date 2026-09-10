@@ -187,7 +187,8 @@ body {
 }
 
 :target {
-  scroll-margin-top: calc(var(--header-h) + 24px);
+  /* TopBanner 와 Header 가 둘 다 fixed 다. 배너 높이가 빠지면 앵커 대상이 데스크톱에서 60px 가려진다. */
+  scroll-margin-top: calc(var(--banner-h) + var(--header-h) + 24px);
 }
 
 @media (prefers-reduced-motion: reduce) {
