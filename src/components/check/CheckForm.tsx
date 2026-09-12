@@ -318,10 +318,10 @@ export function CheckForm({ source }: { source: string }) {
       </ol>
 
       <section>
-        <p className="c1 tracking-[0.16em] text-forest-70 uppercase">
+        <p className="c1 font-semibold tracking-[0.16em] text-forest-70 uppercase">
           {areaIndex + 1} / {AREA_IDS.length} · {areaMeta.title}
         </p>
-        <h2 className="serif mt-2 text-[22px] leading-snug lg:text-[28px]">{areaMeta.question}</h2>
+        <h2 className="serif mt-2 text-[22px] font-semibold leading-snug lg:text-[28px]">{areaMeta.question}</h2>
       </section>
 
       {areaQuestions.map((q) => (
