@@ -197,6 +197,35 @@ body {
   scroll-margin-top: calc(var(--banner-h) + var(--header-h) + 24px);
 }
 
+/* 히녹 히어로와 같은 슬로우 줌. 사진·그라데이션이 멈춰 보이지 않게 한다. */
+@keyframes hero-kenburns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes hero-tone-drift {
+  from {
+    background-position: 12% 0%;
+  }
+  to {
+    background-position: 88% 100%;
+  }
+}
+
+.hero-kenburns {
+  animation: hero-kenburns 18s ease-in-out infinite alternate;
+  transform-origin: 62% 38%;
+}
+
+.hero-tone-drift {
+  background-size: 140% 140%;
+  animation: hero-tone-drift 22s ease-in-out infinite alternate;
+}
+
 .adm-title { font-size: 20px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; }
 .adm-h     { font-size: 17px; line-height: 1.4;  font-weight: 600; }
 .adm-body  { font-size: 15px; line-height: 1.5;  font-weight: 400; }

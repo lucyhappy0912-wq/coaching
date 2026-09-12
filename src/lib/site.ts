@@ -76,6 +76,7 @@ export const HERO_SLIDES = [
     cta: { label: "무료 상담 신청", href: "/consult" },
     tone: "forest" as const,
     image: "",
+    video: "",
   },
   {
     eyebrow: "1:1 Coaching",
@@ -84,6 +85,7 @@ export const HERO_SLIDES = [
     cta: { label: "내게 맞는 코칭 찾기", href: "/coaching" },
     tone: "dusk" as const,
     image: "",
+    video: "",
   },
 ] as const;
 

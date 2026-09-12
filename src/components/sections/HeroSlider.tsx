@@ -35,7 +35,34 @@ export function HeroSlider() {
             i === index ? "opacity-100" : "pointer-events-none opacity-0"
           )}
         >
-          <Photo src={slide.image} tone={slide.tone} priority={i === 0} />
+          <div className="absolute inset-0 overflow-hidden">
+            <div
+              className={cn(
+                "absolute inset-[-8%] size-[116%]",
+                !slide.video && "hero-kenburns",
+              )}
+            >
+              {slide.video ? (
+                <video
+                  className="absolute inset-0 size-full object-cover"
+                  src={slide.video}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload={i === 0 ? "auto" : "metadata"}
+                  aria-hidden
+                />
+              ) : (
+                <Photo
+                  src={slide.image}
+                  tone={slide.tone}
+                  priority={i === 0}
+                  className="hero-tone-drift"
+                />
+              )}
+            </div>
+          </div>
           {/* 아래쪽은 카피, 위쪽은 헤더 글자 가독성을 위한 스크림 */}
           <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-black/40" />
 
