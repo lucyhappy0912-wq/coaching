@@ -2,7 +2,7 @@ import "server-only";
 
 import { randomUUID } from "node:crypto";
 
-import { compute } from "./compute";
+import { compute, type CheckScores } from "./compute";
 import { CONSENT_VERSION, INSTRUMENT_VERSION, RETENTION_DAYS } from "./questions";
 import type { CheckListItem, CheckRecord, CheckUpdateInput, NewCheckInput } from "./store-types";
 import { supabaseConfig } from "./store-mode";
@@ -171,6 +171,21 @@ export async function saveCheckSupabase(input: NewCheckInput) {
     body: JSON.stringify(toRow(record)),
   });
   return { token, record, scores };
+}
+
+export async function getScoresByIdentitySupabase(
+  name: string,
+  phone: string,
+  email: string,
+): Promise<CheckScores | null> {
+  await purgeExpired();
+  const now = new Date().toISOString();
+  const rows = await rest<Pick<Row, "answers">[]>(
+    `check_responses?name=eq.${encodeURIComponent(name)}&phone=eq.${encodeURIComponent(phone)}&email=eq.${encodeURIComponent(email)}&purge_at=gt.${encodeURIComponent(now)}&select=answers&order=created_at.desc&limit=1`,
+  );
+  const row = rows[0];
+  if (!row) return null;
+  return compute(row.answers);
 }
 
 export async function getByTokenSupabase(token: string) {

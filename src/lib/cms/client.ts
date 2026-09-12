@@ -6,6 +6,11 @@ export function cmsEnabled() {
   return supabaseConfig().ok;
 }
 
+/** 원격 저장소가 없어도 로컬 개발에서는 파일에 저장한다. Vercel만 원격 없이는 읽기 전용. */
+export function cmsWritable() {
+  return supabaseConfig().ok || !process.env.VERCEL;
+}
+
 export async function cmsRest<T>(path: string, init: RequestInit = {}): Promise<T> {
   const { url, key, ok } = supabaseConfig();
   if (!ok) throw new Error("CMS_STORE_READONLY");

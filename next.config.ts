@@ -8,6 +8,19 @@ const adminHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  experimental: {
+    // 영상 1GB + multipart 여유. 이 값보다 큰 본문은 잘린 채로 통과하므로 업로드 상한보다 크게 둔다.
+    proxyClientMaxBodySize: "1200mb",
+  },
+  async redirects() {
+    return [
+      { source: "/service", destination: "/way", permanent: false },
+      { source: "/program", destination: "/coaching/founder", permanent: false },
+      { source: "/coaching/founder/next", destination: "/coaching/leadership", permanent: false },
+      { source: "/coaching/adult", destination: "/coaching/stage", permanent: false },
+      { source: "/coaching/senior", destination: "/coaching/next-chapter", permanent: false },
+    ];
+  },
   async headers() {
     return [
       {

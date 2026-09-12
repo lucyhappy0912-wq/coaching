@@ -4,9 +4,13 @@ import { redirect } from "next/navigation";
 
 import { isLikert, type Answers } from "@/lib/check/compute";
 import { QUESTION_KEYS, type QuestionKey } from "@/lib/check/questions";
-import { saveCheck } from "@/lib/check/store";
+import { getScoresByIdentity, saveCheck } from "@/lib/check/store";
+
+import type { FindCheckState } from "./find-state";
 
 export type CheckFormState = { error: string | null };
+
+const FIND_WAIT_MS = 700;
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -66,4 +70,39 @@ export async function submitCheck(
   }
 
   redirect(`/check/r/${token}`);
+}
+
+export async function findCheckReport(
+  _prev: FindCheckState,
+  formData: FormData,
+): Promise<FindCheckState> {
+  const started = Date.now();
+  const name = String(formData.get("name") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").replace(/\D/g, "");
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const honey = String(formData.get("website") ?? "");
+
+  const miss = {
+    error: "입력하신 정보로 분석지를 찾지 못했습니다. 제출 때 넣은 내용을 확인해 주세요.",
+    scores: null,
+  };
+
+  async function done(state: FindCheckState) {
+    const wait = FIND_WAIT_MS - (Date.now() - started);
+    if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
+    return state;
+  }
+
+  if (honey) return done({ error: null, scores: null });
+  if (name.length < 2) return done({ error: "이름을 정확히 입력해 주세요.", scores: null });
+  if (phone.length < 10) return done({ error: "연락처를 정확히 입력해 주세요.", scores: null });
+  if (!EMAIL.test(email)) return done({ error: "이메일 주소를 정확히 입력해 주세요.", scores: null });
+
+  try {
+    const scores = await getScoresByIdentity(name, phone, email);
+    if (!scores) return done(miss);
+    return done({ error: null, scores });
+  } catch {
+    return done(miss);
+  }
 }

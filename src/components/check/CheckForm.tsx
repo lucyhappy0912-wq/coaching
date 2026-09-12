@@ -138,6 +138,11 @@ export function CheckForm({ source }: { source: string }) {
             회사의 다음 단계에 앞서 Founder 자신을 점검하는 약 5분입니다. 최근 3~6개월의 실제 모습을
             떠올리며 답해 주세요. 점수가 높을수록 부족한 것이 아니라, 전환 신호가 많다는 뜻입니다.
           </p>
+          <p className="b3 mt-3">
+            <a href="/check/view" className="lined text-forest">
+              이미 제출한 분석지 보기
+            </a>
+          </p>
         </header>
       <section className="mt-8 border border-forest-20 bg-white px-5 py-6 sm:mt-12 sm:p-7 lg:p-10">
         <p className="c1 tracking-[0.16em] text-forest-70 uppercase">Before you start</p>

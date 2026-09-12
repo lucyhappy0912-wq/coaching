@@ -25,17 +25,24 @@ const notoSansKr = Noto_Sans_KR({
   display: "swap",
 });
 
+const SHARE_TITLE = "멈춘자 | 스타트업 창업자를 리더로.";
+
 export const metadata: Metadata = {
   title: {
-    default: `${SITE.name} | ${SITE.tagline}`,
-    template: `%s | ${SITE.name}`,
+    default: SHARE_TITLE,
+    template: "%s | 멈춘자",
   },
   description: SITE.description,
   openGraph: {
-    title: `${SITE.name} | ${SITE.tagline}`,
+    title: SHARE_TITLE,
     description: SITE.description,
     type: "website",
     locale: "ko_KR",
+  },
+  twitter: {
+    card: "summary",
+    title: SHARE_TITLE,
+    description: SITE.description,
   },
 };
 

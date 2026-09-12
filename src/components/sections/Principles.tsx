@@ -3,7 +3,7 @@ import { PRINCIPLES } from "@/lib/site";
 
 export function Principles() {
   return (
-    <section className="px-(--gutter) py-16 lg:py-20">
+    <section id="belief" className="scroll-mt-(--header-h) px-(--gutter) py-16 lg:py-20">
       <ul className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible">
         {PRINCIPLES.map((item) => (
           <li

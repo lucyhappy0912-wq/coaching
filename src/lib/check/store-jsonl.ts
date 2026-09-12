@@ -4,7 +4,7 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { appendFile, mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { compute } from "./compute";
+import { compute, type CheckScores } from "./compute";
 import { CONSENT_VERSION, INSTRUMENT_VERSION, RETENTION_DAYS } from "./questions";
 import { hashToken, issueResultToken } from "./token";
 import type { CheckListItem, CheckRecord, CheckUpdateInput, NewCheckInput } from "./store-types";
@@ -119,6 +119,25 @@ export async function saveCheckJsonl(input: NewCheckInput) {
   });
   await writeChain;
   return { token, record, scores };
+}
+
+export async function getScoresByIdentityJsonl(
+  name: string,
+  phone: string,
+  email: string,
+): Promise<CheckScores | null> {
+  await purgeExpired();
+  const match = (await readAll())
+    .filter(isFresh)
+    .filter(
+      (row) =>
+        row.identity.name.trim() === name &&
+        row.identity.phone === phone &&
+        row.identity.email === email,
+    )
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))[0];
+  if (!match) return null;
+  return compute(match.answers);
 }
 
 export async function getByTokenJsonl(token: string) {

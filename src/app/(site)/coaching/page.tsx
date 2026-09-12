@@ -1,46 +1,56 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { LinedLink } from "@/components/ui/Buttons";
-import { PageFrame } from "@/components/layout/PageFrame";
-import { Photo } from "@/components/ui/Photo";
-import { AUDIENCES } from "@/lib/site";
+import { PROGRAM_TEASERS } from "@/lib/content";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Coaching",
-  description: "성인·시니어·리더십 1:1 코칭. 지금 서 있는 자리에 맞춰 다음 한 걸음을 정합니다.",
+  description: "Stage, Next Chapter, Founder. 세 가지 전환 가운데 지금 가까운 곳을 고르면 됩니다.",
 };
 
-const SLUG: Record<(typeof AUDIENCES)[number]["id"], string> = {
-  adult: "adult",
-  senior: "senior",
-  leader: "leadership",
+const BAR: Record<string, string> = {
+  sage: "bg-grass",
+  paper: "bg-[#d9d6cc]",
+  forest: "bg-forest",
 };
 
 export default function CoachingIndexPage() {
   return (
-    <PageFrame wide>
-      <p className="c1 tracking-[0.16em] text-forest-70 uppercase">Coaching</p>
-      <h1 className="serif mt-3 text-[28px] leading-tight sm:text-[40px]">내게 맞는 코칭</h1>
-      <p className="b2 mt-4 text-ink-70">
-        세 가지 자리 중 지금 가까운 곳을 고르면 됩니다. 상담에서 다시 맞춰도 됩니다.
-      </p>
-      <ul className="mt-12 space-y-12">
-        {AUDIENCES.map((item) => (
-          <li key={item.id} className="grid gap-6 border-b border-ink-10 pb-12 lg:grid-cols-2 lg:items-center">
-            <div className="relative aspect-4/3 overflow-hidden">
-              <Photo src={item.image} tone={item.tone} alt={item.title} sizes="(min-width: 1025px) 40vw, 100vw" />
-            </div>
-            <div>
-              <p className="c1 tracking-[0.16em] text-forest-70 uppercase">{item.label}</p>
-              <h2 className="serif mt-2 text-[22px] leading-snug lg:text-[28px]">{item.title}</h2>
-              <p className="b3 mt-4 text-ink-70">{item.body}</p>
-              <LinedLink href={`/coaching/${SLUG[item.id]}`} className="mt-6">
-                자세히 보기
-              </LinedLink>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </PageFrame>
+    <div className="bg-white pt-(--header-h)">
+      <div className="mx-auto max-w-[900px] px-(--gutter) pt-16 pb-24 lg:pt-24">
+        <p className="text-[18px] text-forest">세 가지 전환</p>
+        <p className="b3 mt-3 max-w-(--measure-narrow) text-ink-90">
+          삶의 다음 무대, 인생의 다음 장, 창업자에서 리더로.
+        </p>
+
+        <ul className="mt-16 [&:hover_li]:opacity-35 [&_li:hover]:opacity-100">
+          {PROGRAM_TEASERS.map((item) => (
+            <li
+              key={item.id}
+              className="flex gap-5 border-t border-ink-10 py-8 transition-opacity duration-300 last:border-b lg:gap-8 lg:py-10"
+            >
+              <span
+                aria-hidden
+                className={cn("w-2 shrink-0 self-stretch", BAR[item.tone] ?? "bg-grass")}
+              />
+              <div>
+                <Link
+                  href={item.href}
+                  className="serif block text-[34px] leading-[1.15] text-forest lg:text-[48px]"
+                >
+                  {item.line}
+                </Link>
+                <p className="b3 mt-4 max-w-(--measure-narrow) text-ink-90">{item.lead[0]}</p>
+                <LinedLink href={item.href} className="mt-5 inline-block">
+                  {item.cta}
+                </LinedLink>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }

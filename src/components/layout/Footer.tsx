@@ -1,7 +1,14 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+
 import type { CmsSite } from "@/lib/cms/types";
 import { FOOTER_LINKS, SITE } from "@/lib/site";
 
 export function Footer({ site = SITE }: { site?: CmsSite }) {
+  const pathname = usePathname();
+  if (pathname === "/story") return null;
+
   return (
     <footer className="bg-linear-to-b from-white to-grass-20 pt-24 pb-10 lg:pt-32">
       <div className="serif grid gap-10 px-(--gutter) text-forest lg:grid-cols-[1.6fr_1fr_1fr]">

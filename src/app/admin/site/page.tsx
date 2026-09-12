@@ -1,6 +1,9 @@
+import Link from "next/link";
+
 import { AdminShell } from "@/app/admin/_components/AdminShell";
 import { requireAdmin } from "@/lib/auth/dal";
-import { cmsEnabled } from "@/lib/cms/client";
+import { authWritable } from "@/lib/auth/material";
+import { cmsWritable } from "@/lib/cms/client";
 import { getContent } from "@/lib/cms/store";
 
 import { SiteForms } from "./SiteForms";
@@ -13,12 +16,18 @@ export default async function AdminSitePage() {
 
   return (
     <AdminShell title="사이트">
+      <p className="adm-body mb-6 text-ink-70">
+        자주 묻는 질문은{" "}
+        <Link href="/admin/faq" className="text-forest underline-offset-2 hover:underline">
+          자주 묻는 질문
+        </Link>
+        에서 고칩니다.
+      </p>
       <SiteForms
         site={content.site}
-        topMessages={content.topMessages}
         coach={content.coach}
-        faqs={content.faqs}
-        canSave={cmsEnabled()}
+        canSave={cmsWritable()}
+        canChangePassword={authWritable()}
       />
     </AdminShell>
   );

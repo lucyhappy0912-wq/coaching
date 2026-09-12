@@ -1,5 +1,7 @@
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 
+import { readAuthMaterial } from "./material";
+
 export const ADMIN_COOKIE = "__Host-admin_session";
 export const SESSION_MAX_AGE = 28800;
 
@@ -31,26 +33,13 @@ function sessionSecret() {
 }
 
 export function passwordEpochStamp() {
-  const hash = process.env.ADMIN_PASSWORD_HASH?.trim();
-  if (!hash) return null;
-  const epoch = (process.env.ADMIN_SESSION_EPOCH ?? "0").trim();
-  return createHash("sha256").update(`${hash}|${epoch}`).digest("hex").slice(0, 16);
+  const material = readAuthMaterial();
+  if (!material) return null;
+  return createHash("sha256").update(`${material.hash}|${material.epoch}`).digest("hex").slice(0, 16);
 }
 
 export function adminAuthConfigured() {
-  return Boolean(
-    process.env.ADMIN_PASSWORD_HASH?.trim() &&
-      parsePasswordHashSafe() &&
-      sessionSecret() &&
-      passwordEpochStamp(),
-  );
-}
-
-function parsePasswordHashSafe() {
-  const hash = process.env.ADMIN_PASSWORD_HASH?.trim();
-  if (!hash) return false;
-  const parts = hash.split(/[$:]/);
-  return parts.length === 6 && parts[0] === "scrypt";
+  return Boolean(readAuthMaterial() && sessionSecret() && passwordEpochStamp());
 }
 
 function sign(payloadB64: string, secret: Buffer) {

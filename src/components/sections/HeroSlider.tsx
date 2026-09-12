@@ -25,7 +25,7 @@ export function HeroSlider({ slides = HERO_SLIDES }: { slides?: readonly HeroSli
   return (
     <section
       id="hero"
-      className="relative h-[calc(100svh-var(--banner-h))] min-h-[520px] overflow-hidden"
+      className="relative h-svh min-h-[520px] overflow-hidden"
     >
       {slides.map((slide, i) => (
         <div

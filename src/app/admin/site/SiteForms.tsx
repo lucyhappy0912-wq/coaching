@@ -2,19 +2,19 @@
 
 import { useActionState, useEffect, useRef, useState } from "react";
 
-import type { CmsCoach, CmsFaq, CmsSite, PhotoTone } from "@/lib/cms/types";
+import type { CmsCoach, CmsSite, PhotoTone } from "@/lib/cms/types";
 
 import { ImageSlot } from "../_components/ImageSlot";
 import { ADM_AREA, ADM_INPUT } from "../_components/fields";
 import { ToneSelect } from "../_components/ToneSelect";
 
-import { saveBanner, saveCoach, saveContact, saveFaqs, type SaveState } from "./actions";
+import { saveCoach, saveContact, type SaveState } from "./actions";
+import { PasswordForm } from "./PasswordForm";
 
 const JUMP = [
   { href: "#contact", label: "연락처" },
-  { href: "#banner", label: "상단 띠" },
   { href: "#coach", label: "코치" },
-  { href: "#faq", label: "FAQ" },
+  { href: "#password", label: "관리자 비밀번호" },
 ];
 
 function SectionSave({
@@ -66,21 +66,19 @@ function useSaved<T>(initial: T, state: SaveState, current: T) {
 
 export function SiteForms({
   site,
-  topMessages,
   coach,
-  faqs,
   canSave,
+  canChangePassword,
 }: {
   site: CmsSite;
-  topMessages: string[];
   coach: CmsCoach;
-  faqs: CmsFaq[];
   canSave: boolean;
+  canChangePassword: boolean;
 }) {
   return (
     <div className="space-y-8">
       {!canSave ? (
-        <p className="adm-body text-danger">저장소가 없어 저장할 수 없습니다. Supabase SQL을 실행하고 환경변수를 확인하세요.</p>
+        <p className="adm-body text-danger">이 환경에서는 저장할 수 없습니다.</p>
       ) : null}
       <nav className="flex flex-wrap gap-2">
         {JUMP.map((item) => (
@@ -94,9 +92,8 @@ export function SiteForms({
         ))}
       </nav>
       <ContactForm initial={site} canSave={canSave} />
-      <BannerForm initial={topMessages} canSave={canSave} />
       <CoachForm initial={coach} canSave={canSave} />
-      <FaqForm initial={faqs} canSave={canSave} />
+      <PasswordForm canChange={canChangePassword} />
     </div>
   );
 }
@@ -176,40 +173,6 @@ function ContactForm({ initial, canSave }: { initial: CmsSite; canSave: boolean 
   );
 }
 
-function BannerForm({ initial, canSave }: { initial: string[]; canSave: boolean }) {
-  const start = [initial[0] ?? "", initial[1] ?? ""];
-  const [value, setValue] = useState(start);
-  const [state, action, pending] = useActionState(saveBanner, { ok: false } satisfies SaveState);
-  const saved = useSaved(start, state, value);
-
-  return (
-    <form id="banner" action={action} className="scroll-mt-6 rounded-[6px] border border-ink-15 bg-white p-5">
-      <h2 className="adm-h text-forest">상단 띠</h2>
-      <p className="adm-body mt-1 text-ink-70">사이트 맨 위 한 줄입니다. 길면 잘립니다.</p>
-      <div className="mt-4 grid gap-3">
-        <input
-          className={ADM_INPUT}
-          name="top.0"
-          value={value[0]}
-          onChange={(event) => setValue([event.target.value, value[1]])}
-        />
-        <input
-          className={ADM_INPUT}
-          name="top.1"
-          value={value[1]}
-          onChange={(event) => setValue([value[0], event.target.value])}
-        />
-      </div>
-      <SectionSave
-        pending={pending}
-        disabled={!canSave}
-        status={statusOf(pending, state, "이 칸만 저장됩니다.")}
-        onReset={() => setValue(saved)}
-      />
-    </form>
-  );
-}
-
 function CoachForm({ initial, canSave }: { initial: CmsCoach; canSave: boolean }) {
   const [value, setValue] = useState(initial);
   const [state, action, pending] = useActionState(saveCoach, { ok: false } satisfies SaveState);
@@ -275,50 +238,6 @@ function CoachForm({ initial, canSave }: { initial: CmsCoach; canSave: boolean }
             }
           />
         </label>
-      </div>
-      <SectionSave
-        pending={pending}
-        disabled={!canSave}
-        status={statusOf(pending, state, "이 칸만 저장됩니다.")}
-        onReset={() => setValue(saved)}
-      />
-    </form>
-  );
-}
-
-function FaqForm({ initial, canSave }: { initial: CmsFaq[]; canSave: boolean }) {
-  const start = [...initial, ...Array.from({ length: 6 }, () => ({ q: "", a: "" }))].slice(0, 6);
-  const [value, setValue] = useState(start);
-  const [state, action, pending] = useActionState(saveFaqs, { ok: false } satisfies SaveState);
-  const saved = useSaved(start, state, value);
-
-  return (
-    <form id="faq" action={action} className="scroll-mt-6 rounded-[6px] border border-ink-15 bg-white p-5">
-      <h2 className="adm-h text-forest">FAQ</h2>
-      <p className="adm-body mt-1 text-ink-70">질문과 답이 둘 다 있는 칸만 사이트에 나갑니다.</p>
-      <div className="mt-4 space-y-5">
-        {value.map((item, index) => (
-          <div key={index} className="grid gap-2">
-            <input
-              className={ADM_INPUT}
-              name={`faq.${index}.q`}
-              value={item.q}
-              placeholder="질문"
-              onChange={(event) =>
-                setValue((current) => current.map((row, i) => (i === index ? { ...row, q: event.target.value } : row)))
-              }
-            />
-            <textarea
-              className={ADM_AREA}
-              name={`faq.${index}.a`}
-              value={item.a}
-              placeholder="답"
-              onChange={(event) =>
-                setValue((current) => current.map((row, i) => (i === index ? { ...row, a: event.target.value } : row)))
-              }
-            />
-          </div>
-        ))}
       </div>
       <SectionSave
         pending={pending}

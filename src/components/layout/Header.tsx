@@ -14,6 +14,7 @@ export function Header({ site = SITE }: { site?: CmsSite }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const onHome = pathname === "/";
+  const overlayHero = onHome;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -23,6 +24,10 @@ export function Header({ site = SITE }: { site?: CmsSite }) {
   }, []);
 
   useEffect(() => {
+    setScrolled(window.scrollY > 40);
+  }, [pathname]);
+
+  useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
@@ -30,12 +35,12 @@ export function Header({ site = SITE }: { site?: CmsSite }) {
   }, [menuOpen]);
 
   // 히어로 위에서는 흰 글자, 스크롤하거나 메뉴를 열면 흰 배경 + 딥그린 글자
-  const solid = !onHome || scrolled || menuOpen;
+  const solid = !overlayHero || scrolled || menuOpen;
 
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-(--banner-h) z-50 h-(--header-h) transition-colors duration-300",
+        "fixed inset-x-0 top-0 z-50 h-(--header-h) transition-colors duration-300",
         solid ? "bg-white/95 text-forest backdrop-blur" : "bg-transparent text-white"
       )}
     >
@@ -43,9 +48,12 @@ export function Header({ site = SITE }: { site?: CmsSite }) {
         <Link
           href="/"
           onClick={() => setMenuOpen(false)}
-          className="serif max-w-[58%] text-[14px] leading-none tracking-tight sm:max-w-none sm:text-[18px] lg:text-[22px]"
+          className="serif leading-none tracking-tight"
         >
-          멈춘자 your transition partner
+          <span className="block text-[16px] sm:text-[18px] lg:text-[22px]">멈춘자</span>
+          <span className="mt-1 block text-[10px] tracking-[0.02em] opacity-80 sm:text-[11px] lg:text-[12px]">
+            your transition partner
+          </span>
         </Link>
 
         <nav className="serif absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 text-[22px] lg:flex">
@@ -56,8 +64,8 @@ export function Header({ site = SITE }: { site?: CmsSite }) {
           >
             Menu
           </button>
-          <Link href="/program" className="transition-opacity hover:opacity-60">
-            Program
+          <Link href="/coaching" className="transition-opacity hover:opacity-60">
+            Coaching
           </Link>
         </nav>
 
@@ -88,7 +96,7 @@ export function Header({ site = SITE }: { site?: CmsSite }) {
       </div>
 
       {menuOpen && (
-        <div className="max-h-[calc(100vh-var(--banner-h)-var(--header-h))] overflow-y-auto border-t border-ink-10 bg-white text-forest">
+        <div className="max-h-[calc(100vh-var(--header-h))] overflow-y-auto border-t border-ink-10 bg-white text-forest">
           <div className="grid gap-10 px-(--gutter) py-10 lg:grid-cols-3 lg:gap-16 lg:py-14">
             {MENU_GROUPS.map((group) => (
               <div key={group.title}>

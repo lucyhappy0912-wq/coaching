@@ -7,7 +7,7 @@ import { patchContent } from "@/lib/cms/store";
 import type { HeroSlide, PhotoTone } from "@/lib/cms/types";
 
 const TONES: PhotoTone[] = ["sage", "paper", "mist", "dusk", "forest"];
-const HREFS = ["/consult", "/coaching", "/program", "/check", "/board", "/faq", "/coach"];
+const HREFS = ["/consult", "/coaching", "/coaching/founder", "/way", "/check", "/board", "/faq", "/coach"];
 
 function toneOf(value: string, fallback: PhotoTone): PhotoTone {
   return TONES.includes(value as PhotoTone) ? (value as PhotoTone) : fallback;

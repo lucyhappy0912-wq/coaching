@@ -9,7 +9,6 @@ import { AUDIENCES } from "@/lib/site";
 const SLUG_TO_ID = {
   adult: "adult",
   senior: "senior",
-  leadership: "leader",
 } as const;
 
 type Slug = keyof typeof SLUG_TO_ID;

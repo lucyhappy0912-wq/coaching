@@ -27,6 +27,7 @@ function revalidateSite() {
   revalidatePath("/faq");
   revalidatePath("/coach");
   revalidatePath("/admin/site");
+  revalidatePath("/admin/faq");
 }
 
 export async function saveContact(_prev: SaveState, formData: FormData): Promise<SaveState> {
@@ -47,20 +48,6 @@ export async function saveContact(_prev: SaveState, formData: FormData): Promise
   };
   try {
     await patchContent({ site });
-  } catch {
-    return fail();
-  }
-  revalidateSite();
-  return ok();
-}
-
-export async function saveBanner(_prev: SaveState, formData: FormData): Promise<SaveState> {
-  await requireAdmin();
-  const topMessages = [0, 1]
-    .map((index) => String(formData.get(`top.${index}`) ?? "").trim())
-    .filter(Boolean);
-  try {
-    await patchContent({ topMessages: topMessages.length ? topMessages : [""] });
   } catch {
     return fail();
   }
@@ -92,7 +79,7 @@ export async function saveCoach(_prev: SaveState, formData: FormData): Promise<S
 
 export async function saveFaqs(_prev: SaveState, formData: FormData): Promise<SaveState> {
   await requireAdmin();
-  const faqs: CmsFaq[] = [0, 1, 2, 3, 4, 5]
+  const faqs: CmsFaq[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     .map((index) => ({
       q: String(formData.get(`faq.${index}.q`) ?? "").trim(),
       a: String(formData.get(`faq.${index}.a`) ?? "").trim(),

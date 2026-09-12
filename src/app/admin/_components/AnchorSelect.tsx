@@ -5,10 +5,12 @@ import { ADM_INPUT } from "./fields";
 export const PAGE_LINKS = [
   { href: "/consult", label: "상담 신청" },
   { href: "/coaching", label: "코칭 안내" },
-  { href: "/program", label: "프로그램" },
+  { href: "/coaching/stage", label: "Stage Transition" },
+  { href: "/coaching/founder", label: "Founder Transition" },
+  { href: "/way", label: "멈춘자 way" },
   { href: "/check", label: "문답표" },
-  { href: "/board", label: "소식" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/board", label: "Q&A 게시판" },
+  { href: "/faq", label: "자주 묻는 질문" },
   { href: "/coach", label: "코치 소개" },
 ] as const;
 

@@ -14,7 +14,7 @@ export default async function AdminPostsPage() {
   return (
     <AdminShell title="소식">
       <div className="mb-6 flex items-center justify-between">
-        <p className="adm-body text-ink-70">공개 사이트 소식 게시판에 발행된 글만 보입니다.</p>
+        <p className="adm-body text-ink-70">예전 소식 글입니다. 방문자가 남긴 질문은 질문 게시판에서 봅니다.</p>
         <Link href="/admin/posts/new" className="adm-body rounded-[4px] bg-forest px-4 py-2 text-white">
           새 글
         </Link>

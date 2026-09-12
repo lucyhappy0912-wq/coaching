@@ -43,6 +43,7 @@ yarn-error.log*
 /data/checks.jsonl
 /data/check-purge-log.jsonl
 /data/*.jsonl
+/data/admin-auth.json
 
 # 관리자가 업로드한 이미지 (저장소가 아니라 오브젝트 스토리지로 가야 한다)
 /public/uploads/

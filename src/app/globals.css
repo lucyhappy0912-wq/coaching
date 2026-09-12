@@ -54,15 +54,12 @@
 }
 
 :root {
-  /* 상단 띠 배너 + 헤더 높이 (히어로 높이 계산에 사용) */
-  --banner-h: 40px;
   --header-h: 62px;
   --gutter: 20px;
 }
 
 @media (min-width: 1025px) {
   :root {
-    --banner-h: 60px;
     --header-h: 84px;
     --gutter: 40px;
   }
@@ -166,6 +163,34 @@ body {
   font-family: var(--font-serif);
 }
 
+:root {
+  --measure: 42rem;
+  --measure-narrow: 34rem;
+  --measure-wide: 60rem;
+}
+
+.reading {
+  line-height: 180%;
+}
+.reading p + p {
+  margin-top: 1.1em;
+}
+
+.quote {
+  border-left: 3px solid var(--color-stem);
+  padding-left: 20px;
+  font-family: var(--font-serif);
+  font-size: 22px;
+  line-height: 145%;
+  color: var(--color-forest);
+}
+@media (min-width: 1025px) {
+  .quote {
+    font-size: 26px;
+    padding-left: 28px;
+  }
+}
+
 /* 밑줄 텍스트 링크 — 히녹의 btn_line.lined */
 .lined {
   display: inline-block;
@@ -193,8 +218,7 @@ body {
 }
 
 :target {
-  /* TopBanner 와 Header 가 둘 다 fixed 다. 배너 높이가 빠지면 앵커 대상이 데스크톱에서 60px 가려진다. */
-  scroll-margin-top: calc(var(--banner-h) + var(--header-h) + 24px);
+  scroll-margin-top: calc(var(--header-h) + 24px);
 }
 
 /* 히녹 히어로와 같은 슬로우 줌. 사진·그라데이션이 멈춰 보이지 않게 한다. */

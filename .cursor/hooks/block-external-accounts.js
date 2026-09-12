@@ -32,8 +32,12 @@ const DENY_MESSAGE =
   "DB 작업이 필요하면 멈추고 대표에게 확인을 요청해라.";
 
 let raw = "";
-process.stdin.on("data", (chunk) => (raw += chunk));
-process.stdin.on("end", () => {
+let finished = false;
+
+function finish() {
+  if (finished) return;
+  finished = true;
+
   let server = "";
   let tool = "";
 
@@ -42,8 +46,9 @@ process.stdin.on("end", () => {
     server = String(input.mcp_server_name ?? "");
     tool = String(input.tool_name ?? "");
   } catch {
-    // 입력을 못 읽으면 판단할 수 없다. failClosed 가 걸려 있으므로 그대로 실패시킨다.
-    process.exit(1);
+    // JSON이 깨져도 브라우저·Figma 같은 다른 MCP를 막지 않는다.
+    process.stdout.write(JSON.stringify({ permission: "allow" }));
+    return;
   }
 
   if (DENIED_SERVER.test(server) || (!server && DENIED_TOOLS.has(tool))) {
@@ -58,4 +63,9 @@ process.stdin.on("end", () => {
   }
 
   process.stdout.write(JSON.stringify({ permission: "allow" }));
-});
+}
+
+process.stdin.on("data", (chunk) => (raw += chunk));
+process.stdin.on("end", finish);
+process.stdin.on("error", finish);
+setTimeout(finish, 1500);

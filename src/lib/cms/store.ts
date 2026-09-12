@@ -3,7 +3,9 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { cache } from "react";
 
-import { cmsEnabled, cmsRest } from "./client";
+import { cmsEnabled, cmsRest, cmsWritable } from "./client";
+import { readLocalContent, writeLocalContent } from "./local";
+import { mergePages } from "./merge-pages";
 import { cmsSeed } from "./seed";
 import type { CmsData, CmsMember, CmsPost } from "./types";
 
@@ -20,17 +22,20 @@ function mergeCms(raw: Partial<CmsData> | null | undefined): CmsData {
       credentials: raw.coach?.credentials?.length ? raw.coach.credentials : seed.coach.credentials,
     },
     faqs: raw.faqs?.length ? raw.faqs : seed.faqs,
+    pages: mergePages(raw.pages, seed.pages),
   };
 }
 
 export const getContent = cache(async (): Promise<CmsData> => {
-  if (!cmsEnabled()) return cmsSeed();
-  try {
-    const rows = await cmsRest<{ data: CmsData }[]>("cms_content?id=eq.site&select=data");
-    return mergeCms(rows[0]?.data);
-  } catch {
-    return cmsSeed();
+  if (cmsEnabled()) {
+    try {
+      const rows = await cmsRest<{ data: CmsData }[]>("cms_content?id=eq.site&select=data");
+      return mergeCms(rows[0]?.data);
+    } catch {
+      return cmsSeed();
+    }
   }
+  return mergeCms(await readLocalContent());
 });
 
 export async function patchContent(patch: Partial<CmsData>) {
@@ -41,12 +46,17 @@ export async function patchContent(patch: Partial<CmsData>) {
     hero: patch.hero ?? current.hero,
     coach: patch.coach ?? current.coach,
     faqs: patch.faqs ?? current.faqs,
+    pages: patch.pages ?? current.pages,
   });
 }
 
 export async function saveContent(data: CmsData) {
-  if (!cmsEnabled()) throw new Error("CMS_STORE_READONLY");
+  if (!cmsWritable()) throw new Error("CMS_STORE_READONLY");
   const next = mergeCms(data);
+  if (!cmsEnabled()) {
+    await writeLocalContent(next);
+    return next;
+  }
   await cmsRest("cms_content", {
     method: "POST",
     headers: { Prefer: "return=representation,resolution=merge-duplicates" },

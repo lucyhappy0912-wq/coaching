@@ -30,6 +30,13 @@ export default async function CheckResultPage({
           총점 구간과 7개 영역 점수는 모두 보입니다. 10점 이상 상위 3개 영역만 별도 분석표가
           붙습니다. 의학적·심리학적 진단이 아닙니다.
         </p>
+        <p className="b3 mt-3 text-ink-70">
+          이 주소를 잃어버리면{" "}
+          <a href="/check/view" className="lined text-forest">
+            이름·전화·이메일로 다시 열 수 있습니다
+          </a>
+          .
+        </p>
         <div className="mt-12">
           <CheckReport scores={found.scores} />
         </div>

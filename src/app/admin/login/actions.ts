@@ -1,10 +1,11 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { setAdminCookie } from "@/lib/auth/cookie";
+import { readAuthMaterial } from "@/lib/auth/material";
 import { verifyPassword } from "@/lib/auth/password";
-import { ADMIN_COOKIE, adminAuthConfigured, issueSessionToken, SESSION_MAX_AGE } from "@/lib/auth/session";
+import { adminAuthConfigured, issueSessionToken } from "@/lib/auth/session";
 
 export type LoginState = { error: string | null };
 
@@ -24,8 +25,12 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return { error: "로그인할 수 없습니다." };
   }
 
-  const hash = process.env.ADMIN_PASSWORD_HASH?.trim() as string;
-  const ok = await verifyPassword(password, hash);
+  const material = readAuthMaterial();
+  if (!material) {
+    await waitRemaining(started);
+    return { error: "로그인할 수 없습니다." };
+  }
+  const ok = await verifyPassword(password, material.hash);
   if (!ok) {
     await waitRemaining(started);
     return { error: "비밀번호가 올바르지 않습니다." };
@@ -37,17 +42,7 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return { error: "로그인할 수 없습니다." };
   }
 
-  const jar = await cookies();
-  jar.set({
-    name: ADMIN_COOKIE,
-    value: token,
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
-    path: "/",
-    maxAge: SESSION_MAX_AGE,
-  });
-
+  await setAdminCookie(token);
   await waitRemaining(started);
   redirect("/admin/checks");
 }

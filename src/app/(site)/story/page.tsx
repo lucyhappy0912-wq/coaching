@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 
-import { SectionPage } from "@/components/layout/PageFrame";
-import { StoryTabs } from "@/components/sections/StoryTabs";
+import { StoryFilm } from "@/components/content/StoryFilm";
+import { getContent } from "@/lib/cms/store";
+import { BRAND_WHY } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Story",
-  description: "질문으로 정리하고, 주간에 실행하고, 다시 맞춰 보는 코칭 진행 방식입니다.",
+  title: "왜멈춘자인가",
+  description: BRAND_WHY.lead,
 };
 
-export default function StoryPage() {
-  return (
-    <SectionPage>
-      <StoryTabs />
-    </SectionPage>
-  );
+export default async function StoryPage() {
+  const { pages } = await getContent();
+  return <StoryFilm slides={pages.story.slides} />;
 }

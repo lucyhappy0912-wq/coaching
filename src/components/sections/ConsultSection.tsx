@@ -4,7 +4,7 @@ import { SITE } from "@/lib/site";
 
 export function ConsultSection({ site = SITE }: { site?: CmsSite }) {
   return (
-    <section id="consult" className="bg-grass-20 px-(--gutter) py-16 lg:py-24">
+    <section id="consult" className="bg-white px-(--gutter) py-16 lg:py-24">
       <div className="flex flex-col gap-10 lg:flex-row lg:gap-16">
         <div className="lg:w-[38%]">
           <p className="c1 tracking-[0.2em] text-stem uppercase">Consulting</p>

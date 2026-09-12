@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth/dal";
 import {
   getByTokenJsonl,
   getCheckJsonl,
+  getScoresByIdentityJsonl,
   listChecksJsonl,
   removeCheckJsonl,
   saveCheckJsonl,
@@ -14,11 +15,13 @@ import { checkStoreMode } from "./store-mode";
 import {
   getByTokenSupabase,
   getCheckSupabase,
+  getScoresByIdentitySupabase,
   listChecksSupabase,
   removeCheckSupabase,
   saveCheckSupabase,
   updateCheckSupabase,
 } from "./store-supabase";
+import type { CheckScores } from "./compute";
 import type { CheckListItem, CheckUpdateInput, NewCheckInput } from "./store-types";
 
 export type { CheckListItem, CheckRecord, CheckUpdateInput, NewCheckInput } from "./store-types";
@@ -46,6 +49,17 @@ export async function getByToken(token: string) {
   if (mode === "readonly") return null;
   if (mode === "supabase") return getByTokenSupabase(token);
   return getByTokenJsonl(token);
+}
+
+export async function getScoresByIdentity(
+  name: string,
+  phone: string,
+  email: string,
+): Promise<CheckScores | null> {
+  const mode = checkStoreMode();
+  if (mode === "readonly") return null;
+  if (mode === "supabase") return getScoresByIdentitySupabase(name, phone, email);
+  return getScoresByIdentityJsonl(name, phone, email);
 }
 
 export async function listChecksForAdmin(nameQuery?: string): Promise<CheckListItem[]> {

@@ -15,6 +15,7 @@ const TONE_CLASS: Record<PhotoTone, string> = {
 
 export function Photo({
   src,
+  video,
   alt = "",
   tone = "sage",
   className,
@@ -22,12 +23,28 @@ export function Photo({
   priority,
 }: {
   src?: string;
+  video?: string;
   alt?: string;
   tone?: PhotoTone;
   className?: string;
   sizes?: string;
   priority?: boolean;
 }) {
+  if (video) {
+    return (
+      <video
+        className={cn("size-full object-cover", className)}
+        src={video}
+        poster={src || undefined}
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden={!alt}
+      />
+    );
+  }
+
   if (!src) {
     return <div aria-hidden className={cn("size-full", TONE_CLASS[tone], className)} />;
   }

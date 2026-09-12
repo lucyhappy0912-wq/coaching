@@ -8,9 +8,9 @@ export const SITE = {
   // TODO(미확정): 브랜드명·연락처·주소·사업자 정보 모두 플레이스홀더. 대표 확인 필요.
   name: "coaching",
   nameKo: "코칭",
-  tagline: "다음 방향을 스스로 정하는 성인·시니어·리더십 1:1 코칭",
+  tagline: "멈춰야 비로소 보이는 것이 있습니다.",
   description:
-    "성인·시니어·리더를 위한 1:1 코칭 브랜드입니다. 진단 세션부터 주간 코칭까지, 지금 서 있는 자리에서 다음 한 걸음을 스스로 정하도록 함께 정리합니다. 첫 상담은 무료입니다.",
+    "멈춘자는 삶과 사업의 중요한 전환점에서 더 나은 선택을 할 수 있도록 돕는 Transition Coaching 전문 코칭 그룹입니다.",
   phone: "070-0000-0000",
   email: "hello@example.com",
   addressLine: "3F, 00, ○○-ro, ○○-gu, Seoul",
@@ -33,38 +33,30 @@ export const TOP_MESSAGES = [
 /** 헤더 메가메뉴 */
 export const MENU_GROUPS = [
   {
-    title: "COACHING",
+    title: "The Moment",
     items: [
-      { label: "Adult", href: "/coaching/adult" },
-      { label: "Senior", href: "/coaching/senior" },
-      { label: "Leadership", href: "/coaching/leadership" },
+      { label: "왜멈춘자인가", href: "/story" },
+      { label: "멈춘자가 만든 전환", href: "/way" },
+      { label: "Our Belief", href: "/belief" },
     ],
   },
   {
-    title: "PROGRAM",
+    title: "Coaching",
     items: [
-      { label: "Diagnosis", href: "/program" },
-      { label: "Weekly Coaching", href: "/program" },
-      { label: "Online Coaching", href: "/program" },
+      { label: "Stage Transition", href: "/coaching/stage" },
+      { label: "Next Chapter Transition", href: "/coaching/next-chapter" },
+      { label: "From founder to leader", href: "/coaching/founder" },
+      { label: "founder transition 진단", href: "/check" },
+      { label: "your next leadership", href: "/coaching/leadership" },
     ],
   },
   {
-    title: "BRAND",
+    title: "Q&A",
     items: [
-      { label: "Story", href: "/story" },
-      { label: "Coach", href: "/coach" },
-      { label: "Service", href: "/service" },
-      { label: "FAQ", href: "/faq" },
-      { label: "소식", href: "/board" },
-    ],
-  },
-  {
-    title: "문의",
-    items: [
-      { label: "무료 상담 신청", href: "/consult" },
-      { label: "Founder Transition Check", href: "/check" },
-      { label: "자주 묻는 질문", href: "/faq" },
-      { label: "전화 문의", href: `tel:${SITE.phone.replace(/-/g, "")}` },
+      { label: "1:1 코칭", href: "/consult" },
+      { label: "자주묻는 질문", href: "/faq" },
+      { label: "Q&A 게시판", href: "/board" },
+      { label: "전화문의", href: `tel:${SITE.phone.replace(/-/g, "")}` },
     ],
   },
 ] as const;
@@ -298,13 +290,13 @@ export const FOOTER_LINKS = [
   {
     title: "Brand",
     items: [
-      { label: "Story", href: "/story" },
+      { label: "왜멈춘자인가", href: "/story" },
+      { label: "멈춘자가 만든 전환", href: "/way" },
+      { label: "Our Belief", href: "/belief" },
       { label: "Coaching", href: "/coaching" },
       { label: "Coach", href: "/coach" },
-      { label: "Program", href: "/program" },
-      { label: "Service", href: "/service" },
       { label: "FAQ", href: "/faq" },
-      { label: "소식", href: "/board" },
+      { label: "Q&A 게시판", href: "/board" },
     ],
   },
   {
