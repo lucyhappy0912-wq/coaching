@@ -286,5 +286,5 @@ export const LIKERT_LABELS = [
 ];
 
 export const INSTRUMENT_VERSION = "2026-09-10";
-export const CONSENT_VERSION = "check-2026-09-10";
+export const CONSENT_VERSION = "check-2026-09-12";
 export const RETENTION_DAYS = 90;

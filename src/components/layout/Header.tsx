@@ -43,9 +43,9 @@ export function Header({ site = SITE }: { site?: CmsSite }) {
         <Link
           href="/"
           onClick={() => setMenuOpen(false)}
-          className="serif text-[26px] leading-none tracking-tight lg:text-[34px]"
+          className="serif max-w-[58%] text-[14px] leading-none tracking-tight sm:max-w-none sm:text-[18px] lg:text-[22px]"
         >
-          {site.name}
+          멈춘자 your transition partner
         </Link>
 
         <nav className="serif absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 text-[22px] lg:flex">

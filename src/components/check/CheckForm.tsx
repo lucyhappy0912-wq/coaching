@@ -52,6 +52,8 @@ export function CheckForm({ source }: { source: string }) {
     name: "",
     phone: "",
     email: "",
+    industry: "",
+    founderJourney: "",
     agree: false,
     contactConsent: false,
   });
@@ -93,6 +95,8 @@ export function CheckForm({ source }: { source: string }) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return setGateError("이메일 주소를 정확히 입력해 주세요.");
     }
+    if (identity.industry.trim().length < 1) return setGateError("업종을 입력해 주세요.");
+    if (identity.founderJourney.trim().length < 1) return setGateError("창업 후 기간을 입력해 주세요.");
     if (!identity.agree) return setGateError("개인정보 수집·이용에 동의해 주세요.");
 
     setGateError(null);
@@ -127,23 +131,18 @@ export function CheckForm({ source }: { source: string }) {
     return (
       <>
         <header>
-          <p className="c1 tracking-[0.16em] text-forest-70 uppercase">멈춘자 · Transition Partner</p>
-          <h1 className="serif mt-3 text-[28px] leading-tight sm:text-[40px]">
+          <h1 className="serif text-[28px] leading-tight sm:text-[40px]">
             Founder Transition Check
           </h1>
           <p className="b2 mt-4 text-ink-70">
             회사의 다음 단계에 앞서 Founder 자신을 점검하는 약 5분입니다. 최근 3~6개월의 실제 모습을
             떠올리며 답해 주세요. 점수가 높을수록 부족한 것이 아니라, 전환 신호가 많다는 뜻입니다.
           </p>
-          <p className="b3 mt-3 text-ink-70">
-            의학적·심리학적 진단이 아닙니다. 상담을 신청하지 않아도 분석지는 그대로 안내드립니다.
-          </p>
         </header>
       <section className="mt-8 border border-forest-20 bg-white px-5 py-6 sm:mt-12 sm:p-7 lg:p-10">
         <p className="c1 tracking-[0.16em] text-forest-70 uppercase">Before you start</p>
-        <h2 className="serif mt-2 text-[22px] leading-snug lg:text-[28px]">시작하기 전에 남겨 주세요</h2>
         <p className="b3 mt-3 text-ink-70">
-          이름, 전화, 이메일과 동의 후에 문항이 열립니다. 결과는 제출 직후 바로 보여 드립니다.
+          대표님의 현재를 이해할 수 있는 정보를 입력 작성 부탁드립니다.
         </p>
         <div className="mt-8 grid gap-6">
           <label className="block">
@@ -221,6 +220,30 @@ export function CheckForm({ source }: { source: string }) {
               </span>
             </div>
           </div>
+          <label className="block">
+            <span className="c1 mb-2 block tracking-[0.12em] text-forest-70 uppercase">
+              Industry (업종)
+            </span>
+            <input
+              value={identity.industry}
+              onChange={(e) => setIdentity((prev) => ({ ...prev, industry: e.target.value }))}
+              maxLength={80}
+              placeholder="현재 운영하고 있는 비즈니스 분야를 알려주세요."
+              className={inputClass}
+            />
+          </label>
+          <label className="block">
+            <span className="c1 mb-2 block tracking-[0.12em] text-forest-70 uppercase">
+              Founder Journey
+            </span>
+            <input
+              value={identity.founderJourney}
+              onChange={(e) => setIdentity((prev) => ({ ...prev, founderJourney: e.target.value }))}
+              maxLength={80}
+              placeholder="창업 후 현재까지의 기간을 알려주세요."
+              className={inputClass}
+            />
+          </label>
         </div>
         <label className="b3 mt-8 flex items-start gap-3 rounded-sm bg-grass-10 px-3 py-3 text-ink-70">
           <input
@@ -230,7 +253,8 @@ export function CheckForm({ source }: { source: string }) {
             className="mt-0.5 size-5 shrink-0 rounded-none border-ink-50 accent-forest"
           />
           <span>
-            결과 제공과 제출 기록 확인을 위해 이름·전화번호·이메일·21문항 응답을 수집·이용합니다.
+            결과 제공과 제출 기록 확인을 위해 이름·전화번호·이메일·업종·창업 기간·21문항 응답을
+            수집·이용합니다.
             의학적·심리학적 진단이 아닙니다. 제출일로부터 90일 이내 파기합니다. 만 14세 미만은 이용할
             수 없습니다.{" "}
             <a href="/privacy" className="lined text-forest">
@@ -266,6 +290,8 @@ export function CheckForm({ source }: { source: string }) {
       <input type="hidden" name="name" value={identity.name} />
       <input type="hidden" name="phone" value={identity.phone} />
       <input type="hidden" name="email" value={identity.email} />
+      <input type="hidden" name="industry" value={identity.industry} />
+      <input type="hidden" name="founderJourney" value={identity.founderJourney} />
       <input type="hidden" name="agree" value="on" />
       {identity.contactConsent && <input type="hidden" name="contactConsent" value="on" />}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" />
@@ -296,7 +322,6 @@ export function CheckForm({ source }: { source: string }) {
           {areaIndex + 1} / {AREA_IDS.length} · {areaMeta.title}
         </p>
         <h2 className="serif mt-2 text-[22px] leading-snug lg:text-[28px]">{areaMeta.question}</h2>
-        <p className="b3 mt-3 text-ink-70">{areaMeta.wrap}</p>
       </section>
 
       {areaQuestions.map((q) => (

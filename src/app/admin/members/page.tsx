@@ -68,7 +68,9 @@ export default async function AdminMembersPage() {
                     {row.name}
                   </Link>
                   <p className="adm-meta text-ink-70">
-                    {formatPhoneDisplay(row.phone)} · {row.email} · {row.total}점
+                    {formatPhoneDisplay(row.phone)} · {row.email}
+                    {row.industry ? ` · ${row.industry}` : ""}
+                    {row.founderJourney ? ` · ${row.founderJourney}` : ""} · {row.total}점
                   </p>
                 </div>
               </li>

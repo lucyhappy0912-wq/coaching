@@ -10,6 +10,8 @@ export type CheckRecord = {
     name: string;
     phone: string;
     email: string;
+    industry: string;
+    founderJourney: string;
     contactConsent: boolean;
     consentAt: string;
     consentVersion: string;
@@ -26,6 +28,8 @@ export type CheckListItem = {
   name: string;
   phone: string;
   email: string;
+  industry: string;
+  founderJourney: string;
   band: CheckScores["band"];
   total: number;
   source: string;
@@ -37,6 +41,8 @@ export type NewCheckInput = {
   name: string;
   phone: string;
   email: string;
+  industry: string;
+  founderJourney: string;
   contactConsent: boolean;
   source: string;
 };

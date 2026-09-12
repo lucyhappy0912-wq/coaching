@@ -20,7 +20,17 @@ async function readAll(): Promise<CheckRecord[]> {
     return raw
       .split("\n")
       .filter(Boolean)
-      .map((line) => JSON.parse(line) as CheckRecord);
+      .map((line) => {
+        const row = JSON.parse(line) as CheckRecord;
+        return {
+          ...row,
+          identity: {
+            ...row.identity,
+            industry: row.identity.industry ?? "",
+            founderJourney: row.identity.founderJourney ?? "",
+          },
+        };
+      });
   } catch {
     return [];
   }
@@ -91,6 +101,8 @@ export async function saveCheckJsonl(input: NewCheckInput) {
       name: input.name,
       phone: input.phone,
       email: input.email,
+      industry: input.industry,
+      founderJourney: input.founderJourney,
       contactConsent: input.contactConsent,
       consentAt: createdAt.toISOString(),
       consentVersion: CONSENT_VERSION,
@@ -128,6 +140,8 @@ export async function listChecksJsonl(): Promise<CheckListItem[]> {
     name: row.identity.name,
     phone: row.identity.phone,
     email: row.identity.email,
+    industry: row.identity.industry ?? "",
+    founderJourney: row.identity.founderJourney ?? "",
     band: row.scores.band,
     total: row.scores.total,
     source: row.source,

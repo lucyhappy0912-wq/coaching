@@ -19,9 +19,9 @@ export default async function AdminChecksPage() {
   const rows = await listChecksForAdmin();
 
   return (
-    <AdminShell title="Founder Transition Check">
+    <AdminShell title="문답">
       <p className="adm-body text-ink-70">
-        이름·전화·이메일은 관리자만 봅니다. 이름을 누르면 21문항 답과 분석지가 열립니다.
+        이름·전화·이메일·업종·창업 기간은 관리자만 봅니다. 이름을 누르면 문항 답과 분석지가 열립니다.
       </p>
       {rows.length === 0 ? (
         <p className="adm-body mt-8 rounded-[6px] border border-ink-15 bg-white p-5 text-ink-70">
@@ -36,6 +36,8 @@ export default async function AdminChecksPage() {
                 <th className="adm-label px-4 py-3 text-forest-70">이름</th>
                 <th className="adm-label px-4 py-3 text-forest-70">전화</th>
                 <th className="adm-label px-4 py-3 text-forest-70">이메일</th>
+                <th className="adm-label px-4 py-3 text-forest-70">업종</th>
+                <th className="adm-label px-4 py-3 text-forest-70">창업 기간</th>
                 <th className="adm-label px-4 py-3 text-forest-70">구간</th>
                 <th className="adm-label px-4 py-3 text-forest-70">총점</th>
                 <th className="adm-label px-4 py-3 text-forest-70">연락</th>
@@ -52,6 +54,8 @@ export default async function AdminChecksPage() {
                   </td>
                   <td className="adm-body px-4 py-3 text-ink-90">{formatPhoneDisplay(row.phone)}</td>
                   <td className="adm-body px-4 py-3 text-ink-90">{row.email}</td>
+                  <td className="adm-body px-4 py-3 text-ink-90">{row.industry || "—"}</td>
+                  <td className="adm-body px-4 py-3 text-ink-90">{row.founderJourney || "—"}</td>
                   <td className="adm-body px-4 py-3 text-ink-90">{BAND_COPY[row.band].label}</td>
                   <td className="adm-body px-4 py-3 text-ink-90">{row.total}</td>
                   <td className="adm-meta px-4 py-3 text-ink-70">

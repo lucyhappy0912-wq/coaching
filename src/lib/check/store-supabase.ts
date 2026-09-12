@@ -17,6 +17,8 @@ type Row = {
   name: string;
   phone: string;
   email: string;
+  industry?: string;
+  founder_journey?: string;
   contact_consent: boolean;
   consent_at: string;
   consent_version: string;
@@ -82,6 +84,8 @@ function toRecord(row: Row): CheckRecord {
       name: row.name,
       phone: row.phone,
       email: row.email,
+      industry: row.industry ?? "",
+      founderJourney: row.founder_journey ?? "",
       contactConsent: row.contact_consent,
       consentAt: row.consent_at,
       consentVersion: row.consent_version,
@@ -103,6 +107,8 @@ function toRow(record: CheckRecord): Row {
     name: record.identity.name,
     phone: record.identity.phone,
     email: record.identity.email,
+    industry: record.identity.industry,
+    founder_journey: record.identity.founderJourney,
     contact_consent: record.identity.contactConsent,
     consent_at: record.identity.consentAt,
     consent_version: record.identity.consentVersion,
@@ -149,6 +155,8 @@ export async function saveCheckSupabase(input: NewCheckInput) {
       name: input.name,
       phone: input.phone,
       email: input.email,
+      industry: input.industry,
+      founderJourney: input.founderJourney,
       contactConsent: input.contactConsent,
       consentAt: createdAt.toISOString(),
       consentVersion: CONSENT_VERSION,
@@ -192,6 +200,8 @@ export async function listChecksSupabase(): Promise<CheckListItem[]> {
       name: record.identity.name,
       phone: record.identity.phone,
       email: record.identity.email,
+      industry: record.identity.industry,
+      founderJourney: record.identity.founderJourney,
       band: record.scores.band,
       total: record.scores.total,
       source: record.source,

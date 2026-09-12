@@ -17,6 +17,8 @@ export async function submitCheck(
   const name = String(formData.get("name") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").replace(/\D/g, "");
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const industry = String(formData.get("industry") ?? "").trim().slice(0, 80);
+  const founderJourney = String(formData.get("founderJourney") ?? "").trim().slice(0, 80);
   const agree = formData.get("agree") === "on";
   const contactConsent = formData.get("contactConsent") === "on";
   const source = String(formData.get("source") ?? "direct").slice(0, 40);
@@ -26,6 +28,8 @@ export async function submitCheck(
   if (name.length < 2) return { error: "이름을 정확히 입력해 주세요." };
   if (phone.length < 10) return { error: "연락처를 정확히 입력해 주세요." };
   if (!EMAIL.test(email)) return { error: "이메일 주소를 정확히 입력해 주세요." };
+  if (industry.length < 1) return { error: "업종을 입력해 주세요." };
+  if (founderJourney.length < 1) return { error: "창업 후 기간을 입력해 주세요." };
   if (!agree) return { error: "결과 제공을 위한 개인정보 수집·이용에 동의해 주세요." };
 
   const answers = {} as Answers;
@@ -37,7 +41,16 @@ export async function submitCheck(
 
   let token: string;
   try {
-    ({ token } = await saveCheck({ answers, name, phone, email, contactConsent, source }));
+    ({ token } = await saveCheck({
+      answers,
+      name,
+      phone,
+      email,
+      industry,
+      founderJourney,
+      contactConsent,
+      source,
+    }));
   } catch (error) {
     const code = error instanceof Error ? error.message : "";
     if (code === "CHECK_STORE_READONLY") {

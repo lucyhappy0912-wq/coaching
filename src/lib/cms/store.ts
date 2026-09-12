@@ -33,6 +33,17 @@ export const getContent = cache(async (): Promise<CmsData> => {
   }
 });
 
+export async function patchContent(patch: Partial<CmsData>) {
+  const current = await getContent();
+  return saveContent({
+    site: patch.site ?? current.site,
+    topMessages: patch.topMessages ?? current.topMessages,
+    hero: patch.hero ?? current.hero,
+    coach: patch.coach ?? current.coach,
+    faqs: patch.faqs ?? current.faqs,
+  });
+}
+
 export async function saveContent(data: CmsData) {
   if (!cmsEnabled()) throw new Error("CMS_STORE_READONLY");
   const next = mergeCms(data);

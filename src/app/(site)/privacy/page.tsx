@@ -20,7 +20,10 @@ export default function PrivacyPage() {
 
         <h2 className="serif t3 mt-12">1. Founder Transition Check</h2>
         <ul className="b3 mt-4 list-disc space-y-2 pl-5 text-ink-70">
-          <li>수집: 이름, 전화번호, 이메일, 21문항 각 1~5점 응답, 선택적 연락 동의 여부</li>
+          <li>
+            수집: 이름, 전화번호, 이메일, 업종, 창업 후 기간, 21문항 각 1~5점 응답, 선택적 연락 동의
+            여부
+          </li>
           <li>목적: 분석지 제공, 누가 제출했는지 확인. 연락 동의 시에만 프로그램 안내</li>
           <li>열람: 운영자만 확인합니다. 검색에 노출되지 않습니다</li>
           <li>보유: 제출일로부터 90일 이내 파기</li>

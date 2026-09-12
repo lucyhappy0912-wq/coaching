@@ -12,9 +12,9 @@ export default async function AdminPostsPage() {
   const posts = await listPosts();
 
   return (
-    <AdminShell title="게시판">
+    <AdminShell title="소식">
       <div className="mb-6 flex items-center justify-between">
-        <p className="adm-body text-ink-70">공개 사이트 `/board`에 발행된 글만 보입니다.</p>
+        <p className="adm-body text-ink-70">공개 사이트 소식 게시판에 발행된 글만 보입니다.</p>
         <Link href="/admin/posts/new" className="adm-body rounded-[4px] bg-forest px-4 py-2 text-white">
           새 글
         </Link>
