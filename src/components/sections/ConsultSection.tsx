@@ -1,7 +1,8 @@
 import { ConsultForm } from "@/components/sections/ConsultForm";
+import type { CmsSite } from "@/lib/cms/types";
 import { SITE } from "@/lib/site";
 
-export function ConsultSection() {
+export function ConsultSection({ site = SITE }: { site?: CmsSite }) {
   return (
     <section id="consult" className="bg-grass-20 px-(--gutter) py-16 lg:py-24">
       <div className="flex flex-col gap-10 lg:flex-row lg:gap-16">
@@ -17,23 +18,23 @@ export function ConsultSection() {
             <div>
               <dt className="text-ink-70">Tel.</dt>
               <dd>
-                <a href={`tel:${SITE.phone.replace(/-/g, "")}`} className="lined">
-                  {SITE.phone}
+                <a href={`tel:${site.phone.replace(/-/g, "")}`} className="lined">
+                  {site.phone}
                 </a>
               </dd>
             </div>
             <div>
               <dt className="text-ink-70">Email.</dt>
               <dd>
-                <a href={`mailto:${SITE.email}`} className="lined">
-                  {SITE.email}
+                <a href={`mailto:${site.email}`} className="lined">
+                  {site.email}
                 </a>
               </dd>
             </div>
             <div>
               <dt className="text-ink-70">Hours.</dt>
               <dd>
-                {SITE.hours} / {SITE.lunch}
+                {site.hours} / {site.lunch}
               </dd>
             </div>
           </dl>

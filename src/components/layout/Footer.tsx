@@ -1,18 +1,19 @@
+import type { CmsSite } from "@/lib/cms/types";
 import { FOOTER_LINKS, SITE } from "@/lib/site";
 
-export function Footer() {
+export function Footer({ site = SITE }: { site?: CmsSite }) {
   return (
     <footer className="bg-linear-to-b from-white to-grass-20 pt-24 pb-10 lg:pt-32">
       <div className="serif grid gap-10 px-(--gutter) text-forest lg:grid-cols-[1.6fr_1fr_1fr]">
         <div className="space-y-1 text-[13px] leading-relaxed lg:text-[15px]">
-          <p>{SITE.company}</p>
+          <p>{site.company}</p>
           <p>
-            Owner. {SITE.owner} Business Reg N. {SITE.bizNo}
+            Owner. {site.owner} Business Reg N. {site.bizNo}
           </p>
           <p>
-            Tel. {SITE.phone} Email. {SITE.email}
+            Tel. {site.phone} Email. {site.email}
           </p>
-          <p>Address. {SITE.addressLine}</p>
+          <p>Address. {site.addressLine}</p>
         </div>
 
         {FOOTER_LINKS.map((group) => (

@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Phone, Search, X } from "lucide-react";
 
+import type { CmsSite } from "@/lib/cms/types";
 import { MENU_GROUPS, SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-export function Header() {
+export function Header({ site = SITE }: { site?: CmsSite }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -44,7 +45,7 @@ export function Header() {
           onClick={() => setMenuOpen(false)}
           className="serif text-[26px] leading-none tracking-tight lg:text-[34px]"
         >
-          {SITE.name}
+          {site.name}
         </Link>
 
         <nav className="serif absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 text-[22px] lg:flex">
@@ -62,7 +63,7 @@ export function Header() {
 
         <div className="flex items-center gap-4">
           <a
-            href={`tel:${SITE.phone.replace(/-/g, "")}`}
+            href={`tel:${site.phone.replace(/-/g, "")}`}
             aria-label="전화 문의"
             className="transition-opacity hover:opacity-60"
           >
@@ -121,7 +122,7 @@ export function Header() {
 
           <div className="border-t border-ink-10 px-(--gutter) py-6">
             <p className="b3 text-ink-70">
-              {SITE.hours} · {SITE.phone}
+              {site.hours} · {site.phone}
             </p>
           </div>
         </div>

@@ -32,6 +32,14 @@ export function Photo({
     return <div aria-hidden className={cn("size-full", TONE_CLASS[tone], className)} />;
   }
 
+  if (src.startsWith("https://") || src.startsWith("http://")) {
+    return (
+      // 관리자가 올린 원격 주소. next/image 호스트 허용 목록에 묶지 않는다.
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={src} alt={alt} className={cn("size-full object-cover", className)} />
+    );
+  }
+
   return (
     <Image
       src={src}

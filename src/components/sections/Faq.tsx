@@ -1,12 +1,13 @@
+import type { CmsFaq } from "@/lib/cms/types";
 import { FAQS } from "@/lib/site";
 
-export function Faq() {
+export function Faq({ faqs = FAQS }: { faqs?: readonly CmsFaq[] }) {
   return (
     <section id="faq" className="bg-grass-10 px-(--gutter) py-16 lg:py-20">
       <h2 className="t2 mb-8 lg:mb-10">FAQ</h2>
 
       <div className="border-t border-forest-20">
-        {FAQS.map((faq) => (
+        {faqs.map((faq) => (
           <details
             key={faq.q}
             className="group border-b border-forest-20 py-5 [&_summary::-webkit-details-marker]:hidden"

@@ -1,3 +1,4 @@
+import { getContent } from "@/lib/cms/store";
 import { AudienceRows } from "@/components/sections/AudienceRows";
 import { BrandStory } from "@/components/sections/BrandStory";
 import { CoachBand } from "@/components/sections/CoachBand";
@@ -10,20 +11,21 @@ import { ProgramTabs } from "@/components/sections/ProgramTabs";
 import { Services } from "@/components/sections/Services";
 import { StoryTabs } from "@/components/sections/StoryTabs";
 
-export default function Home() {
+export default async function Home() {
+  const content = await getContent();
   return (
     <>
-      <HeroSlider />
+      <HeroSlider slides={content.hero} />
       <AudienceRows />
       <ProgramTabs />
       <MidBanner />
       <StoryTabs />
       <Services />
-      <CoachBand />
+      <CoachBand coach={content.coach} />
       <BrandStory />
       <Principles />
-      <Faq />
-      <ConsultSection />
+      <Faq faqs={content.faqs} />
+      <ConsultSection site={content.site} />
     </>
   );
 }

@@ -55,6 +55,7 @@ export const MENU_GROUPS = [
       { label: "Coach", href: "/coach" },
       { label: "Service", href: "/service" },
       { label: "FAQ", href: "/faq" },
+      { label: "소식", href: "/board" },
     ],
   },
   {
@@ -303,6 +304,7 @@ export const FOOTER_LINKS = [
       { label: "Program", href: "/program" },
       { label: "Service", href: "/service" },
       { label: "FAQ", href: "/faq" },
+      { label: "소식", href: "/board" },
     ],
   },
   {

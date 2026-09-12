@@ -5,14 +5,15 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { PillButton } from "@/components/ui/Buttons";
 import { Photo } from "@/components/ui/Photo";
+import type { HeroSlide } from "@/lib/cms/types";
 import { HERO_SLIDES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const AUTOPLAY_MS = 6000;
 
-export function HeroSlider() {
+export function HeroSlider({ slides = HERO_SLIDES }: { slides?: readonly HeroSlide[] }) {
   const [index, setIndex] = useState(0);
-  const count = HERO_SLIDES.length;
+  const count = slides.length;
 
   const go = (next: number) => setIndex((next + count) % count);
 
@@ -26,9 +27,9 @@ export function HeroSlider() {
       id="hero"
       className="relative h-[calc(100svh-var(--banner-h))] min-h-[520px] overflow-hidden"
     >
-      {HERO_SLIDES.map((slide, i) => (
+      {slides.map((slide, i) => (
         <div
-          key={slide.title}
+          key={`${slide.title}-${i}`}
           aria-hidden={i !== index}
           className={cn(
             "absolute inset-0 transition-opacity duration-700",
@@ -78,7 +79,7 @@ export function HeroSlider() {
       ))}
 
       <div className="absolute right-(--gutter) bottom-14 hidden items-center gap-3 lg:flex">
-        {HERO_SLIDES.map((slide, i) => (
+        {slides.map((slide, i) => (
           <button
             key={slide.title}
             type="button"
