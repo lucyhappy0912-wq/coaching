@@ -19,8 +19,10 @@ C드라이브 여유는 24GB(10%)뿐이다. 이 프로젝트의 모든 산출물
 
 ## 계정은 전부 신규
 
-GitHub · Vercel · Supabase 모두 **새로 가입해서 연결한다. 기존 계정에 절대 연결하지 않는다.**
+GitHub · Vercel · Supabase **프로젝트 주인은** 새로 만든 계정이다. 저장소 주인을 기존 계정으로 바꾸지 않는다.
 
+- GitHub 저장소 주인: `lucyhappy0912-wq`
+- **이 PC에서 Git·푸시의 기본 계정은 항상 `sungheum1986-dev`다.** Collaborator로 작업한다. `lucyhappy0912-wq`나 `leegtdss`로 로그인·자격 증명을 바꾸지 않는다. `cmdkey /delete`로 GitHub 로그인을 지우고 다른 계정으로 다시 붙이지 않는다
 - `git remote add`, `vercel link`, `vercel deploy`, `gh auth login` 을 에이전트가 실행하지 않는다. 대표가 직접 한다
 - **Supabase MCP 도구를 호출하지 않는다.** 사용자 전역 설정의 서버가 기존 계정 프로젝트에 인증된 채 살아 있고, 서브에이전트는 부모의 MCP를 그대로 상속한다. `.cursor/hooks.json` 이 호출을 차단하지만 애초에 시도하지 않는다
 - git 커밋은 이 저장소의 로컬 정체성으로만 한다. 전역 git 정체성을 설정하지 않는다
