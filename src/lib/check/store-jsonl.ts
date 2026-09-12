@@ -7,7 +7,7 @@ import path from "node:path";
 import { compute } from "./compute";
 import { CONSENT_VERSION, INSTRUMENT_VERSION, RETENTION_DAYS } from "./questions";
 import { hashToken, issueResultToken } from "./token";
-import type { CheckListItem, CheckRecord, NewCheckInput } from "./store-types";
+import type { CheckListItem, CheckRecord, CheckUpdateInput, NewCheckInput } from "./store-types";
 
 const FILE = path.join(process.cwd(), "data", "checks.jsonl");
 const PURGE_LOG = path.join(process.cwd(), "data", "check-purge-log.jsonl");
@@ -157,6 +157,37 @@ export async function getCheckJsonl(id: string) {
   if (!record || !isFresh(record)) return null;
   const { resultTokenHash: _hash, ...safe } = record;
   return { record: safe, scores: compute(record.answers) };
+}
+
+export async function updateCheckJsonl(id: string, input: CheckUpdateInput) {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return false;
+  await purgeExpired();
+  const scores = compute(input.answers);
+  let updated = false;
+  writeChain = writeChain.then(async () => {
+    const rows = await readAll();
+    const index = rows.findIndex((row) => row.id === id);
+    if (index < 0 || !isFresh(rows[index])) return;
+    const prev = rows[index];
+    rows[index] = {
+      ...prev,
+      answers: input.answers,
+      identity: {
+        ...prev.identity,
+        name: input.name,
+        phone: input.phone,
+        email: input.email,
+        industry: input.industry,
+        founderJourney: input.founderJourney,
+        contactConsent: prev.identity.contactConsent && input.contactConsent,
+      },
+      scores: { total: scores.total, band: scores.band, areas: scores.areas },
+    };
+    await replaceAll(rows);
+    updated = true;
+  });
+  await writeChain;
+  return updated;
 }
 
 export async function removeCheckJsonl(id: string) {

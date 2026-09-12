@@ -2,29 +2,49 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { deleteCheck } from "@/app/admin/checks/actions";
+import { AdminCheckAreas } from "@/app/admin/checks/AdminCheckAreas";
 import { AdminShell } from "@/app/admin/_components/AdminShell";
 import { CheckReport } from "@/components/check/CheckReport";
 import { requireAdmin } from "@/lib/auth/dal";
+import { BAND_COPY } from "@/lib/check/copy";
 import { formatPhoneDisplay } from "@/lib/check/mask";
-import { AREAS, LIKERT_LABELS, QUESTIONS } from "@/lib/check/questions";
 import { getCheckForAdmin } from "@/lib/check/store";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
+const VIEWS = [
+  { id: "answers", label: "영역 응답", href: "" },
+  { id: "top", label: "상위 3개 분석지", href: "?view=top" },
+  { id: "full", label: "전체 분석지", href: "?view=full" },
+] as const;
+
+type AdminCheckView = (typeof VIEWS)[number]["id"];
+
+function parseView(value: string | undefined): AdminCheckView {
+  if (value === "top" || value === "full") return value;
+  return "answers";
+}
+
 export default async function AdminCheckDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ view?: string }>;
 }) {
   await requireAdmin();
   const { id } = await params;
+  const { view: viewParam } = await searchParams;
+  const view = parseView(viewParam);
   const found = await getCheckForAdmin(id);
   if (!found) notFound();
 
   const { record, scores } = found;
+  const band = BAND_COPY[scores.band];
 
   return (
-    <AdminShell title="분석지 · 응답">
+    <AdminShell title="문답 · 상세">
       <p className="adm-body mb-6">
         <Link href="/admin/checks" className="text-forest underline-offset-2 hover:underline">
           목록으로
@@ -33,6 +53,9 @@ export default async function AdminCheckDetailPage({
 
       <section className="rounded-[6px] border border-ink-15 bg-white p-5">
         <h2 className="adm-h text-forest">응답자</h2>
+        <p className="adm-body mt-2 text-ink-70">
+          {band.label} · 총점 {scores.total}점
+        </p>
         <dl className="mt-4 grid gap-3 sm:grid-cols-2">
           <div>
             <dt className="adm-label text-forest-70">이름</dt>
@@ -71,32 +94,55 @@ export default async function AdminCheckDetailPage({
         </dl>
       </section>
 
-      <section className="mt-6 rounded-[6px] border border-ink-15 bg-white p-5">
-        <h2 className="adm-h text-forest">문항별 답</h2>
-        <ol className="mt-4 space-y-5">
-          {QUESTIONS.map((q) => {
-            const score = record.answers[q.key];
-            const choice = LIKERT_LABELS.find((item) => item.value === score)?.label ?? "";
-            return (
-              <li key={q.key} className="border-b border-ink-10 pb-4 last:border-0 last:pb-0">
-                <p className="adm-label text-forest-70">
-                  {String(q.no).padStart(2, "0")} · {AREAS[q.area].title} · {q.label}
-                </p>
-                <p className="adm-body mt-2 text-ink-90">{q.prompt}</p>
-                <p className="adm-body mt-2 font-medium text-forest">
-                  {score}점 · {choice}
-                </p>
-              </li>
-            );
-          })}
-        </ol>
-      </section>
+      <nav className="mt-6 flex flex-wrap gap-2" aria-label="문답 보기">
+        {VIEWS.map((item) => {
+          const active = item.id === view;
+          return (
+            <Link
+              key={item.id}
+              href={`/admin/checks/${id}${item.href}`}
+              className={cn(
+                "adm-body rounded-[4px] px-3 py-2",
+                active ? "bg-forest text-white" : "border border-ink-15 bg-white text-forest hover:border-forest-30",
+              )}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+        <Link
+          href={`/admin/checks/${id}/edit`}
+          className="adm-body rounded-[4px] border border-ink-15 bg-white px-3 py-2 text-forest hover:border-forest-30"
+        >
+          수정
+        </Link>
+        <a
+          href="#purge"
+          className="adm-body rounded-[4px] border border-danger/30 bg-white px-3 py-2 text-danger"
+        >
+          파기
+        </a>
+      </nav>
 
-      <div className="mt-10">
-        <CheckReport scores={scores} showCta={false} />
-      </div>
+      {view === "answers" ? <AdminCheckAreas answers={record.answers} scores={scores} /> : null}
 
-      <form action={deleteCheck} className="mt-16 rounded-[6px] border border-danger/30 bg-white p-5">
+      {view === "top" ? (
+        <div className="mt-6">
+          <CheckReport scores={scores} showCta={false} variant="priority" />
+        </div>
+      ) : null}
+
+      {view === "full" ? (
+        <div className="mt-6">
+          <CheckReport scores={scores} showCta={false} variant="full" />
+        </div>
+      ) : null}
+
+      <form
+        id="purge"
+        action={deleteCheck}
+        className="mt-16 scroll-mt-6 rounded-[6px] border border-danger/30 bg-white p-5"
+      >
         <input type="hidden" name="id" value={record.id} />
         <h2 className="adm-h text-danger">이 제출 파기</h2>
         <p className="adm-body mt-2 text-ink-70">

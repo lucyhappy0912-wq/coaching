@@ -27,7 +27,8 @@ export default async function CheckResultPage({
         <p className="c1 tracking-[0.2em] text-forest-70 uppercase">Founder Transition Check</p>
         <h1 className="serif t1 mt-4">분석지</h1>
         <p className="b3 mt-4 text-ink-70">
-          21문항 점수를 더한 구간의 분석지입니다. 의학적·심리학적 진단이 아닙니다.
+          총점 구간과 7개 영역 점수는 모두 보입니다. 10점 이상 상위 3개 영역만 별도 분석표가
+          붙습니다. 의학적·심리학적 진단이 아닙니다.
         </p>
         <div className="mt-12">
           <CheckReport scores={found.scores} />

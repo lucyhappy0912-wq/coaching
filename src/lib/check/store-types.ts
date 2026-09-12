@@ -46,3 +46,13 @@ export type NewCheckInput = {
   contactConsent: boolean;
   source: string;
 };
+
+export type CheckUpdateInput = {
+  answers: Answers;
+  name: string;
+  phone: string;
+  email: string;
+  industry: string;
+  founderJourney: string;
+  contactConsent: boolean;
+};

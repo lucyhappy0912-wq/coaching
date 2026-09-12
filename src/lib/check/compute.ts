@@ -7,6 +7,13 @@ import {
   type QuestionKey,
 } from "./questions";
 
+export const PRIORITY_AREA_MIN = 10;
+export const PRIORITY_AREA_FOCUS = 3;
+
+export function isPriorityAreaScore(score: number) {
+  return score >= PRIORITY_AREA_MIN;
+}
+
 export type Answers = Record<QuestionKey, Likert>;
 
 export type CheckScores = {
@@ -17,6 +24,7 @@ export type CheckScores = {
   midKeys: QuestionKey[];
   topAreas: AreaId[];
   quietAreas: AreaId[];
+  priorityAreas: AreaId[];
 };
 
 export function bandOf(total: number): Band {
@@ -52,5 +60,9 @@ export function compute(answers: Answers): CheckScores {
     QUESTIONS.filter((q) => q.area === id).every((q) => answers[q.key] <= 2),
   );
 
-  return { total, band: bandOf(total), areas, highKeys, midKeys, topAreas, quietAreas };
+  const priorityAreas = AREA_IDS.filter((id) => isPriorityAreaScore(areas[id]))
+    .sort((a, b) => areas[b] - areas[a] || AREA_IDS.indexOf(a) - AREA_IDS.indexOf(b))
+    .slice(0, PRIORITY_AREA_FOCUS);
+
+  return { total, band: bandOf(total), areas, highKeys, midKeys, topAreas, quietAreas, priorityAreas };
 }

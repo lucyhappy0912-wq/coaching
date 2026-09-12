@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 
 import { compute } from "./compute";
 import { CONSENT_VERSION, INSTRUMENT_VERSION, RETENTION_DAYS } from "./questions";
-import type { CheckListItem, CheckRecord, NewCheckInput } from "./store-types";
+import type { CheckListItem, CheckRecord, CheckUpdateInput, NewCheckInput } from "./store-types";
 import { supabaseConfig } from "./store-mode";
 import { hashToken, issueResultToken } from "./token";
 
@@ -222,6 +222,31 @@ export async function getCheckSupabase(id: string) {
   const record = toRecord(row);
   const { resultTokenHash: _hash, ...safe } = record;
   return { record: safe, scores: compute(record.answers) };
+}
+
+export async function updateCheckSupabase(id: string, input: CheckUpdateInput) {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return false;
+  await purgeExpired();
+  const found = await getCheckSupabase(id);
+  if (!found) return false;
+  const scores = compute(input.answers);
+  const contactConsent = found.record.identity.contactConsent && input.contactConsent;
+  await rest<unknown>(`check_responses?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      name: input.name,
+      phone: input.phone,
+      email: input.email,
+      industry: input.industry,
+      founder_journey: input.founderJourney,
+      contact_consent: contactConsent,
+      answers: input.answers,
+      total: scores.total,
+      band: scores.band,
+      areas: scores.areas,
+    }),
+  });
+  return true;
 }
 
 export async function removeCheckSupabase(id: string) {
