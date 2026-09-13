@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import type { CmsCoach, CmsSite, PhotoTone } from "@/lib/cms/types";
 
@@ -55,12 +56,16 @@ function statusOf(pending: boolean, state: SaveState, idle: string) {
 }
 
 function useSaved<T>(initial: T, state: SaveState, current: T) {
+  const router = useRouter();
   const [saved, setSaved] = useState(initial);
   const currentRef = useRef(current);
   currentRef.current = current;
   useEffect(() => {
-    if (state.ok && state.stamp) setSaved(currentRef.current);
-  }, [state.ok, state.stamp]);
+    if (state.ok && state.stamp) {
+      setSaved(currentRef.current);
+      router.refresh();
+    }
+  }, [state.ok, state.stamp, router]);
   return saved;
 }
 

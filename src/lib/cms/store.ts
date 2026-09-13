@@ -37,6 +37,14 @@ async function readRemoteContent() {
   return mergeCms(rows[0]?.data);
 }
 
+/** 전체 `data` 가 깨져도 푸터용 site 만이라도 관리자 저장분을 쓴다. */
+async function readRemoteSite() {
+  const rows = await cmsRest<{ site: CmsData["site"] }[]>(
+    "cms_content?id=eq.site&select=site:data->site",
+  );
+  return mergeCms({ site: rows[0]?.site });
+}
+
 /** 쓰기 전에 쓴다. 실패하면 시드로 숨기지 않는다. */
 export async function readContentForWrite() {
   if (cmsEnabled()) return readRemoteContent();
@@ -49,7 +57,11 @@ export const getContent = cache(async (): Promise<CmsData> => {
     try {
       return await readRemoteContent();
     } catch {
-      return cmsSeed();
+      try {
+        return await readRemoteSite();
+      } catch {
+        return cmsSeed();
+      }
     }
   }
   return mergeCms(await readLocalContent());

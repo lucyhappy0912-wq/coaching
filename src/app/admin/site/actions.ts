@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/dal";
+import { cmsFailMessage } from "@/lib/cms/client";
 import { patchContent } from "@/lib/cms/store";
 import type { CmsCoach, CmsFaq, CmsSite, PhotoTone } from "@/lib/cms/types";
 
@@ -14,8 +15,8 @@ function toneOf(value: string, fallback: PhotoTone): PhotoTone {
 
 export type SaveState = { ok: boolean; error?: string; stamp?: number };
 
-function fail(): SaveState {
-  return { ok: false, error: "저장하지 못했습니다. 저장소 연결을 확인하세요." };
+function fail(error?: unknown): SaveState {
+  return { ok: false, error: cmsFailMessage(error) };
 }
 
 function ok(): SaveState {
@@ -23,9 +24,17 @@ function ok(): SaveState {
 }
 
 function revalidateSite() {
+  revalidatePath("/", "layout");
   revalidatePath("/");
   revalidatePath("/faq");
   revalidatePath("/coach");
+  revalidatePath("/consult");
+  revalidatePath("/privacy");
+  revalidatePath("/check");
+  revalidatePath("/coaching");
+  revalidatePath("/way");
+  revalidatePath("/belief");
+  revalidatePath("/story");
   revalidatePath("/admin/site");
   revalidatePath("/admin/faq");
 }
@@ -48,8 +57,8 @@ export async function saveContact(_prev: SaveState, formData: FormData): Promise
   };
   try {
     await patchContent({ site });
-  } catch {
-    return fail();
+  } catch (error) {
+    return fail(error);
   }
   revalidateSite();
   return ok();
@@ -70,8 +79,8 @@ export async function saveCoach(_prev: SaveState, formData: FormData): Promise<S
   };
   try {
     await patchContent({ coach });
-  } catch {
-    return fail();
+  } catch (error) {
+    return fail(error);
   }
   revalidateSite();
   return ok();
@@ -87,8 +96,8 @@ export async function saveFaqs(_prev: SaveState, formData: FormData): Promise<Sa
     .filter((item) => item.q && item.a);
   try {
     await patchContent({ faqs });
-  } catch {
-    return fail();
+  } catch (error) {
+    return fail(error);
   }
   revalidateSite();
   return ok();

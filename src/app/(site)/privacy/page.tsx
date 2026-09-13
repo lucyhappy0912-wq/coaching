@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 
-import { SITE } from "@/lib/site";
+import { getContent } from "@/lib/cms/store";
 import { Container } from "@/components/ui/Container";
 
 export const metadata: Metadata = {
   title: "개인정보처리방침",
 };
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const { site } = await getContent();
   return (
     <div className="bg-white pt-(--header-h)">
       <Container className="mx-auto max-w-3xl py-16 lg:py-24">
@@ -38,7 +39,7 @@ export default function PrivacyPage() {
 
         <h2 className="serif t3 mt-12">3. 문의</h2>
         <p className="b3 mt-4 text-ink-70">
-          {SITE.email} · {SITE.phone}
+          {site.email} · {site.phone}
         </p>
       </Container>
     </div>

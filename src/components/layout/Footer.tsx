@@ -6,6 +6,23 @@ import type { CmsSite } from "@/lib/cms/types";
 import { DEFAULT_MENU_OFF, isMenuHrefOn } from "@/lib/menu";
 import { FOOTER_LINKS, SITE } from "@/lib/site";
 
+function footerNav(site: CmsSite) {
+  const brand = FOOTER_LINKS.find((group) => group.title === "Brand");
+  return [
+    ...(brand ? [brand] : []),
+    {
+      title: "Help",
+      items: [
+        { label: "무료 상담 신청", href: "/consult" },
+        { label: "Founder Transition Check", href: "/check" },
+        { label: "개인정보처리방침", href: "/privacy" },
+        { label: site.email, href: `mailto:${site.email}` },
+        { label: site.phone, href: `tel:${site.phone.replace(/-/g, "")}` },
+      ],
+    },
+  ];
+}
+
 export function Footer({
   site = SITE,
   menuOff = DEFAULT_MENU_OFF,
@@ -32,7 +49,7 @@ export function Footer({
           <p>Address. {site.addressLine}</p>
         </div>
 
-        {FOOTER_LINKS.map((group) => (
+        {footerNav(site).map((group) => (
           <nav key={group.title} className="text-[13px] lg:text-[15px]">
             <p className="lined mb-4 inline-block">{group.title}</p>
             <ul className="space-y-1.5">
