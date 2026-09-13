@@ -28,7 +28,7 @@ export default async function CheckResultPage({
         <p className="c1 tracking-[0.2em] text-forest-70 uppercase">Founder Transition Check</p>
         <h1 className="serif t1 mt-4">Founder Transition 결과 분석</h1>
         {found.record.identity.name.trim() ? (
-          <p className="b3 mt-4 text-ink-70">
+          <p className="serif t3 mt-6 text-forest">
             {found.record.identity.name.trim()}님은 총점 {found.scores.total}점으로{" "}
             {BAND_RESULT_NAME[found.scores.band]}에 해당합니다.
           </p>
