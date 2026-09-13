@@ -71,6 +71,9 @@ export async function togglePagePublic(href: string) {
     return { ok: false as const, error: "저장하지 못했습니다. 저장소 연결을 확인하세요." };
   }
   revalidatePath("/", "layout");
+  revalidatePath("/");
+  revalidatePath("/coaching");
+  revalidatePath("/check");
   revalidatePath("/admin/pages");
   revalidatePath("/admin/menu");
   return { ok: true as const };

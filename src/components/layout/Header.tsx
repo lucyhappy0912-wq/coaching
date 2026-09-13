@@ -6,18 +6,16 @@ import { useEffect, useState } from "react";
 import { Phone, Search, X } from "lucide-react";
 
 import type { CmsSite } from "@/lib/cms/types";
-import { DEFAULT_MENU_OFF, visibleMenuGroups } from "@/lib/menu";
+import { DEFAULT_MENU_OFF, visibleMenuGroups, type MenuGroup } from "@/lib/menu";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export function Header({
   site = SITE,
-  menuOff = DEFAULT_MENU_OFF,
-  menuOn = [],
+  groups,
 }: {
   site?: CmsSite;
-  menuOff?: readonly string[];
-  menuOn?: readonly string[];
+  groups?: MenuGroup[];
 }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -107,7 +105,7 @@ export function Header({
       {menuOpen && (
         <div className="max-h-[calc(100vh-var(--header-h))] overflow-y-auto border-t border-ink-10 bg-white text-forest">
           <div className="grid gap-10 px-(--gutter) py-10 lg:grid-cols-3 lg:gap-16 lg:py-14">
-            {visibleMenuGroups(menuOff, menuOn).map((group) => (
+            {(groups ?? visibleMenuGroups(DEFAULT_MENU_OFF)).map((group) => (
               <div key={group.title}>
                 <p className="c1 mb-5 tracking-[0.2em] text-stem uppercase">{group.title}</p>
                 <ul className="space-y-3.5">

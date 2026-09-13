@@ -19,13 +19,15 @@ export async function saveMenu(_prev: SaveState, formData: FormData): Promise<Sa
   const off = hrefs.filter((href) => !on.includes(href));
   try {
     await patchContent({
-      menuOff: sanitizeMenuOff(off),
+      menuOff: sanitizeMenuOff(off, on),
       menuOn: sanitizeMenuOn(on),
     });
   } catch {
     return fail();
   }
   revalidatePath("/", "layout");
+  revalidatePath("/");
+  revalidatePath("/coaching");
   revalidatePath("/admin/menu");
   return { ok: true, stamp: Date.now() };
 }

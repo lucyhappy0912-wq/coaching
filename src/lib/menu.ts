@@ -25,15 +25,6 @@ export function canToggleHref(href: string) {
   return TOGGLE_HREFS.has(href);
 }
 
-export function sanitizeMenuOff(raw: unknown): string[] {
-  if (!Array.isArray(raw)) return [...DEFAULT_MENU_OFF];
-  return [
-    ...new Set(
-      raw.filter((href): href is string => typeof href === "string" && TOGGLE_HREFS.has(href)),
-    ),
-  ];
-}
-
 export function sanitizeMenuOn(raw: unknown): string[] {
   if (!Array.isArray(raw)) return [];
   return [
@@ -43,8 +34,18 @@ export function sanitizeMenuOn(raw: unknown): string[] {
   ];
 }
 
-export function isMenuHrefOn(href: string, menuOff: readonly string[], menuOn: readonly string[] = []) {
-  if (DEFAULT_HIDDEN.has(href)) return menuOn.includes(href);
+/** 저장된 값이 비어 있어도 기본 숨김 페이지는 켜기 전까지 메뉴에서 뺀다. */
+export function sanitizeMenuOff(raw: unknown, menuOn: unknown = []): string[] {
+  const enabled = new Set(sanitizeMenuOn(menuOn));
+  const extra = Array.isArray(raw)
+    ? raw.filter((href): href is string => typeof href === "string" && TOGGLE_HREFS.has(href))
+    : [...DEFAULT_MENU_OFF];
+  const off = new Set<string>([...DEFAULT_MENU_OFF, ...extra]);
+  for (const href of enabled) off.delete(href);
+  return [...off];
+}
+
+export function isMenuHrefOn(href: string, menuOff: readonly string[], _menuOn: readonly string[] = []) {
   return !menuOff.includes(href);
 }
 
@@ -55,15 +56,19 @@ export function nextMenuVisibility(
 ): { menuOff: string[]; menuOn: string[] } {
   if (!TOGGLE_HREFS.has(href)) return { menuOff: [...menuOff], menuOn: [...menuOn] };
   const on = isMenuHrefOn(href, menuOff, menuOn);
-  if (DEFAULT_HIDDEN.has(href)) {
+  if (on) {
     return {
-      menuOff: [...menuOff],
-      menuOn: on ? menuOn.filter((item) => item !== href) : [...menuOn, href],
+      menuOff: sanitizeMenuOff([...menuOff, href], menuOn.filter((item) => item !== href)),
+      menuOn: sanitizeMenuOn(menuOn.filter((item) => item !== href)),
     };
   }
+  const nextOn = DEFAULT_HIDDEN.has(href) ? [...menuOn, href] : [...menuOn];
   return {
-    menuOn: [...menuOn],
-    menuOff: on ? [...menuOff, href] : menuOff.filter((item) => item !== href),
+    menuOff: sanitizeMenuOff(
+      menuOff.filter((item) => item !== href),
+      nextOn,
+    ),
+    menuOn: sanitizeMenuOn(nextOn),
   };
 }
 

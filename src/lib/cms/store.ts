@@ -3,6 +3,8 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { cache } from "react";
 
+import { unstable_noStore as noStore } from "next/cache";
+
 import { cmsEnabled, cmsRest, cmsWritable } from "./client";
 import { readLocalContent, writeLocalContent } from "./local";
 import { mergePages } from "./merge-pages";
@@ -25,12 +27,13 @@ function mergeCms(raw: Partial<CmsData> | null | undefined): CmsData {
     },
     faqs: raw.faqs?.length ? raw.faqs : seed.faqs,
     pages: mergePages(raw.pages, seed.pages),
-    menuOff: sanitizeMenuOff(raw.menuOff),
     menuOn: sanitizeMenuOn(raw.menuOn),
+    menuOff: sanitizeMenuOff(raw.menuOff, raw.menuOn),
   };
 }
 
 export const getContent = cache(async (): Promise<CmsData> => {
+  noStore();
   if (cmsEnabled()) {
     try {
       const rows = await cmsRest<{ data: CmsData }[]>("cms_content?id=eq.site&select=data");
