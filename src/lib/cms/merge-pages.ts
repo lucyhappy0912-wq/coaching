@@ -4,6 +4,12 @@ function pick(raw: string | undefined, seed: string) {
   return raw === undefined ? seed : raw;
 }
 
+/** 예전에 시드에 박혀 저장소에 남은 문구는 새 시드로 교체한다. */
+function pickHomeCta(raw: string | undefined, seed: string) {
+  if (raw === undefined || raw === "Stage Transition 더 알아보기") return seed;
+  return raw;
+}
+
 function mediaOf(raw: Partial<MediaRef> | undefined, seed: MediaRef): MediaRef {
   return {
     tone: raw?.tone ?? seed.tone,
@@ -66,7 +72,7 @@ export function mergePages(raw: Partial<CmsPages> | undefined, seed: CmsPages): 
           title: pick(next?.title, item.title),
           lead: next?.lead?.length ? next.lead : item.lead,
           href: pick(next?.href, item.href),
-          cta: pick(next?.cta, item.cta),
+          cta: pickHomeCta(next?.cta, item.cta),
         };
       }),
     },
