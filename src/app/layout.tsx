@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant, Mulish, Noto_Sans_KR } from "next/font/google";
 
 import { SITE } from "@/lib/site";
+import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const cormorant = Cormorant({
@@ -28,20 +29,23 @@ const notoSansKr = Noto_Sans_KR({
 const SHARE_TITLE = "멈춘자 | 스타트업 창업자를 리더로.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
   title: {
     default: SHARE_TITLE,
     template: "%s | 멈춘자",
   },
   description: SITE.description,
   openGraph: {
-    title: SHARE_TITLE,
+    title: "멈춘자",
     description: SITE.description,
+    url: "/",
+    siteName: "멈춘자",
     type: "website",
     locale: "ko_KR",
   },
   twitter: {
-    card: "summary",
-    title: SHARE_TITLE,
+    card: "summary_large_image",
+    title: "멈춘자",
     description: SITE.description,
   },
 };
