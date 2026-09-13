@@ -87,9 +87,6 @@ export function Header({
           <button type="button" aria-label="검색" className="transition-opacity hover:opacity-60">
             <Search className="size-[18px]" strokeWidth={1.4} />
           </button>
-          <Link href="/consult" className="serif text-[20px] leading-none lg:text-[26px]">
-            Consult
-          </Link>
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}

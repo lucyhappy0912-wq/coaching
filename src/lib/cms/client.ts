@@ -14,6 +14,9 @@ export function cmsWritable() {
 export function cmsFailMessage(error: unknown) {
   const code = error instanceof Error ? error.message : "";
   if (code === "CMS_STORE_READONLY") return "저장소 주소와 키가 없습니다.";
+  if (code.includes("PGRST205")) {
+    return "저장 표(cms_content)가 없습니다. Supabase SQL Editor에서 CMS 마이그레이션을 실행해 주세요.";
+  }
   if (code.startsWith("CMS_STORE_FAILED:")) {
     const hint = code.slice("CMS_STORE_FAILED:".length);
     return hint ? `저장소가 거절했습니다 (${hint}).` : "저장소가 거절했습니다.";
