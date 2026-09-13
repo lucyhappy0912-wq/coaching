@@ -22,7 +22,10 @@ export async function submitConsult(_prev: ConsultState, formData: FormData): Pr
   } catch (error) {
     const code = error instanceof Error ? error.message : "";
     if (code === "LEAD_INVALID") {
-      return { status: "error", message: "이름과 연락처를 정확히 입력해 주세요." };
+      return { status: "error", message: "이름을 정확히 입력해 주세요." };
+    }
+    if (code === "LEAD_PHONE") {
+      return { status: "error", message: "휴대폰 번호는 010으로 시작하는 번호를 넣어 주세요." };
     }
     if (code === "LEAD_STORE_READONLY" || code === "STORE_READONLY") {
       return { status: "error", message: "지금은 신청을 받을 수 없습니다. 전화로 문의해 주세요." };

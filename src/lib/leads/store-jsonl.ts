@@ -4,6 +4,8 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import { digitsOnly, isKoreanMobile } from "@/lib/phone";
+
 import type { Lead, LeadListItem, LeadStatus } from "./types";
 
 const FILE = path.join(process.cwd(), "data", "leads.jsonl");
@@ -73,11 +75,11 @@ export function cleanLeadName(value: string) {
 
 export function validateLead(input: { name: string; phone: string; preferredTime: string; message: string }) {
   const name = cleanLeadName(input.name);
-  const phone = input.phone.replace(/\D/g, "");
+  const phone = digitsOnly(input.phone);
   const preferredTime = input.preferredTime.trim().slice(0, 60);
   const message = input.message.trim().slice(0, 1000);
   if (name.length < 2 || name.length > 40) throw new Error("LEAD_INVALID");
-  if (phone.length < 10 || phone.length > 11) throw new Error("LEAD_INVALID");
+  if (!isKoreanMobile(phone)) throw new Error("LEAD_PHONE");
   return { name, phone, preferredTime, message };
 }
 

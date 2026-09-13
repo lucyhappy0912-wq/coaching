@@ -1,13 +1,15 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { submitConsult, type ConsultState } from "@/app/(site)/consult-actions";
 import { HoneypotField } from "@/components/ui/HoneypotField";
+import { formatMobileInput } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 
 export function ConsultForm() {
   const [state, action, pending] = useActionState(submitConsult, { status: "idle" } satisfies ConsultState);
+  const [phone, setPhone] = useState("");
 
   if (state.status === "done") {
     return (
@@ -38,8 +40,11 @@ export function ConsultForm() {
             inputMode="numeric"
             autoComplete="tel"
             placeholder="010-1234-5678"
+            value={phone}
+            onChange={(event) => setPhone(formatMobileInput(event.target.value))}
             className={inputClass}
           />
+          <p className="b3 mt-2 text-ink-70">숫자만 넣으면 됩니다. 예: 01012345678</p>
         </Field>
         <Field label="상담 희망 시간" htmlFor="preferredTime" className="sm:col-span-2">
           <input
@@ -57,6 +62,7 @@ export function ConsultForm() {
         <input
           type="checkbox"
           name="agree"
+          required
           className="mt-1 size-3.5 shrink-0 rounded-none border-ink-50 accent-forest"
         />
         <span>
