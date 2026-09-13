@@ -63,9 +63,10 @@ export async function togglePagePublic(href: string) {
   await requireAdmin();
   if (!cmsWritable()) return { ok: false as const, error: "이 환경에서는 저장할 수 없습니다." };
   if (!canToggleHref(href)) return { ok: false as const, error: "이 페이지는 숨길 수 없습니다." };
+  let next: { menuOff: string[]; menuOn: string[] };
   try {
     const current = await getContent();
-    const next = nextMenuVisibility(href, current.menuOff, current.menuOn);
+    next = nextMenuVisibility(href, current.menuOff, current.menuOn);
     await patchContent(next);
   } catch {
     return { ok: false as const, error: "저장하지 못했습니다. 저장소 연결을 확인하세요." };
@@ -74,7 +75,8 @@ export async function togglePagePublic(href: string) {
   revalidatePath("/");
   revalidatePath("/coaching");
   revalidatePath("/check");
+  revalidatePath(href);
   revalidatePath("/admin/pages");
   revalidatePath("/admin/menu");
-  return { ok: true as const };
+  return { ok: true as const, menuOff: next.menuOff, menuOn: next.menuOn };
 }

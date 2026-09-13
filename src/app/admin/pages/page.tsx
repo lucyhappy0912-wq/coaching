@@ -14,8 +14,8 @@ export default async function AdminPagesIndex() {
   return (
     <AdminShell title="페이지" subtitle="사진·영상·글을 페이지마다 고칩니다">
       <p className="adm-body text-ink-70">
-        큰 제목은 사이트 메뉴 이름입니다. 아래 작은 제목으로 어떤 페이지인지 고릅니다. 눈 아이콘을
-        누르면 메뉴에 보일지 바로 바뀝니다.
+        카드 왼쪽은 글을 고치는 화면입니다. 오른쪽 눈을 누르면 그 페이지가 사이트 메뉴에서 빠지고,
+        주소로 들어와도 열리지 않습니다. 다시 누르면 공개됩니다.
       </p>
       <PageCards menuOff={content.menuOff} menuOn={content.menuOn} canSave={cmsWritable()} />
     </AdminShell>
