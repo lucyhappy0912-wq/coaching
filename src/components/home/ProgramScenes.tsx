@@ -58,7 +58,7 @@ export function ProgramScenes({ programs }: { programs: CmsHomeProgram[] }) {
                 railLeft && "lg:order-1"
               )}
             >
-              <div className="max-w-md">
+              <div className="max-w-(--measure-narrow)">
                 <h2
                   className={cn(
                     "serif text-[26px] leading-[1.2] md:text-[32px] lg:text-[40px]",

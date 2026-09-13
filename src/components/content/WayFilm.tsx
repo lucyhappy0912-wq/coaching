@@ -35,7 +35,7 @@ export function WayFilm({ page }: { page: CmsPages["way"] }) {
               <Photo src={item.image} video={item.video} tone={item.tone} alt={item.title} className="absolute inset-0" />
             </div>
             <div className="flex w-full items-center px-0 py-10 lg:w-1/2 lg:px-14">
-              <div className="max-w-[420px] text-white">
+              <div className="max-w-(--measure-narrow) text-white">
                 <p className="b2 space-y-6">
                   <span className="block">{item.body[0]}</span>
                   <span className="mt-6 block">{item.body[1]}</span>

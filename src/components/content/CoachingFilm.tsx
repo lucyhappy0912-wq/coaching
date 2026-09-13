@@ -82,7 +82,7 @@ export function CoachingFilm({
                 />
               </div>
               <div className="flex w-full items-center px-0 py-10 lg:w-1/2 lg:px-14">
-                <div className="max-w-[420px] text-white">
+                <div className="max-w-(--measure-narrow) text-white">
                   <p className="text-[13px] tracking-[0.14em] text-white/55">{item.eyebrow}</p>
                   {shown ? (
                     <Link

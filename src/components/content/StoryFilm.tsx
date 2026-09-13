@@ -75,7 +75,7 @@ export function StoryFilm({ slides }: { slides: CmsPages["story"]["slides"] }) {
 
       <div className="absolute top-[calc(var(--header-h)+48px)] bottom-16 left-(--gutter) right-(--gutter) z-10 max-w-[520px] lg:left-1/2 lg:right-(--gutter) lg:max-w-none">
         <h1 className="text-[26px] leading-snug whitespace-pre-line lg:text-[30px]">{current.title}</h1>
-        <div className="b3 mt-6 max-w-[500px] space-y-5 text-white/90">
+        <div className="b3 mt-6 max-w-(--measure-narrow) space-y-5 text-white/90">
           {current.lines.map((line) => (
             <p key={line}>{line}</p>
           ))}
