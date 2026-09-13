@@ -26,10 +26,10 @@ export default async function CheckResultPage({
       <Container className="mx-auto max-w-3xl py-8 sm:py-16 lg:py-24">
         <p className="c1 tracking-[0.2em] text-forest-70 uppercase">Founder Transition Check</p>
         <h1 className="serif t1 mt-4">Founder Transition 결과 분석</h1>
-        {found.scores.band === "PRIORITY" && found.identity.name.trim() ? (
+        {found.scores.band === "PRIORITY" && found.record.identity.name.trim() ? (
           <p className="b3 mt-4 text-ink-70">
-            {found.identity.name.trim()}님은 총점 {found.scores.total}점으로 Transition Priority에
-            해당합니다.
+            {found.record.identity.name.trim()}님은 총점 {found.scores.total}점으로 Transition
+            Priority에 해당합니다.
           </p>
         ) : null}
         <div className="mt-12">
