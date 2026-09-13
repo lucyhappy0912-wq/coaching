@@ -13,3 +13,5 @@ export function checkStoreMode(): CheckStoreMode {
   if (process.env.VERCEL) return "readonly";
   return "jsonl";
 }
+
+export const dataStoreMode = checkStoreMode;

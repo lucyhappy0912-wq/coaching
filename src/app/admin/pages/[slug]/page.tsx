@@ -20,7 +20,7 @@ export default async function AdminPageEditor({ params }: { params: Promise<{ sl
   const content = await getContent();
 
   return (
-    <AdminShell title={meta?.title ?? "페이지"} wide>
+    <AdminShell title={meta?.title ?? "페이지"} subtitle={meta?.subtitle} wide>
       <PagesEditor slug={key} initial={pageSlice(content.pages, key)} canSave={cmsWritable()} />
     </AdminShell>
   );

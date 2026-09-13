@@ -12,10 +12,10 @@ export default async function AdminPagesIndex() {
   const content = await getContent();
 
   return (
-    <AdminShell title="페이지">
+    <AdminShell title="페이지" subtitle="사진·영상·글을 페이지마다 고칩니다">
       <p className="adm-body text-ink-70">
-        공개 페이지의 사진·영상·글을 페이지마다 고칩니다. 눈 아이콘을 누르면 사이트 메뉴에 보일지
-        바로 바뀝니다.
+        큰 제목은 사이트 메뉴 이름입니다. 아래 작은 제목으로 어떤 페이지인지 고릅니다. 눈 아이콘을
+        누르면 메뉴에 보일지 바로 바뀝니다.
       </p>
       <PageCards menuOff={content.menuOff} menuOn={content.menuOn} canSave={cmsWritable()} />
     </AdminShell>

@@ -91,7 +91,7 @@ export default async function AdminHomePage() {
                 className="block rounded-[6px] border border-ink-15 bg-white px-4 py-3 text-forest hover:bg-ink-05"
               >
                 <p className="adm-body">{item.title}</p>
-                <p className="adm-meta mt-1 text-ink-70">{item.preview}</p>
+                <p className="adm-meta mt-1 text-ink-70">{item.subtitle}</p>
               </Link>
             </li>
           ))}

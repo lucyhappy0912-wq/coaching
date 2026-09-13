@@ -9,11 +9,13 @@ import type { AdminCounts } from "./counts";
 
 export function AdminFrame({
   title,
+  subtitle,
   wide,
   counts,
   children,
 }: {
   title: string;
+  subtitle?: string;
   wide?: boolean;
   counts: AdminCounts;
   children: React.ReactNode;
@@ -61,10 +63,14 @@ export function AdminFrame({
           >
             메뉴
           </button>
-          <p className="adm-h truncate text-forest">{title}</p>
+          <div className="min-w-0">
+            <p className="adm-h truncate text-forest">{title}</p>
+            {subtitle ? <p className="adm-meta truncate text-ink-70">{subtitle}</p> : null}
+          </div>
         </header>
         <main className={wide ? "flex-1 px-6 py-6 pb-28" : "mx-auto w-full max-w-[880px] flex-1 px-6 py-6 pb-28"}>
           <h1 className="adm-title hidden text-forest md:block">{title}</h1>
+          {subtitle ? <p className="adm-body mt-1 hidden text-ink-70 md:block">{subtitle}</p> : null}
           <div className="md:mt-6">{children}</div>
         </main>
       </div>

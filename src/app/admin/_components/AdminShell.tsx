@@ -5,10 +5,12 @@ import { AdminFrame } from "./AdminFrame";
 
 export async function AdminShell({
   title,
+  subtitle,
   wide = false,
   children,
 }: {
   title: string;
+  subtitle?: string;
   wide?: boolean;
   children: React.ReactNode;
 }) {
@@ -19,7 +21,7 @@ export async function AdminShell({
   };
 
   return (
-    <AdminFrame title={title} wide={wide} counts={counts}>
+    <AdminFrame title={title} subtitle={subtitle} wide={wide} counts={counts}>
       {children}
     </AdminFrame>
   );
