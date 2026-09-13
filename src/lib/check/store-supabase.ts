@@ -58,6 +58,7 @@ async function rest<T>(path: string, init: RequestInit = {}): Promise<T> {
   });
   const text = await res.text();
   if (!res.ok) {
+    const hint = /PGRST\d+/.exec(text)?.[0] ?? /22P02|23502|23505/.exec(text)?.[0] ?? String(res.status);
     if (res.status === 401 || res.status === 403) throw new Error("CHECK_STORE_AUTH");
     if (
       res.status === 404 ||
@@ -67,14 +68,8 @@ async function rest<T>(path: string, init: RequestInit = {}): Promise<T> {
     ) {
       throw new Error("CHECK_STORE_NO_TABLE");
     }
-    if (
-      text.includes("PGRST204") ||
-      text.includes("industry") ||
-      text.includes("founder_journey")
-    ) {
-      throw new Error("CHECK_STORE_MISSING_COLUMN");
-    }
-    throw new Error("CHECK_STORE_WRITE_FAILED");
+    if (text.includes("PGRST204")) throw new Error(`CHECK_STORE_MISSING_COLUMN:${hint}`);
+    throw new Error(`CHECK_STORE_WRITE_FAILED:${hint}`);
   }
   if (!text) return [] as T;
   return JSON.parse(text) as T;
@@ -104,8 +99,8 @@ function toRecord(row: Row): CheckRecord {
   };
 }
 
-function toRow(record: CheckRecord, withProfile = true): Row {
-  const row: Row = {
+function toCoreRow(record: CheckRecord) {
+  return {
     id: record.id,
     created_at: record.createdAt,
     instrument: record.instrument,
@@ -124,11 +119,6 @@ function toRow(record: CheckRecord, withProfile = true): Row {
     band: record.scores.band,
     areas: record.scores.areas,
   };
-  if (withProfile) {
-    row.industry = record.identity.industry;
-    row.founder_journey = record.identity.founderJourney;
-  }
-  return row;
 }
 
 async function purgeExpired() {
@@ -184,17 +174,20 @@ export async function saveCheckSupabase(input: NewCheckInput) {
     purgeAt: new Date(createdAt.getTime() + RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString(),
     scores: { total: scores.total, band: scores.band, areas: scores.areas },
   };
+  await rest<Row[]>("check_responses", {
+    method: "POST",
+    body: JSON.stringify(toCoreRow(record)),
+  });
   try {
-    await rest<Row[]>("check_responses", {
-      method: "POST",
-      body: JSON.stringify(toRow(record)),
+    await rest<unknown>(`check_responses?id=eq.${encodeURIComponent(record.id)}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        industry: record.identity.industry,
+        founder_journey: record.identity.founderJourney,
+      }),
     });
-  } catch (error) {
-    if (!(error instanceof Error) || error.message !== "CHECK_STORE_MISSING_COLUMN") throw error;
-    await rest<Row[]>("check_responses", {
-      method: "POST",
-      body: JSON.stringify(toRow(record, false)),
-    });
+  } catch {
+    // 업종 칸이 없는 표에도 제출은 남겨 둔다.
   }
   return { token, record, scores };
 }

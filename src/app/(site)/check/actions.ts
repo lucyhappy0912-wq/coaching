@@ -67,11 +67,16 @@ export async function submitCheck(
     if (code === "CHECK_STORE_NO_TABLE") {
       return { error: "저장 표가 없습니다. Supabase SQL Editor에서 check_responses 마이그레이션을 실행해 주세요." };
     }
-    if (code === "CHECK_STORE_MISSING_COLUMN") {
-      return { error: "저장 표에 업종·창업기간 칸이 없습니다. Supabase SQL Editor에서 20260912_check_profile.sql을 실행해 주세요." };
+    if (code.startsWith("CHECK_STORE_MISSING_COLUMN")) {
+      return { error: "저장 표에 필요한 칸이 없습니다. Supabase SQL Editor에서 check_responses 마이그레이션을 실행해 주세요." };
     }
-    if (code === "CHECK_STORE_WRITE_FAILED") {
-      return { error: "저장소에 제출을 넣지 못했습니다. 잠시 후 다시 시도해 주세요." };
+    if (code.startsWith("CHECK_STORE_WRITE_FAILED")) {
+      const hint = code.split(":")[1];
+      return {
+        error: hint
+          ? `저장소가 제출을 거절했습니다 (${hint}).`
+          : "저장소에 제출을 넣지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      };
     }
     return { error: "제출을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
   }
