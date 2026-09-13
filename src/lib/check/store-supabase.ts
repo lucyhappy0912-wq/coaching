@@ -208,10 +208,10 @@ export async function saveCheckSupabase(input: NewCheckInput) {
     if (!(error instanceof Error) || !error.message.startsWith("CHECK_STORE_MISSING_COLUMN")) {
       throw error;
     }
-    const { industry: _i, founder_journey: _j, ...rest } = row;
+    const { industry: _i, founder_journey: _j, ...withoutProfileColumns } = row;
     await rest<Row[]>("check_responses", {
       method: "POST",
-      body: JSON.stringify(rest),
+      body: JSON.stringify(withoutProfileColumns),
     });
   }
   return { token, record, scores };
