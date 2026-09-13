@@ -75,6 +75,18 @@ export async function setLeadStatus(id: string, status: LeadStatus) {
   return setLeadStatusJsonl(id, status);
 }
 
+/** 목록·상세를 열면 신규 뱃지를 내린다. React cache를 거치지 않는다. */
+export async function markNewLeadsSeen(id?: string) {
+  await requireAdmin();
+  if (dataStoreMode() === "readonly") return;
+  const rows =
+    dataStoreMode() === "supabase" ? await listLeadsSupabase() : await listLeadsJsonl();
+  const targets = id
+    ? rows.filter((row) => row.id === id && row.status === "new")
+    : rows.filter((row) => row.status === "new");
+  await Promise.all(targets.map((row) => setLeadStatus(row.id, "contacted")));
+}
+
 export async function removeLead(id: string) {
   await requireAdmin();
   assertWritable();

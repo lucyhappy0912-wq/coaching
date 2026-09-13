@@ -109,6 +109,8 @@ function toCoreRow(record: CheckRecord) {
     name: record.identity.name,
     phone: record.identity.phone,
     email: record.identity.email,
+    industry: record.identity.industry,
+    founder_journey: record.identity.founderJourney,
     contact_consent: record.identity.contactConsent,
     consent_at: record.identity.consentAt,
     consent_version: record.identity.consentVersion,
@@ -178,17 +180,6 @@ export async function saveCheckSupabase(input: NewCheckInput) {
     method: "POST",
     body: JSON.stringify(toCoreRow(record)),
   });
-  try {
-    await rest<unknown>(`check_responses?id=eq.${encodeURIComponent(record.id)}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        industry: record.identity.industry,
-        founder_journey: record.identity.founderJourney,
-      }),
-    });
-  } catch {
-    // 업종 칸이 없는 표에도 제출은 남겨 둔다.
-  }
   return { token, record, scores };
 }
 

@@ -4,7 +4,7 @@ import { AdminShell } from "@/app/admin/_components/AdminShell";
 import { requireAdmin } from "@/lib/auth/dal";
 import { maskName, maskPhone } from "@/lib/check/mask";
 import { dataStoreMode } from "@/lib/check/store-mode";
-import { listLeadsForAdmin } from "@/lib/leads/store";
+import { listLeadsForAdmin, markNewLeadsSeen } from "@/lib/leads/store";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +16,7 @@ const STATUS: Record<string, string> = {
 
 export default async function AdminInquiriesPage() {
   await requireAdmin();
+  await markNewLeadsSeen();
   const rows = await listLeadsForAdmin();
 
   return (

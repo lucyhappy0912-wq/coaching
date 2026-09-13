@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { AdminShell } from "@/app/admin/_components/AdminShell";
 import { requireAdmin } from "@/lib/auth/dal";
 import { formatPhoneDisplay } from "@/lib/check/mask";
-import { getLeadForAdmin } from "@/lib/leads/store";
+import { getLeadForAdmin, markNewLeadsSeen } from "@/lib/leads/store";
 
 import { deleteLead, updateLeadStatus } from "../actions";
 
@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminInquiryDetail({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
   const { id } = await params;
+  await markNewLeadsSeen(id);
   const row = await getLeadForAdmin(id);
   if (!row) notFound();
 
