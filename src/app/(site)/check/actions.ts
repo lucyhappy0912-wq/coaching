@@ -1,10 +1,12 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { isLikert, type Answers } from "@/lib/check/compute";
 import { QUESTION_KEYS, type QuestionKey } from "@/lib/check/questions";
 import { getScoresByIdentity, saveCheck } from "@/lib/check/store";
+import { honeypotFilled } from "@/lib/honeypot";
 
 import type { FindCheckState } from "./find-state";
 
@@ -26,9 +28,8 @@ export async function submitCheck(
   const agree = formData.get("agree") === "on";
   const contactConsent = formData.get("contactConsent") === "on";
   const source = String(formData.get("source") ?? "direct").slice(0, 40);
-  const honey = String(formData.get("website") ?? "");
 
-  if (honey) return { error: null };
+  if (honeypotFilled(formData)) return { error: null };
   if (name.length < 2) return { error: "이름을 정확히 입력해 주세요." };
   if (phone.length < 10) return { error: "연락처를 정확히 입력해 주세요." };
   if (!EMAIL.test(email)) return { error: "이메일 주소를 정확히 입력해 주세요." };
@@ -66,9 +67,13 @@ export async function submitCheck(
     if (code === "CHECK_STORE_NO_TABLE") {
       return { error: "저장 표가 없습니다. Supabase SQL Editor에서 check_responses 마이그레이션을 실행해 주세요." };
     }
+    if (code === "CHECK_STORE_WRITE_FAILED") {
+      return { error: "제출을 파일에 쓰지 못했습니다. 잠시 후 다시 시도해 주세요." };
+    }
     return { error: "제출을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
   }
 
+  revalidatePath("/admin/checks");
   redirect(`/check/r/${token}`);
 }
 
@@ -80,8 +85,6 @@ export async function findCheckReport(
   const name = String(formData.get("name") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").replace(/\D/g, "");
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  const honey = String(formData.get("website") ?? "");
-
   const miss = {
     error: "입력하신 정보로 분석지를 찾지 못했습니다. 제출 때 넣은 내용을 확인해 주세요.",
     scores: null,
@@ -93,7 +96,7 @@ export async function findCheckReport(
     return state;
   }
 
-  if (honey) return done({ error: null, scores: null });
+  if (honeypotFilled(formData)) return done({ error: null, scores: null });
   if (name.length < 2) return done({ error: "이름을 정확히 입력해 주세요.", scores: null });
   if (phone.length < 10) return done({ error: "연락처를 정확히 입력해 주세요.", scores: null });
   if (!EMAIL.test(email)) return done({ error: "이메일 주소를 정확히 입력해 주세요.", scores: null });

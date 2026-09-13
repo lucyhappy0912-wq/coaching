@@ -3,9 +3,16 @@
 import { usePathname } from "next/navigation";
 
 import type { CmsSite } from "@/lib/cms/types";
+import { DEFAULT_MENU_OFF, isMenuHrefOn } from "@/lib/menu";
 import { FOOTER_LINKS, SITE } from "@/lib/site";
 
-export function Footer({ site = SITE }: { site?: CmsSite }) {
+export function Footer({
+  site = SITE,
+  menuOff = DEFAULT_MENU_OFF,
+}: {
+  site?: CmsSite;
+  menuOff?: readonly string[];
+}) {
   const pathname = usePathname();
   if (pathname === "/story") return null;
 
@@ -27,7 +34,7 @@ export function Footer({ site = SITE }: { site?: CmsSite }) {
           <nav key={group.title} className="text-[13px] lg:text-[15px]">
             <p className="lined mb-4 inline-block">{group.title}</p>
             <ul className="space-y-1.5">
-              {group.items.map((item) => (
+              {group.items.filter((item) => isMenuHrefOn(item.href, menuOff)).map((item) => (
                 <li key={item.label}>
                   <a href={item.href} className="transition-opacity hover:opacity-60">
                     {item.label}

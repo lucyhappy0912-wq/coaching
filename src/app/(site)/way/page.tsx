@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { WayFilm } from "@/components/content/WayFilm";
+import { assertPublicHref } from "@/lib/cms/assert-public";
 import { getContent } from "@/lib/cms/store";
 import { WAY } from "@/lib/content";
 
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function WayPage() {
+  await assertPublicHref("/way");
   const { pages } = await getContent();
   return <WayFilm page={pages.way} />;
 }

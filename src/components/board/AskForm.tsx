@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { submitQuestion, type BoardAskState } from "@/app/(site)/board-actions";
+import { HoneypotField } from "@/components/ui/HoneypotField";
 import { cn } from "@/lib/utils";
 
 const inputClass =
@@ -21,7 +22,7 @@ export function AskForm() {
 
   return (
     <form action={action} className="border border-ink-10 bg-white p-6 lg:p-8">
-      <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
+      <HoneypotField />
       <p className="serif text-[20px] text-forest">질문하기</p>
       <div className="mt-6 space-y-6">
         <label className="block">

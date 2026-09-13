@@ -3,11 +3,12 @@
 import { revalidatePath } from "next/cache";
 
 import { createLead } from "@/lib/leads/store";
+import { honeypotFilled } from "@/lib/honeypot";
 
 export type ConsultState = { status: "idle" | "done" | "error"; message?: string };
 
 export async function submitConsult(_prev: ConsultState, formData: FormData): Promise<ConsultState> {
-  if (String(formData.get("website") ?? "")) return { status: "done" };
+  if (honeypotFilled(formData)) return { status: "done" };
   if (formData.get("agree") !== "on") {
     return { status: "error", message: "개인정보 수집·이용에 동의해 주세요." };
   }

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { CheckForm } from "@/components/check/CheckForm";
 import { Photo } from "@/components/ui/Photo";
 import { Container } from "@/components/ui/Container";
+import { assertPublicHref } from "@/lib/cms/assert-public";
 import { getContent } from "@/lib/cms/store";
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default async function CheckPage({
 }: {
   searchParams: Promise<{ src?: string }>;
 }) {
+  await assertPublicHref("/check");
   const { src } = await searchParams;
   const source = src && /^[a-z0-9_-]{1,40}$/i.test(src) ? src : "direct";
   const { pages } = await getContent();

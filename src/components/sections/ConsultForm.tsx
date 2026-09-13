@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { submitConsult, type ConsultState } from "@/app/(site)/consult-actions";
+import { HoneypotField } from "@/components/ui/HoneypotField";
 import { cn } from "@/lib/utils";
 
 export function ConsultForm() {
@@ -23,7 +24,7 @@ export function ConsultForm() {
 
   return (
     <form action={action} className="bg-white p-7 lg:p-10">
-      <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
+      <HoneypotField />
       <div className="grid gap-7 sm:grid-cols-2">
         <Field label="이름" htmlFor="name">
           <input id="name" name="name" required autoComplete="name" className={inputClass} />

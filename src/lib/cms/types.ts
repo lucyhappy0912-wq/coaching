@@ -115,6 +115,7 @@ export type CmsData = {
   coach: CmsCoach;
   faqs: CmsFaq[];
   pages: CmsPages;
+  menuOff: string[];
 };
 
 export type CmsPost = {

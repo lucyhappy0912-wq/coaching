@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { SectionPage } from "@/components/layout/PageFrame";
 import { Faq } from "@/components/sections/Faq";
+import { assertPublicHref } from "@/lib/cms/assert-public";
 import { getContent } from "@/lib/cms/store";
 
 export const metadata: Metadata = {
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function FaqPage() {
+  await assertPublicHref("/faq");
   const content = await getContent();
   return (
     <SectionPage>

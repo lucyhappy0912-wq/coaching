@@ -3,11 +3,12 @@
 import { revalidatePath } from "next/cache";
 
 import { createQuestion } from "@/lib/board/store";
+import { honeypotFilled } from "@/lib/honeypot";
 
 export type BoardAskState = { status: "idle" | "done" | "error"; message?: string };
 
 export async function submitQuestion(_prev: BoardAskState, formData: FormData): Promise<BoardAskState> {
-  if (String(formData.get("website") ?? "")) return { status: "done" };
+  if (honeypotFilled(formData)) return { status: "done" };
   try {
     await createQuestion({
       name: String(formData.get("name") ?? ""),

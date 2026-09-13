@@ -6,9 +6,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const content = await getContent();
   return (
     <div className="flex min-h-svh flex-col">
-      <Header site={content.site} />
+      <Header site={content.site} menuOff={content.menuOff} />
       <main className="flex-1">{children}</main>
-      <Footer site={content.site} />
+      <Footer site={content.site} menuOff={content.menuOff} />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { findCheckReport } from "@/app/(site)/check/actions";
 import type { FindCheckState } from "@/app/(site)/check/find-state";
 import { CheckReport } from "@/components/check/CheckReport";
+import { HoneypotField } from "@/components/ui/HoneypotField";
 
 const initial: FindCheckState = { error: null, scores: null };
 
@@ -22,7 +23,7 @@ export function CheckViewForm() {
           문답 제출 때 넣은 이름·전화번호·이메일을 그대로 입력해 주세요. 가장 최근 제출 한 건의
           분석지만 보여 드립니다.
         </p>
-        <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" />
+        <HoneypotField />
         <div className="mt-8 grid gap-6">
           <label className="block">
             <span className="c1 mb-2 block tracking-[0.12em] text-forest-70 uppercase">이름</span>

@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 
 import { submitCheck, type CheckFormState } from "@/app/(site)/check/actions";
+import { HoneypotField } from "@/components/ui/HoneypotField";
 import { isLikert } from "@/lib/check/compute";
 import {
   AREA_IDS,
@@ -290,7 +291,7 @@ export function CheckForm({ source }: { source: string }) {
   }
 
   return (
-    <form action={action} className="space-y-10 sm:space-y-14">
+    <form action={action} className="relative space-y-10 sm:space-y-14">
       <input type="hidden" name="source" value={source} />
       <input type="hidden" name="name" value={identity.name} />
       <input type="hidden" name="phone" value={identity.phone} />
@@ -299,7 +300,7 @@ export function CheckForm({ source }: { source: string }) {
       <input type="hidden" name="founderJourney" value={identity.founderJourney} />
       <input type="hidden" name="agree" value="on" />
       {identity.contactConsent && <input type="hidden" name="contactConsent" value="on" />}
-      <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" />
+      <HoneypotField />
       {QUESTIONS.map((q) =>
         answers[q.key] ? (
           <input key={q.key} type="hidden" name={q.key} value={answers[q.key]} />

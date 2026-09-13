@@ -3,10 +3,12 @@ import Link from "next/link";
 import { AskForm } from "@/components/board/AskForm";
 import { SectionPage } from "@/components/layout/PageFrame";
 import { listPublishedQuestions } from "@/lib/board/store";
+import { assertPublicHref } from "@/lib/cms/assert-public";
 
 export const dynamic = "force-dynamic";
 
 export default async function BoardPage() {
+  await assertPublicHref("/board");
   const questions = await listPublishedQuestions();
   return (
     <SectionPage>

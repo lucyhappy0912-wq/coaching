@@ -28,7 +28,10 @@ const GROUPS = [
   },
   {
     label: "설정",
-    items: [{ href: "/admin/site", label: "사이트 정보" }],
+    items: [
+      { href: "/admin/site", label: "사이트 정보" },
+      { href: "/admin/menu", label: "메뉴" },
+    ],
   },
 ];
 

@@ -1,3 +1,4 @@
+import { DEFAULT_MENU_OFF } from "@/lib/menu";
 import { COACH, FAQS, HERO_SLIDES, SITE, TOP_MESSAGES } from "@/lib/site";
 
 import { pagesSeed } from "./pages-seed";
@@ -11,5 +12,6 @@ export function cmsSeed(): CmsData {
     coach: { ...COACH, credentials: [...COACH.credentials] },
     faqs: FAQS.map((item) => ({ ...item })),
     pages: pagesSeed(),
+    menuOff: [...DEFAULT_MENU_OFF],
   };
 }
