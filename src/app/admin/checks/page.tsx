@@ -101,10 +101,10 @@ export default async function AdminChecksPage() {
                   </td>
                   <td className="adm-body whitespace-nowrap py-3.5 pr-6 text-ink-90">{row.email}</td>
                   <td className="adm-body whitespace-nowrap py-3.5 pr-6 text-ink-90">
-                    {row.industry || "—"}
+                    {row.industry}
                   </td>
                   <td className="adm-body whitespace-nowrap py-3.5 pr-6 text-ink-90">
-                    {row.founderJourney || "—"}
+                    {row.founderJourney}
                   </td>
                   <td className="adm-body whitespace-nowrap py-3.5 pr-6 text-ink-90">
                     {BAND_COPY[row.band].label}

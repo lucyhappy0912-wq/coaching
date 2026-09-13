@@ -69,14 +69,18 @@ export default async function AdminCheckDetailPage({
             <dt className="adm-label text-forest-70">이메일</dt>
             <dd className="adm-body mt-1 break-all text-ink-90">{record.identity.email}</dd>
           </div>
-          <div>
-            <dt className="adm-label text-forest-70">Industry (업종)</dt>
-            <dd className="adm-body mt-1 text-ink-90">{record.identity.industry || "—"}</dd>
-          </div>
-          <div>
-            <dt className="adm-label text-forest-70">Founder Journey</dt>
-            <dd className="adm-body mt-1 text-ink-90">{record.identity.founderJourney || "—"}</dd>
-          </div>
+          {record.identity.industry ? (
+            <div>
+              <dt className="adm-label text-forest-70">Industry (업종)</dt>
+              <dd className="adm-body mt-1 whitespace-nowrap text-ink-90">{record.identity.industry}</dd>
+            </div>
+          ) : null}
+          {record.identity.founderJourney ? (
+            <div>
+              <dt className="adm-label text-forest-70">Founder Journey</dt>
+              <dd className="adm-body mt-1 whitespace-nowrap text-ink-90">{record.identity.founderJourney}</dd>
+            </div>
+          ) : null}
           <div>
             <dt className="adm-label text-forest-70">프로그램 연락</dt>
             <dd className="adm-body mt-1 text-ink-90">

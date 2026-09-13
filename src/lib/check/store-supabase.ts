@@ -2,8 +2,8 @@ import "server-only";
 
 import { randomUUID } from "node:crypto";
 
-import { compute, type CheckScores } from "./compute";
-import { CONSENT_VERSION, INSTRUMENT_VERSION, RETENTION_DAYS } from "./questions";
+import { compute, isLikert, type Answers, type CheckScores } from "./compute";
+import { CONSENT_VERSION, INSTRUMENT_VERSION, QUESTIONS, RETENTION_DAYS } from "./questions";
 import type { CheckListItem, CheckRecord, CheckUpdateInput, NewCheckInput } from "./store-types";
 import { supabaseConfig } from "./store-mode";
 import { hashToken, issueResultToken } from "./token";
@@ -75,19 +75,41 @@ async function rest<T>(path: string, init: RequestInit = {}): Promise<T> {
   return JSON.parse(text) as T;
 }
 
+const INDUSTRY_KEY = "__industry";
+const JOURNEY_KEY = "__founderJourney";
+
+function packAnswers(answers: Answers, industry: string, founderJourney: string) {
+  return { ...answers, [INDUSTRY_KEY]: industry, [JOURNEY_KEY]: founderJourney };
+}
+
+function unpackAnswers(raw: unknown) {
+  const obj = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+  const answers = {} as Answers;
+  for (const q of QUESTIONS) {
+    const n = Number(obj[q.key]);
+    if (isLikert(n)) answers[q.key] = n;
+  }
+  return {
+    answers,
+    industry: typeof obj[INDUSTRY_KEY] === "string" ? obj[INDUSTRY_KEY] : "",
+    founderJourney: typeof obj[JOURNEY_KEY] === "string" ? obj[JOURNEY_KEY] : "",
+  };
+}
+
 function toRecord(row: Row): CheckRecord {
+  const packed = unpackAnswers(row.answers);
   return {
     id: row.id,
     createdAt: row.created_at,
     instrument: "founder-transition-check",
     instrumentVersion: row.instrument_version,
-    answers: row.answers,
+    answers: packed.answers,
     identity: {
       name: row.name,
       phone: row.phone,
       email: row.email,
-      industry: row.industry ?? "",
-      founderJourney: row.founder_journey ?? "",
+      industry: (row.industry ?? "").trim() || packed.industry,
+      founderJourney: (row.founder_journey ?? "").trim() || packed.founderJourney,
       contactConsent: row.contact_consent,
       consentAt: row.consent_at,
       consentVersion: row.consent_version,
@@ -105,7 +127,7 @@ function toCoreRow(record: CheckRecord) {
     created_at: record.createdAt,
     instrument: record.instrument,
     instrument_version: record.instrumentVersion,
-    answers: record.answers,
+    answers: packAnswers(record.answers, record.identity.industry, record.identity.founderJourney),
     name: record.identity.name,
     phone: record.identity.phone,
     email: record.identity.email,
@@ -176,10 +198,22 @@ export async function saveCheckSupabase(input: NewCheckInput) {
     purgeAt: new Date(createdAt.getTime() + RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString(),
     scores: { total: scores.total, band: scores.band, areas: scores.areas },
   };
-  await rest<Row[]>("check_responses", {
-    method: "POST",
-    body: JSON.stringify(toCoreRow(record)),
-  });
+  const row = toCoreRow(record);
+  try {
+    await rest<Row[]>("check_responses", {
+      method: "POST",
+      body: JSON.stringify(row),
+    });
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.startsWith("CHECK_STORE_MISSING_COLUMN")) {
+      throw error;
+    }
+    const { industry: _i, founder_journey: _j, ...rest } = row;
+    await rest<Row[]>("check_responses", {
+      method: "POST",
+      body: JSON.stringify(rest),
+    });
+  }
   return { token, record, scores };
 }
 
@@ -261,7 +295,7 @@ export async function updateCheckSupabase(id: string, input: CheckUpdateInput) {
     phone: input.phone,
     email: input.email,
     contact_consent: contactConsent,
-    answers: input.answers,
+    answers: packAnswers(input.answers, input.industry, input.founderJourney),
     total: scores.total,
     band: scores.band,
     areas: scores.areas,

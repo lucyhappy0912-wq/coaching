@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 
 import { updateCheck } from "@/app/admin/checks/actions";
 import type { UpdateCheckState } from "@/app/admin/checks/search";
@@ -33,6 +33,12 @@ export function AdminCheckEditForm({
   answers: Answers;
 }) {
   const [state, action, pending] = useActionState(updateCheck, initial);
+  const errorRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (!state.error) return;
+    errorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [state.error]);
 
   return (
     <form action={action} className="mt-6 space-y-6">
@@ -143,7 +149,15 @@ export function AdminCheckEditForm({
         );
       })}
 
-      {state.error ? <p className="adm-body text-danger">{state.error}</p> : null}
+      {state.error ? (
+        <p
+          ref={errorRef}
+          role="alert"
+          className="adm-body rounded-[4px] border border-danger/30 bg-danger-tint px-4 py-3 text-danger"
+        >
+          {state.error}
+        </p>
+      ) : null}
       <button
         type="submit"
         disabled={pending}
