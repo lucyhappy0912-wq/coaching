@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/dal";
 import { applyPageSlice } from "@/lib/cms/page-keys";
-import { cmsWritable } from "@/lib/cms/client";
-import { getContent, patchContent } from "@/lib/cms/store";
+import { cmsFailMessage, cmsWritable } from "@/lib/cms/client";
+import { patchContent, readContentForWrite } from "@/lib/cms/store";
 import { PAGE_KEYS, type PageKey } from "@/lib/cms/types";
 import { canToggleHref, nextMenuVisibility } from "@/lib/menu";
 
@@ -27,7 +27,7 @@ export async function savePageSlice(_prev: SaveState, formData: FormData): Promi
     return { ok: false, error: "저장 형식이 올바르지 않습니다." };
   }
   try {
-    const current = await getContent();
+    const current = await readContentForWrite();
     await patchContent({ pages: applyPageSlice(current.pages, slug, slice) });
   } catch {
     return { ok: false, error: "저장하지 못했습니다. 저장소 연결을 확인하세요." };
@@ -65,11 +65,11 @@ export async function togglePagePublic(href: string) {
   if (!canToggleHref(href)) return { ok: false as const, error: "이 페이지는 숨길 수 없습니다." };
   let next: { menuOff: string[]; menuOn: string[] };
   try {
-    const current = await getContent();
+    const current = await readContentForWrite();
     next = nextMenuVisibility(href, current.menuOff, current.menuOn);
     await patchContent(next);
-  } catch {
-    return { ok: false as const, error: "저장하지 못했습니다. 저장소 연결을 확인하세요." };
+  } catch (error) {
+    return { ok: false as const, error: cmsFailMessage(error) };
   }
   revalidatePath("/", "layout");
   revalidatePath("/");

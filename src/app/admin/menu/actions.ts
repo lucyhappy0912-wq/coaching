@@ -3,13 +3,14 @@
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/dal";
+import { cmsFailMessage } from "@/lib/cms/client";
 import { patchContent } from "@/lib/cms/store";
 import { menuToggleItems, sanitizeMenuOff, sanitizeMenuOn } from "@/lib/menu";
 
 import type { SaveState } from "../site/actions";
 
-function fail(): SaveState {
-  return { ok: false, error: "저장하지 못했습니다. 저장소 연결을 확인하세요." };
+function fail(error?: unknown): SaveState {
+  return { ok: false, error: cmsFailMessage(error) };
 }
 
 export async function saveMenu(_prev: SaveState, formData: FormData): Promise<SaveState> {
@@ -22,8 +23,8 @@ export async function saveMenu(_prev: SaveState, formData: FormData): Promise<Sa
       menuOff: sanitizeMenuOff(off, on),
       menuOn: sanitizeMenuOn(on),
     });
-  } catch {
-    return fail();
+  } catch (error) {
+    return fail(error);
   }
   revalidatePath("/", "layout");
   revalidatePath("/");

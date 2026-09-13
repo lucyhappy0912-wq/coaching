@@ -32,12 +32,22 @@ function mergeCms(raw: Partial<CmsData> | null | undefined): CmsData {
   };
 }
 
+async function readRemoteContent() {
+  const rows = await cmsRest<{ data: CmsData }[]>("cms_content?id=eq.site&select=data");
+  return mergeCms(rows[0]?.data);
+}
+
+/** 쓰기 전에 쓴다. 실패하면 시드로 숨기지 않는다. */
+export async function readContentForWrite() {
+  if (cmsEnabled()) return readRemoteContent();
+  return mergeCms(await readLocalContent());
+}
+
 export const getContent = cache(async (): Promise<CmsData> => {
   noStore();
   if (cmsEnabled()) {
     try {
-      const rows = await cmsRest<{ data: CmsData }[]>("cms_content?id=eq.site&select=data");
-      return mergeCms(rows[0]?.data);
+      return await readRemoteContent();
     } catch {
       return cmsSeed();
     }
@@ -46,7 +56,7 @@ export const getContent = cache(async (): Promise<CmsData> => {
 });
 
 export async function patchContent(patch: Partial<CmsData>) {
-  const current = await getContent();
+  const current = await readContentForWrite();
   return saveContent({
     site: patch.site ?? current.site,
     topMessages: patch.topMessages ?? current.topMessages,
@@ -66,16 +76,19 @@ export async function saveContent(data: CmsData) {
     await writeLocalContent(next);
     return next;
   }
-  await cmsRest("cms_content", {
-    method: "POST",
-    headers: { Prefer: "return=representation,resolution=merge-duplicates" },
-    body: JSON.stringify({
-      id: "site",
-      data: next,
-      revision: 1,
-      updated_at: new Date().toISOString(),
-    }),
-  });
+  const now = new Date().toISOString();
+  const existing = await cmsRest<{ id: string }[]>("cms_content?id=eq.site&select=id");
+  if (existing[0]) {
+    await cmsRest("cms_content?id=eq.site", {
+      method: "PATCH",
+      body: JSON.stringify({ data: next, updated_at: now }),
+    });
+  } else {
+    await cmsRest("cms_content", {
+      method: "POST",
+      body: JSON.stringify({ id: "site", data: next, revision: 1, updated_at: now }),
+    });
+  }
   return next;
 }
 
