@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Phone, Search, X } from "lucide-react";
+import { X } from "lucide-react";
 
 import type { CmsSite } from "@/lib/cms/types";
 import { DEFAULT_MENU_OFF, visibleMenuGroups, type MenuGroup } from "@/lib/menu";
@@ -77,16 +77,6 @@ export function Header({
         </nav>
 
         <div className="flex items-center gap-4">
-          <a
-            href={`tel:${site.phone.replace(/-/g, "")}`}
-            aria-label="전화 문의"
-            className="transition-opacity hover:opacity-60"
-          >
-            <Phone className="size-[18px]" strokeWidth={1.4} />
-          </a>
-          <button type="button" aria-label="검색" className="transition-opacity hover:opacity-60">
-            <Search className="size-[18px]" strokeWidth={1.4} />
-          </button>
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
