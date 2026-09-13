@@ -256,21 +256,34 @@ export async function updateCheckSupabase(id: string, input: CheckUpdateInput) {
   if (!found) return false;
   const scores = compute(input.answers);
   const contactConsent = found.record.identity.contactConsent && input.contactConsent;
-  await rest<unknown>(`check_responses?id=eq.${encodeURIComponent(id)}`, {
-    method: "PATCH",
-    body: JSON.stringify({
-      name: input.name,
-      phone: input.phone,
-      email: input.email,
-      industry: input.industry,
-      founder_journey: input.founderJourney,
-      contact_consent: contactConsent,
-      answers: input.answers,
-      total: scores.total,
-      band: scores.band,
-      areas: scores.areas,
-    }),
-  });
+  const core = {
+    name: input.name,
+    phone: input.phone,
+    email: input.email,
+    contact_consent: contactConsent,
+    answers: input.answers,
+    total: scores.total,
+    band: scores.band,
+    areas: scores.areas,
+  };
+  try {
+    await rest<unknown>(`check_responses?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        ...core,
+        industry: input.industry,
+        founder_journey: input.founderJourney,
+      }),
+    });
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.startsWith("CHECK_STORE_MISSING_COLUMN")) {
+      throw error;
+    }
+    await rest<unknown>(`check_responses?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      body: JSON.stringify(core),
+    });
+  }
   return true;
 }
 

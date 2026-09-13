@@ -76,7 +76,15 @@ export async function updateCheck(
       contactConsent,
     });
     if (!ok) return { error: "제출을 저장하지 못했습니다." };
-  } catch {
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "";
+    if (code.startsWith("CHECK_STORE_MISSING_COLUMN")) {
+      return {
+        error:
+          "저장 표에 업종·창업 기간 칸이 없습니다. Supabase SQL Editor에서 20260912_check_profile.sql을 실행해 주세요.",
+      };
+    }
+    if (code === "CHECK_STORE_READONLY") return { error: "배포 저장소가 읽기 전이라 수정할 수 없습니다." };
     return { error: "제출을 저장하지 못했습니다." };
   }
 
