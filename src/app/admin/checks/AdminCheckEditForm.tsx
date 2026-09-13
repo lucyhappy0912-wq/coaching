@@ -66,21 +66,23 @@ export function AdminCheckEditForm({
             />
           </label>
           <label className="block">
-            <span className="adm-label mb-1.5 block text-forest-70">Industry (업종)</span>
+            <span className="adm-label mb-1.5 block text-forest-70">Industry (업종) · 필수</span>
             <input
               name="industry"
               defaultValue={industry}
               required
+              aria-required="true"
               maxLength={80}
               className={inputClass}
             />
           </label>
           <label className="block">
-            <span className="adm-label mb-1.5 block text-forest-70">Founder Journey</span>
+            <span className="adm-label mb-1.5 block text-forest-70">Founder Journey · 필수</span>
             <input
               name="founderJourney"
               defaultValue={founderJourney}
               required
+              aria-required="true"
               maxLength={80}
               className={inputClass}
             />

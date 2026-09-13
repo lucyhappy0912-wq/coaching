@@ -228,11 +228,13 @@ export function CheckForm({ source }: { source: string }) {
           </div>
           <label className="block">
             <span className="c1 mb-2 block tracking-[0.12em] text-forest-70 uppercase">
-              Industry (업종)
+              Industry (업종) · 필수
             </span>
             <input
               value={identity.industry}
               onChange={(e) => setIdentity((prev) => ({ ...prev, industry: e.target.value }))}
+              required
+              aria-required="true"
               maxLength={80}
               placeholder="현재 운영하고 있는 비즈니스 분야를 알려주세요."
               className={inputClass}
@@ -240,11 +242,13 @@ export function CheckForm({ source }: { source: string }) {
           </label>
           <label className="block">
             <span className="c1 mb-2 block tracking-[0.12em] text-forest-70 uppercase">
-              Founder Journey
+              Founder Journey · 필수
             </span>
             <input
               value={identity.founderJourney}
               onChange={(e) => setIdentity((prev) => ({ ...prev, founderJourney: e.target.value }))}
+              required
+              aria-required="true"
               maxLength={80}
               placeholder="창업 후 현재까지의 기간을 알려주세요."
               className={inputClass}
