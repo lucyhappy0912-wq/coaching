@@ -67,6 +67,13 @@ async function rest<T>(path: string, init: RequestInit = {}): Promise<T> {
     ) {
       throw new Error("CHECK_STORE_NO_TABLE");
     }
+    if (
+      text.includes("PGRST204") ||
+      text.includes("industry") ||
+      text.includes("founder_journey")
+    ) {
+      throw new Error("CHECK_STORE_MISSING_COLUMN");
+    }
     throw new Error("CHECK_STORE_WRITE_FAILED");
   }
   if (!text) return [] as T;
@@ -97,8 +104,8 @@ function toRecord(row: Row): CheckRecord {
   };
 }
 
-function toRow(record: CheckRecord): Row {
-  return {
+function toRow(record: CheckRecord, withProfile = true): Row {
+  const row: Row = {
     id: record.id,
     created_at: record.createdAt,
     instrument: record.instrument,
@@ -107,8 +114,6 @@ function toRow(record: CheckRecord): Row {
     name: record.identity.name,
     phone: record.identity.phone,
     email: record.identity.email,
-    industry: record.identity.industry,
-    founder_journey: record.identity.founderJourney,
     contact_consent: record.identity.contactConsent,
     consent_at: record.identity.consentAt,
     consent_version: record.identity.consentVersion,
@@ -119,25 +124,38 @@ function toRow(record: CheckRecord): Row {
     band: record.scores.band,
     areas: record.scores.areas,
   };
+  if (withProfile) {
+    row.industry = record.identity.industry;
+    row.founder_journey = record.identity.founderJourney;
+  }
+  return row;
 }
 
 async function purgeExpired() {
-  const now = new Date().toISOString();
-  const gone = await rest<Pick<Row, "id">[]>(
-    `check_responses?purge_at=lte.${encodeURIComponent(now)}&select=id`,
-  );
-  if (!Array.isArray(gone) || gone.length === 0) return;
-  await rest<Row[]>(`check_responses?purge_at=lte.${encodeURIComponent(now)}`, { method: "DELETE" });
-  await rest<unknown>("check_purge_log", {
-    method: "POST",
-    body: JSON.stringify(
-      gone.map((row) => ({
-        record_id: row.id,
-        purged_at: now,
-        reason: "retention",
-      })),
-    ),
-  });
+  try {
+    const now = new Date().toISOString();
+    const gone = await rest<Pick<Row, "id">[]>(
+      `check_responses?purge_at=lte.${encodeURIComponent(now)}&select=id`,
+    );
+    if (!Array.isArray(gone) || gone.length === 0) return;
+    await rest<Row[]>(`check_responses?purge_at=lte.${encodeURIComponent(now)}`, { method: "DELETE" });
+    try {
+      await rest<unknown>("check_purge_log", {
+        method: "POST",
+        body: JSON.stringify(
+          gone.map((row) => ({
+            record_id: row.id,
+            purged_at: now,
+            reason: "retention",
+          })),
+        ),
+      });
+    } catch {
+      // 파기 기록은 제출을 막지 않는다.
+    }
+  } catch {
+    // 만료 정리는 제출을 막지 않는다.
+  }
 }
 
 export async function saveCheckSupabase(input: NewCheckInput) {
@@ -166,10 +184,18 @@ export async function saveCheckSupabase(input: NewCheckInput) {
     purgeAt: new Date(createdAt.getTime() + RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString(),
     scores: { total: scores.total, band: scores.band, areas: scores.areas },
   };
-  await rest<Row[]>("check_responses", {
-    method: "POST",
-    body: JSON.stringify(toRow(record)),
-  });
+  try {
+    await rest<Row[]>("check_responses", {
+      method: "POST",
+      body: JSON.stringify(toRow(record)),
+    });
+  } catch (error) {
+    if (!(error instanceof Error) || error.message !== "CHECK_STORE_MISSING_COLUMN") throw error;
+    await rest<Row[]>("check_responses", {
+      method: "POST",
+      body: JSON.stringify(toRow(record, false)),
+    });
+  }
   return { token, record, scores };
 }
 
