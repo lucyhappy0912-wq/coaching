@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { CoachingFilm } from "@/components/content/CoachingFilm";
+import { COACHING_LINKS } from "@/components/content/HinokPage";
 import { getContent } from "@/lib/cms/store";
 import { PROGRAM_TEASERS } from "@/lib/content";
 import { isMenuHrefOn } from "@/lib/menu";
@@ -36,7 +37,14 @@ export default async function CoachingIndexPage() {
     <CoachingFilm
       hero={pages.home.moment}
       programs={programs}
-      openHrefs={programs.filter((item) => isMenuHrefOn(item.href, menuOff, menuOn)).map((item) => item.href)}
+      openHrefs={[
+        ...programs.filter((item) => isMenuHrefOn(item.href, menuOff, menuOn)).map((item) => item.href),
+        ...COACHING_LINKS.filter(
+          (item) =>
+            (item.href === "/check" || item.href === "/coaching/leadership") &&
+            isMenuHrefOn(item.href, menuOff, menuOn),
+        ).map((item) => item.href),
+      ]}
     />
   );
 }

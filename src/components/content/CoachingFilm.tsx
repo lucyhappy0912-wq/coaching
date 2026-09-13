@@ -5,13 +5,7 @@ import { Photo } from "@/components/ui/Photo";
 import type { CmsHomeProgram, MediaRef } from "@/lib/cms/types";
 import { cn } from "@/lib/utils";
 
-import { AboutRail } from "./HinokPage";
-
-const COACHING_LINKS = [
-  { href: "#stage", label: "Stage Transition" },
-  { href: "#next-chapter", label: "Next Chapter" },
-  { href: "#founder", label: "Founder Transition" },
-];
+import { AboutRail, COACHING_LINKS } from "./HinokPage";
 
 export type CoachingScene = CmsHomeProgram & {
   axis?: string;
@@ -42,12 +36,17 @@ export function CoachingFilm({
         />
         <div className="absolute inset-0 bg-black/30" />
 
-        <div className="absolute top-[calc(var(--header-h)+28px)] left-(--gutter) z-10 hidden lg:block">
-          <AboutRail title="Coaching" links={COACHING_LINKS} current="/coaching" variant="dark" />
+        <div className="absolute top-[calc(var(--header-h)+28px)] left-(--gutter) z-20 hidden lg:block">
+          <AboutRail
+            title="Coaching"
+            links={COACHING_LINKS.filter((item) => open.has(item.href))}
+            current="/coaching"
+            variant="dark"
+          />
         </div>
 
-        <div className="relative z-10 flex h-full items-end justify-center px-(--gutter) pb-16 text-center lg:pb-24">
-          <div>
+        <div className="pointer-events-none relative z-10 flex h-full items-end justify-center px-(--gutter) pb-16 text-center lg:pb-24">
+          <div className="pointer-events-auto">
             <p className="text-[15px] tracking-[0.18em] text-white/70 uppercase">Coaching</p>
             <h1 className="serif mt-3 text-[40px] leading-none lg:text-[52px]">세 가지 전환</h1>
             <p className="mt-4 text-[15px] text-white/90 lg:text-[17px]">

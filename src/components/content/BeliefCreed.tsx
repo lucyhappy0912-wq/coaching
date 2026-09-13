@@ -9,11 +9,11 @@ export function BeliefCreed({ page }: { page: CmsPages["belief"] }) {
       <section className="relative h-svh min-h-[640px] overflow-hidden text-white">
         <Photo src={page.hero.image} video={page.hero.video} tone={page.hero.tone} alt={page.hero.line} className="absolute inset-0" />
         <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute top-[calc(var(--header-h)+28px)] left-(--gutter) z-10 hidden lg:block">
+        <div className="absolute top-[calc(var(--header-h)+28px)] left-(--gutter) z-20 hidden lg:block">
           <AboutRail title="The Moment" links={MOMENT_LINKS} current="/belief" variant="dark" />
         </div>
-        <div className="relative z-10 flex h-full items-end px-(--gutter) pb-16 lg:pb-24">
-          <div className="max-w-3xl">
+        <div className="pointer-events-none relative z-10 flex h-full items-end px-(--gutter) pb-16 lg:pb-24">
+          <div className="pointer-events-auto max-w-3xl">
             <p className="serif text-[28px] leading-[1.15] lg:text-[44px]">{page.hero.chain}</p>
             <p className="b1 mt-6 text-white/90">{page.hero.line}</p>
           </div>

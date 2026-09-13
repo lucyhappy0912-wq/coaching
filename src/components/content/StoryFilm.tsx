@@ -69,16 +69,18 @@ export function StoryFilm({ slides }: { slides: CmsPages["story"]["slides"] }) {
         </div>
       ))}
 
-      <div className="absolute top-[calc(var(--header-h)+28px)] left-(--gutter) z-10 hidden lg:block">
+      <div className="absolute top-[calc(var(--header-h)+28px)] left-(--gutter) z-20 hidden lg:block">
         <AboutRail title="The Moment" links={MOMENT_LINKS} current="/story" variant="dark" />
       </div>
 
-      <div className="absolute top-[calc(var(--header-h)+48px)] bottom-16 left-(--gutter) right-(--gutter) z-10 max-w-[520px] lg:left-1/2 lg:right-(--gutter) lg:max-w-none">
-        <h1 className="text-[26px] leading-snug whitespace-pre-line lg:text-[30px]">{current.title}</h1>
-        <div className="b3 mt-6 max-w-(--measure-narrow) space-y-5 text-white/90">
-          {current.lines.map((line) => (
-            <p key={line}>{line}</p>
-          ))}
+      <div className="pointer-events-none absolute top-[calc(var(--header-h)+48px)] bottom-16 left-(--gutter) right-(--gutter) z-10 max-w-[520px] lg:left-1/2 lg:right-(--gutter) lg:max-w-none">
+        <div className="pointer-events-auto">
+          <h1 className="text-[26px] leading-snug whitespace-pre-line lg:text-[30px]">{current.title}</h1>
+          <div className="b3 mt-6 max-w-(--measure-narrow) space-y-5 text-white/90">
+            {current.lines.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+          </div>
         </div>
       </div>
 

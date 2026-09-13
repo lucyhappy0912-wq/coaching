@@ -11,12 +11,12 @@ export function WayFilm({ page }: { page: CmsPages["way"] }) {
         <Photo src={page.hero.image} video={page.hero.video} tone={page.hero.tone} alt={page.hero.title} className="absolute inset-0" />
         <div className="absolute inset-0 bg-black/25" />
 
-        <div className="absolute top-[calc(var(--header-h)+28px)] left-(--gutter) z-10 hidden lg:block">
+        <div className="absolute top-[calc(var(--header-h)+28px)] left-(--gutter) z-20 hidden lg:block">
           <AboutRail title="The Moment" links={MOMENT_LINKS} current="/way" variant="dark" />
         </div>
 
-        <div className="relative z-10 flex h-full items-end justify-center px-(--gutter) pb-16 text-center lg:pb-24">
-          <div>
+        <div className="pointer-events-none relative z-10 flex h-full items-end justify-center px-(--gutter) pb-16 text-center lg:pb-24">
+          <div className="pointer-events-auto">
             <h1 className="serif text-[40px] leading-none lg:text-[52px]">{page.hero.eyebrow}</h1>
             <p className="mt-4 text-[15px] text-white/90 lg:text-[17px]">{page.hero.title}</p>
           </div>
