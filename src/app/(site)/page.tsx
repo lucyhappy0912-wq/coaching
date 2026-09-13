@@ -5,11 +5,11 @@ import { getContent } from "@/lib/cms/store";
 import { visibleByHref } from "@/lib/menu";
 
 export default async function Home() {
-  const { pages, menuOff } = await getContent();
+  const { pages, menuOff, menuOn } = await getContent();
   return (
     <>
       <MomentPin moment={pages.home.moment} />
-      <ProgramScenes programs={visibleByHref(pages.home.programs, menuOff)} />
+      <ProgramScenes programs={visibleByHref(pages.home.programs, menuOff, menuOn)} />
       <ConsultCta showCheck={false} />
     </>
   );

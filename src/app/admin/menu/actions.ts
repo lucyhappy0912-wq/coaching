@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/dal";
 import { patchContent } from "@/lib/cms/store";
-import { menuToggleItems, sanitizeMenuOff } from "@/lib/menu";
+import { menuToggleItems, sanitizeMenuOff, sanitizeMenuOn } from "@/lib/menu";
 
 import type { SaveState } from "../site/actions";
 
@@ -14,11 +14,14 @@ function fail(): SaveState {
 
 export async function saveMenu(_prev: SaveState, formData: FormData): Promise<SaveState> {
   await requireAdmin();
-  const off = menuToggleItems()
-    .map((item) => item.href)
-    .filter((href) => formData.get(`on:${href}`) !== "on");
+  const hrefs = menuToggleItems().map((item) => item.href);
+  const on = hrefs.filter((href) => formData.get(`on:${href}`) === "on");
+  const off = hrefs.filter((href) => !on.includes(href));
   try {
-    await patchContent({ menuOff: sanitizeMenuOff(off) });
+    await patchContent({
+      menuOff: sanitizeMenuOff(off),
+      menuOn: sanitizeMenuOn(on),
+    });
   } catch {
     return fail();
   }

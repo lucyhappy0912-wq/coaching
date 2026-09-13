@@ -9,9 +9,11 @@ import { FOOTER_LINKS, SITE } from "@/lib/site";
 export function Footer({
   site = SITE,
   menuOff = DEFAULT_MENU_OFF,
+  menuOn = [],
 }: {
   site?: CmsSite;
   menuOff?: readonly string[];
+  menuOn?: readonly string[];
 }) {
   const pathname = usePathname();
   if (pathname === "/story") return null;
@@ -34,7 +36,7 @@ export function Footer({
           <nav key={group.title} className="text-[13px] lg:text-[15px]">
             <p className="lined mb-4 inline-block">{group.title}</p>
             <ul className="space-y-1.5">
-              {group.items.filter((item) => isMenuHrefOn(item.href, menuOff)).map((item) => (
+              {group.items.filter((item) => isMenuHrefOn(item.href, menuOff, menuOn)).map((item) => (
                 <li key={item.label}>
                   <a href={item.href} className="transition-opacity hover:opacity-60">
                     {item.label}

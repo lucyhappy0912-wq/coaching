@@ -17,7 +17,7 @@ export default async function AdminMenuPage() {
         사이트 상단 메뉴에 어떤 페이지를 보여줄지 정합니다. Next Chapter, Founder, Leadership은
         기본으로 꺼 두었습니다.
       </p>
-      <MenuForm initialOff={content.menuOff} canSave={cmsWritable()} />
+      <MenuForm initialOff={content.menuOff} initialOn={content.menuOn} canSave={cmsWritable()} />
     </AdminShell>
   );
 }

@@ -13,5 +13,6 @@ export function cmsSeed(): CmsData {
     faqs: FAQS.map((item) => ({ ...item })),
     pages: pagesSeed(),
     menuOff: [...DEFAULT_MENU_OFF],
+    menuOn: [],
   };
 }

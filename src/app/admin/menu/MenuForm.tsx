@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useRef, useState } from "react";
 
+import { isMenuHrefOn } from "@/lib/menu";
 import { MENU_GROUPS } from "@/lib/site";
 
 import { SaveBar } from "../_components/SaveBar";
@@ -16,19 +17,30 @@ function groupToggles() {
   })).filter((group) => group.items.length > 0);
 }
 
-export function MenuForm({ initialOff, canSave }: { initialOff: string[]; canSave: boolean }) {
+export function MenuForm({
+  initialOff,
+  initialOn,
+  canSave,
+}: {
+  initialOff: string[];
+  initialOn: string[];
+  canSave: boolean;
+}) {
   const groups = groupToggles();
   const [off, setOff] = useState(initialOff);
-  const offRef = useRef(off);
-  offRef.current = off;
-  const [saved, setSaved] = useState(initialOff);
+  const [onList, setOnList] = useState(initialOn);
+  const visRef = useRef({ off, onList });
+  visRef.current = { off, onList };
+  const [saved, setSaved] = useState({ off: initialOff, onList: initialOn });
   const [state, action, pending] = useActionState(saveMenu, { ok: false } satisfies SaveState);
 
   useEffect(() => {
-    if (state.ok && state.stamp) setSaved(offRef.current);
+    if (state.ok && state.stamp) setSaved(visRef.current);
   }, [state.ok, state.stamp]);
 
-  const dirty = JSON.stringify([...off].sort()) !== JSON.stringify([...saved].sort());
+  const dirty =
+    JSON.stringify([...off].sort()) !== JSON.stringify([...saved.off].sort()) ||
+    JSON.stringify([...onList].sort()) !== JSON.stringify([...saved.onList].sort());
   const status = pending
     ? "저장 중…"
     : state.error
@@ -39,8 +51,9 @@ export function MenuForm({ initialOff, canSave }: { initialOff: string[]; canSav
           ? "저장했습니다. 사이트 메뉴에 바로 반영됩니다."
           : "꺼 둔 항목은 메뉴·푸터·관련 목록에서 빠지고, 주소로 들어와도 열리지 않습니다.";
 
-  function toggle(href: string, on: boolean) {
-    setOff((current) => (on ? current.filter((item) => item !== href) : [...current, href]));
+  function toggle(href: string, nextOn: boolean) {
+    setOff((current) => (nextOn ? current.filter((item) => item !== href) : [...current, href]));
+    setOnList((current) => (nextOn ? [...current, href] : current.filter((item) => item !== href)));
   }
 
   return (
@@ -51,7 +64,7 @@ export function MenuForm({ initialOff, canSave }: { initialOff: string[]; canSav
           <p className="adm-meta mb-4 tracking-[0.16em] text-ink-70">{group.title}</p>
           <ul className="divide-y divide-ink-10">
             {group.items.map((item) => {
-              const on = !off.includes(item.href);
+              const on = isMenuHrefOn(item.href, off, onList);
               return (
                 <li key={item.href} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
                   <div className="min-w-0">
@@ -74,7 +87,15 @@ export function MenuForm({ initialOff, canSave }: { initialOff: string[]; canSav
           </ul>
         </section>
       ))}
-      <SaveBar status={status} pending={pending} disabled={!canSave} onReset={() => setOff(saved)} />
+      <SaveBar
+        status={status}
+        pending={pending}
+        disabled={!canSave}
+        onReset={() => {
+          setOff(saved.off);
+          setOnList(saved.onList);
+        }}
+      />
     </form>
   );
 }

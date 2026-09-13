@@ -116,6 +116,7 @@ export type CmsData = {
   faqs: CmsFaq[];
   pages: CmsPages;
   menuOff: string[];
+  menuOn: string[];
 };
 
 export type CmsPost = {

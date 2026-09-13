@@ -6,7 +6,7 @@ import { cache } from "react";
 import { cmsEnabled, cmsRest, cmsWritable } from "./client";
 import { readLocalContent, writeLocalContent } from "./local";
 import { mergePages } from "./merge-pages";
-import { sanitizeMenuOff } from "@/lib/menu";
+import { sanitizeMenuOff, sanitizeMenuOn } from "@/lib/menu";
 
 import { cmsSeed } from "./seed";
 import type { CmsData, CmsMember, CmsPost } from "./types";
@@ -26,6 +26,7 @@ function mergeCms(raw: Partial<CmsData> | null | undefined): CmsData {
     faqs: raw.faqs?.length ? raw.faqs : seed.faqs,
     pages: mergePages(raw.pages, seed.pages),
     menuOff: sanitizeMenuOff(raw.menuOff),
+    menuOn: sanitizeMenuOn(raw.menuOn),
   };
 }
 
@@ -51,6 +52,7 @@ export async function patchContent(patch: Partial<CmsData>) {
     faqs: patch.faqs ?? current.faqs,
     pages: patch.pages ?? current.pages,
     menuOff: patch.menuOff ?? current.menuOff,
+    menuOn: patch.menuOn ?? current.menuOn,
   });
 }
 

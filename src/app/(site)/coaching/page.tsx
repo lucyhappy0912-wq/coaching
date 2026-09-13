@@ -19,8 +19,8 @@ const BAR: Record<string, string> = {
 };
 
 export default async function CoachingIndexPage() {
-  const { menuOff } = await getContent();
-  const teasers = visibleByHref(PROGRAM_TEASERS, menuOff);
+  const { menuOff, menuOn } = await getContent();
+  const teasers = visibleByHref(PROGRAM_TEASERS, menuOff, menuOn);
 
   return (
     <div className="bg-white pt-(--header-h)">

@@ -7,6 +7,7 @@ import { applyPageSlice } from "@/lib/cms/page-keys";
 import { cmsWritable } from "@/lib/cms/client";
 import { getContent, patchContent } from "@/lib/cms/store";
 import { PAGE_KEYS, type PageKey } from "@/lib/cms/types";
+import { canToggleHref, nextMenuVisibility } from "@/lib/menu";
 
 export type SaveState = { ok: boolean; error?: string; stamp?: number };
 
@@ -56,4 +57,21 @@ function sanitizeSlice(value: unknown): unknown {
     else next[key] = sanitizeSlice(item);
   }
   return next;
+}
+
+export async function togglePagePublic(href: string) {
+  await requireAdmin();
+  if (!cmsWritable()) return { ok: false as const, error: "이 환경에서는 저장할 수 없습니다." };
+  if (!canToggleHref(href)) return { ok: false as const, error: "이 페이지는 숨길 수 없습니다." };
+  try {
+    const current = await getContent();
+    const next = nextMenuVisibility(href, current.menuOff, current.menuOn);
+    await patchContent(next);
+  } catch {
+    return { ok: false as const, error: "저장하지 못했습니다. 저장소 연결을 확인하세요." };
+  }
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/pages");
+  revalidatePath("/admin/menu");
+  return { ok: true as const };
 }
