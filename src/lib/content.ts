@@ -51,7 +51,7 @@ export const PROGRAM_TEASERS: ProgramTeaser[] = [
     ],
     process: ["Deep Awareness", "Self Work", "Coaching", "Integration", "Action"],
     href: "/coaching/stage",
-    cta: "Stage Transition 더 알아보기",
+    cta: "Founder Transition 더 알아보기",
     tone: "sage",
   },
   {
