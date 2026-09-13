@@ -1,5 +1,12 @@
 import type { Band } from "./questions";
 
+export const BAND_RESULT_NAME: Record<Band, string> = {
+  STABLE: "Transition Stable",
+  SIGNAL: "Transition Signal",
+  NEEDED: "Transition Needed",
+  PRIORITY: "Transition Priority",
+};
+
 export const BAND_COPY: Record<
   Band,
   { label: string; range: string; lead: string; need: string; help: string }
