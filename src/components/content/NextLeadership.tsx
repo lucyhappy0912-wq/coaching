@@ -1,4 +1,3 @@
-import { LinedLink, PillButton } from "@/components/ui/Buttons";
 import { Photo } from "@/components/ui/Photo";
 import type { CmsPages } from "@/lib/cms/types";
 
@@ -29,15 +28,6 @@ export function NextLeadership({ page }: { page: CmsPages["leadership"] }) {
             ))}
           </ol>
         </div>
-      </section>
-
-      <section className="flex min-h-[40vh] items-center justify-between gap-8 px-(--gutter) py-16">
-        <PillButton href="/consult" variant="white">
-          1:1 코칭 상담
-        </PillButton>
-        <LinedLink href="/check" className="text-white">
-          founder transition 진단
-        </LinedLink>
       </section>
     </div>
   );

@@ -1,4 +1,3 @@
-import { ConsultCta } from "@/components/content/Journey";
 import { Photo } from "@/components/ui/Photo";
 import type { MediaRef } from "@/lib/cms/types";
 import { FOUNDER_TRANSITION } from "@/lib/founder-transition";
@@ -139,11 +138,6 @@ export function FounderTransition({
           </div>
         </div>
       </section>
-
-      <ConsultCta
-        title={copy.close.eyebrow}
-        body={copy.next.body[copy.next.body.length - 1]}
-      />
     </div>
   );
 }

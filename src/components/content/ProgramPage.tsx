@@ -1,4 +1,4 @@
-import { ConsultCta, ProcessChain } from "@/components/content/Journey";
+import { ProcessChain } from "@/components/content/Journey";
 import { COACHING_LINKS, HinokShell, VisualIntro, VisualStep } from "@/components/content/HinokPage";
 import type { PhotoTone } from "@/lib/cms/types";
 import type { WeekCopy } from "@/lib/content";
@@ -47,7 +47,6 @@ export function ProgramPage({
         ))}
         {extra}
       </HinokShell>
-      <ConsultCta />
     </>
   );
 }

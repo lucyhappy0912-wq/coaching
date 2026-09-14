@@ -38,19 +38,23 @@ export function Footer({
               {group.title === "The Moment" ? "Brand" : group.title}
             </p>
             <ul className="space-y-1.5">
-              {group.items.map((item) => (
+              {group.items.map((item) => {
+                const href = item.href === "/consult" ? "/lift" : item.href;
+                const label = item.href === "/consult" ? "LIFT – Life Architecture" : item.label;
+                return (
                 <li key={item.href}>
-                  {item.href.startsWith("tel:") || item.href.startsWith("mailto:") ? (
-                    <a href={item.href} className="serif text-[13px] transition-opacity hover:opacity-60 lg:text-[15px]">
-                      {item.label}
+                  {href.startsWith("tel:") || href.startsWith("mailto:") ? (
+                    <a href={href} className="serif text-[13px] transition-opacity hover:opacity-60 lg:text-[15px]">
+                      {label}
                     </a>
                   ) : (
-                    <Link href={item.href} className="serif text-[13px] transition-opacity hover:opacity-60 lg:text-[15px]">
-                      {item.label}
+                    <Link href={href} className="serif text-[13px] transition-opacity hover:opacity-60 lg:text-[15px]">
+                      {label}
                     </Link>
                   )}
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </nav>
         ))}

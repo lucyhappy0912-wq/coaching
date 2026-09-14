@@ -1,4 +1,3 @@
-import { ConsultCta } from "@/components/content/Journey";
 import { Photo } from "@/components/ui/Photo";
 import type { CmsProgramPage } from "@/lib/cms/types";
 
@@ -67,8 +66,6 @@ export function StageJournal({ page }: { page: CmsProgramPage }) {
           </div>
         </article>
       ))}
-
-      <ConsultCta showCheck={false} />
     </div>
   );
 }

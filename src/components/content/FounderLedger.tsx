@@ -1,4 +1,3 @@
-import { ConsultCta } from "@/components/content/Journey";
 import { HashRedirect } from "@/components/content/HashRedirect";
 import { Photo } from "@/components/ui/Photo";
 import type { CmsProgramPage } from "@/lib/cms/types";
@@ -91,8 +90,6 @@ export function FounderLedger({ page }: { page: CmsProgramPage }) {
           </ol>
         </div>
       </section>
-
-      <ConsultCta />
     </div>
   );
 }

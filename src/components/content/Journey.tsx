@@ -1,4 +1,3 @@
-import { LinedLink, PillButton } from "@/components/ui/Buttons";
 import type { WeekCopy } from "@/lib/content";
 
 export function ProcessChain({ steps }: { steps: readonly string[] }) {
@@ -32,33 +31,5 @@ export function WeekJourney({ weeks }: { weeks: readonly WeekCopy[] }) {
         </li>
       ))}
     </ol>
-  );
-}
-
-export function ConsultCta({
-  title = "전환이 필요하다면",
-  body = "첫 상담은 무료입니다. 지금 어떤 단계에 있는지 듣고, 맞는 프로그램을 함께 고릅니다.",
-  showCheck = true,
-}: {
-  title?: string;
-  body?: string;
-  showCheck?: boolean;
-}) {
-  return (
-    <section className="bg-forest px-(--gutter) py-16 text-white lg:py-20">
-      <p className="c1 tracking-[0.2em] text-white/70 uppercase">Coaching</p>
-      <h2 className="t2 mt-3 max-w-(--measure-narrow)">{title}</h2>
-      <p className="b2 mt-5 max-w-(--measure-narrow) text-white/85">{body}</p>
-      <div className="mt-8 flex flex-wrap items-center gap-6">
-        <PillButton href="/consult" variant="white">
-          무료 상담 신청
-        </PillButton>
-        {showCheck ? (
-          <LinedLink href="/check" className="text-white">
-            founder transition 진단
-          </LinedLink>
-        ) : null}
-      </div>
-    </section>
   );
 }

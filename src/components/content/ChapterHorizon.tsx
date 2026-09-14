@@ -1,4 +1,3 @@
-import { ConsultCta } from "@/components/content/Journey";
 import { Photo } from "@/components/ui/Photo";
 import type { CmsProgramPage } from "@/lib/cms/types";
 import { cn } from "@/lib/utils";
@@ -60,8 +59,6 @@ export function ChapterHorizon({ page }: { page: CmsProgramPage }) {
           </div>
         </article>
       ))}
-
-      <ConsultCta showCheck={false} />
     </div>
   );
 }
