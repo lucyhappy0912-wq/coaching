@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getAdminSession } from "@/lib/auth/dal";
-import { IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, formatMegabytes } from "@/lib/cms/media-limits";
+import { IMAGE_UPLOAD_BYTES, VIDEO_MAX_BYTES, formatMegabytes } from "@/lib/cms/media-limits";
 import { uploadMedia } from "@/lib/cms/media";
 
 export const dynamic = "force-dynamic";
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     }
     if (code === "CMS_MEDIA_SIZE") {
       return jsonError(
-        `사진은 ${formatMegabytes(IMAGE_MAX_BYTES)}, 영상은 ${formatMegabytes(VIDEO_MAX_BYTES)}까지 올릴 수 있습니다.`,
+        `사진은 ${formatMegabytes(IMAGE_UPLOAD_BYTES)}, 영상은 ${formatMegabytes(VIDEO_MAX_BYTES)}까지 올릴 수 있습니다.`,
         400,
       );
     }

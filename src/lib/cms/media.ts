@@ -8,7 +8,7 @@ import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 
 import { cmsEnabled, cmsStorage, cmsWritable, mediaPublicUrl } from "./client";
-import { IMAGE_MAX_BYTES, VIDEO_MAX_BYTES } from "./media-limits";
+import { IMAGE_UPLOAD_BYTES, VIDEO_MAX_BYTES } from "./media-limits";
 
 const IMAGE_EXT = {
   "image/jpeg": "jpg",
@@ -169,7 +169,7 @@ export async function uploadMedia(file: File, expect?: "image" | "video") {
   if (expect === "image" && !isImage(kind)) throw new Error("CMS_MEDIA_TYPE");
   if (expect === "video" && isImage(kind)) throw new Error("CMS_MEDIA_TYPE");
 
-  const limit = isImage(kind) ? IMAGE_MAX_BYTES : VIDEO_MAX_BYTES;
+  const limit = isImage(kind) ? IMAGE_UPLOAD_BYTES : VIDEO_MAX_BYTES;
   if (file.size > limit) throw new Error("CMS_MEDIA_SIZE");
 
   const ext = isImage(kind) ? IMAGE_EXT[kind] : VIDEO_EXT[kind];

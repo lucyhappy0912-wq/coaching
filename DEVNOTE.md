@@ -12,7 +12,7 @@
 
 - **로컬 저장 위치**: `{cwd}/public/uploads/` (이 PC는 `F:\coaching\public\uploads`). C 임시폴더·캐시를 쓰지 않는다
 - **공개 URL**: `/uploads/<timestamp>-<12hex>.<ext>`
-- **허용 사진**: JPG, PNG, GIF, WebP, AVIF · 20MB. HEIC는 거절하고 한글 안내
+- **허용 사진**: JPG, PNG, GIF, WebP, AVIF. 원본 40MB까지 고르고, 브라우저에서 4MB 아래로 줄인 뒤 올린다. Vercel Function 본문은 4.5MB라 20MB를 그대로 보내면 413이 난다. HEIC는 거절하고 한글 안내
 - **허용 영상**: MP4, MOV, AVI, WMV, WebM 등 · 1GB · 로컬만
 - **인증**: `__Host-admin_session` 쿠키. API는 `redirect()` 하지 않고 JSON 401
 - **실패 코드**: `CMS_MEDIA_TYPE` / `CMS_MEDIA_HEIC` / `CMS_MEDIA_SIZE` / `CMS_MEDIA_TRUNCATED` / `CMS_MEDIA_WRITE` / `CMS_STORE_READONLY`

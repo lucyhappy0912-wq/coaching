@@ -3,9 +3,11 @@
 import { useRef, useState, type ReactNode } from "react";
 
 import { Photo, type PhotoTone } from "@/components/ui/Photo";
+import { compressImageForUpload } from "@/lib/cms/compress-image";
 import {
   IMAGE_ACCEPT,
   IMAGE_MAX_BYTES,
+  IMAGE_UPLOAD_BYTES,
   VIDEO_ACCEPT,
   VIDEO_MAX_BYTES,
   classifyUpload,
@@ -20,7 +22,7 @@ function readUploadResponse(xhr: XMLHttpRequest): { url?: string; error?: string
     return { error: "로그인이 만료되었습니다. 다시 로그인해 주세요." };
   }
   if (status === 413) {
-    return { error: "파일이 너무 큽니다. 더 작은 파일로 올려 주세요." };
+    return { error: "서버가 약 4MB를 넘는 파일을 받지 못합니다. 사진을 더 줄여 주세요." };
   }
   if (!text) {
     return { error: status ? `서버가 비어 있는 답을 보냈습니다. (${status})` : "서버에 연결하지 못했습니다." };
@@ -87,13 +89,28 @@ export function ImageSlot({
   async function upload(file: File, kind: "image" | "video") {
     const limit = kind === "image" ? IMAGE_MAX_BYTES : VIDEO_MAX_BYTES;
     if (file.size > limit) {
-      setError(`${kind === "image" ? "사진" : "영상"}은 ${formatMegabytes(limit)}까지 올릴 수 있습니다.`);
+      setError(`${kind === "image" ? "사진" : "영상"}은 ${formatMegabytes(limit)}까지 고를 수 있습니다.`);
       return;
     }
     setError(null);
     setPending(kind);
     setProgress(0);
-    const json = await postFile(file, kind, setProgress);
+    let payload = file;
+    if (kind === "image") {
+      try {
+        payload = await compressImageForUpload(file, IMAGE_UPLOAD_BYTES);
+      } catch (error) {
+        setPending(null);
+        const code = error instanceof Error ? error.message : "";
+        setError(
+          code === "CMS_MEDIA_STILL_LARGE"
+            ? "사진을 4MB 아래로 줄이지 못했습니다. 더 작은 파일로 올려 주세요."
+            : "이 사진은 줄일 수 없습니다. JPG 또는 PNG로 바꿔 주세요.",
+        );
+        return;
+      }
+    }
+    const json = await postFile(payload, kind, setProgress);
     setPending(null);
     if (!json.url) {
       setError(json.error ?? "올리지 못했습니다.");
@@ -153,7 +170,10 @@ export function ImageSlot({
           takeFile(file, "image");
         }}
       />
-      <p className="adm-body mt-2 text-ink-70">사진: JPG, PNG, GIF, WebP, AVIF · {formatMegabytes(IMAGE_MAX_BYTES)}까지</p>
+      <p className="adm-body mt-2 text-ink-70">
+        사진: JPG, PNG, GIF, WebP, AVIF · 원본 {formatMegabytes(IMAGE_MAX_BYTES)}까지 · 올리면 자동으로 4MB 아래로
+        줄입니다
+      </p>
       {allowVideo ? (
         <div className="mt-3">
           <input
