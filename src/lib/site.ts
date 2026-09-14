@@ -33,6 +33,10 @@ export const TOP_MESSAGES = [
 /** 헤더 메가메뉴 */
 export const MENU_GROUPS = [
   {
+    title: "Transition Coach 대표코치",
+    items: [{ label: "대표코치", href: "/coach" }],
+  },
+  {
     title: "The Moment",
     items: [
       { label: "Our Belief", href: "/belief" },
@@ -47,7 +51,7 @@ export const MENU_GROUPS = [
       { label: "6-week founder transition", href: "/coaching/founder" },
       { label: "from Founder to Leader", href: "/coaching/leadership" },
       { label: "Founder Transition (Check)", href: "/check" },
-      { label: "LIFT – Life Architecture", href: "/consult?src=lift" },
+      { label: "LIFT – Life Architecture", href: "/lift" },
       { label: "Stage Transition", href: "/coaching/stage" },
       { label: "Next Chapter Transition", href: "/coaching/next-chapter" },
     ],

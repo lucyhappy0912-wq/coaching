@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import type { CmsSite } from "@/lib/cms/types";
-import { DEFAULT_MENU_OFF, visibleMenuGroups } from "@/lib/menu";
+import { DEFAULT_MENU_OFF, isMenuHrefOn, visibleMenuGroups } from "@/lib/menu";
 import { SITE } from "@/lib/site";
 
 export function Footer({
@@ -22,9 +22,21 @@ export function Footer({
   return (
     <footer className="bg-white text-forest">
       <div className="grid gap-10 px-(--gutter) pt-24 pb-10 lg:grid-cols-3 lg:gap-16 lg:pt-32 lg:pb-14">
-        {visibleMenuGroups(menuOff, menuOn).map((group) => (
+        {visibleMenuGroups(menuOff, menuOn)
+          .filter((group) => group.title !== "Transition Coach 대표코치")
+          .map((group) => (
           <nav key={group.title}>
-            <p className="c1 mb-4 tracking-[0.2em] text-stem uppercase">{group.title}</p>
+            {group.title === "The Moment" && isMenuHrefOn("/coach", menuOff, menuOn) ? (
+              <Link
+                href="/coach"
+                className="c1 mb-8 block tracking-[0.2em] text-stem uppercase transition-opacity hover:opacity-60"
+              >
+                Transition Coach 대표코치
+              </Link>
+            ) : null}
+            <p className="c1 mb-4 tracking-[0.2em] text-stem uppercase">
+              {group.title === "The Moment" ? "Brand" : group.title}
+            </p>
             <ul className="space-y-1.5">
               {group.items.map((item) => (
                 <li key={item.href}>

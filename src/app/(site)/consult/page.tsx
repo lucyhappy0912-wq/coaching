@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { SectionPage } from "@/components/layout/PageFrame";
 import { ConsultSection } from "@/components/sections/ConsultSection";
@@ -10,7 +11,13 @@ export const metadata: Metadata = {
   description: "첫 상담은 무료입니다. 지금 어떤 상황인지 듣고 코칭이 필요한지부터 말씀드립니다.",
 };
 
-export default async function ConsultPage() {
+export default async function ConsultPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ src?: string }>;
+}) {
+  const { src } = await searchParams;
+  if (src === "lift") redirect("/lift");
   await assertPublicHref("/consult");
   const content = await getContent();
   return (

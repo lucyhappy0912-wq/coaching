@@ -1,18 +1,15 @@
 "use client";
 
-import { Fragment, useActionState, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { applyLift, type LiftApplyState } from "@/app/(site)/check/lift-actions";
-import { LinedLink } from "@/components/ui/Buttons";
-import { HoneypotField } from "@/components/ui/HoneypotField";
+import { LiftNextSheet, type LiftApplicant } from "@/components/check/LiftNextSheet";
 import { cn } from "@/lib/utils";
 import { BAND_COPY } from "@/lib/check/copy";
 import type { CheckScores } from "@/lib/check/compute";
-import { LIFT_NEXT } from "@/lib/check/lift-copy";
 import { PRIORITY_AREA_COPY, PRIORITY_CLOSE, PRIORITY_INTRO } from "@/lib/check/priority-copy";
 import { AREA_IDS, AREAS, type AreaId } from "@/lib/check/questions";
 
-export type LiftApplicant = { name: string; phone: string; email: string };
+export type { LiftApplicant };
 
 const CARD = "border border-forest-20 bg-white px-5 py-6 sm:p-7 lg:p-10";
 
@@ -155,114 +152,6 @@ function PriorityClose() {
       <p className="b3 mt-4 text-ink-70">{PRIORITY_CLOSE.goal}</p>
       <p className="b3 mt-4 text-ink-70">{PRIORITY_CLOSE.shift}</p>
     </section>
-  );
-}
-
-const LIFT_NAME = "LIFT – Life Architecture";
-
-function liftStanza(text: string) {
-  const chunks = text.split(LIFT_NAME);
-  return chunks.map((chunk, i) => (
-    <Fragment key={i}>
-      {i > 0 ? <span className="whitespace-nowrap">{LIFT_NAME}</span> : null}
-      {chunk}
-    </Fragment>
-  ));
-}
-
-const APPLY_BTN =
-  "serif inline-flex h-11 w-full items-center justify-center rounded-sm bg-forest px-7 text-[15px] text-white shadow-[0_4px_4px_0_rgba(0,58,64,0.1)] hover:bg-forest-90 disabled:opacity-60 lg:h-12 lg:px-8 lg:text-base";
-
-function LiftApply({ applicant }: { applicant: LiftApplicant }) {
-  const [state, action, pending] = useActionState(applyLift, { status: "idle" } satisfies LiftApplyState);
-  if (state.status === "done") {
-    return (
-      <div className="flex min-h-28 flex-col items-center justify-center border border-forest-20 bg-white px-6 py-8 text-center">
-        <p className="serif t3">신청이 완료되었습니다.</p>
-        <p className="b3 mt-3 text-ink-70">남겨 주신 연락처로 안내드리겠습니다.</p>
-      </div>
-    );
-  }
-  return (
-    <form action={action} className="flex flex-col gap-4">
-      <HoneypotField />
-      <input type="hidden" name="name" value={applicant.name} />
-      <input type="hidden" name="phone" value={applicant.phone} />
-      <input type="hidden" name="email" value={applicant.email} />
-      <button type="submit" disabled={pending} className={APPLY_BTN}>
-        {pending ? "신청 중…" : LIFT_NEXT.cta}
-      </button>
-      {state.status === "error" ? <p className="b3 text-[#c0392b]">{state.message}</p> : null}
-    </form>
-  );
-}
-
-function LiftCopy({
-  title,
-  stanzas,
-}: {
-  title: string;
-  stanzas: readonly string[];
-}) {
-  const [intro, questions, ...rest] = stanzas;
-  const close = rest.at(-1);
-  const middle = rest.slice(0, -1);
-  return (
-    <>
-      <p className="serif t3 mt-3 whitespace-pre-line break-keep">{title}</p>
-      {intro ? <p className="b3 mt-5 whitespace-pre-line text-ink-70">{liftStanza(intro)}</p> : null}
-      {questions ? (
-        <blockquote className="serif mt-8 border-l-[3px] border-stem pl-5 text-[16px] leading-[1.55] whitespace-pre-line break-keep text-forest lg:pl-7 lg:text-[20px] lg:leading-[1.45]">
-          {liftStanza(questions)}
-        </blockquote>
-      ) : null}
-      {middle.map((stanza) => (
-        <p key={stanza} className="b3 mt-5 whitespace-pre-line text-ink-70">
-          {liftStanza(stanza)}
-        </p>
-      ))}
-      {close ? (
-        <p className="serif mt-10 border-t border-forest-20 pt-6 text-[18px] leading-snug whitespace-pre-line break-keep text-forest lg:text-[22px]">
-          {liftStanza(close)}
-        </p>
-      ) : null}
-    </>
-  );
-}
-
-function LiftNextSheet({
-  showCta,
-  applicant,
-}: {
-  showCta: boolean;
-  applicant?: LiftApplicant;
-}) {
-  return (
-    <>
-      <section className="relative overflow-hidden border border-forest-20 bg-grass-10 px-5 py-6 sm:p-7 lg:p-10">
-        <p
-          aria-hidden
-          className="serif pointer-events-none absolute -right-2 top-2 select-none text-[80px] leading-none text-forest/[0.06] lg:-right-1 lg:top-0 lg:text-[128px]"
-        >
-          LIFT
-        </p>
-        <p className="c1 relative tracking-[0.2em] text-forest-70 uppercase">LIFT · Life Architecture</p>
-        <div className="relative lg:hidden">
-          <LiftCopy title={LIFT_NEXT.titleMobile} stanzas={LIFT_NEXT.stanzasMobile} />
-        </div>
-        <div className="relative hidden lg:block">
-          <LiftCopy title={LIFT_NEXT.title} stanzas={LIFT_NEXT.stanzas} />
-        </div>
-      </section>
-      {showCta ? (
-        <section className="mt-16 flex flex-col gap-4">
-          {applicant ? <LiftApply applicant={applicant} /> : null}
-          <LinedLink href="/" replace className="text-forest">
-            홈으로
-          </LinedLink>
-        </section>
-      ) : null}
-    </>
   );
 }
 

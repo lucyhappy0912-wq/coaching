@@ -21,5 +21,5 @@ export const LIFT_NEXT = {
     "LIFT – Life Architecture는\nFounder Transition을 시작하는\n첫 번째 전환입니다.",
   ],
   cta: "LIFT – Life Architecture 신청하기",
-  href: "/consult?src=lift",
+  href: "/lift",
 };

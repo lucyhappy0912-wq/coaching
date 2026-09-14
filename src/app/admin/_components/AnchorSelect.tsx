@@ -10,10 +10,10 @@ export const PAGE_LINKS = [
   { href: "/coaching/founder-transition", label: "Founder Transition" },
   { href: "/way", label: "Meomchunja Way" },
   { href: "/check", label: "Founder Transition (Check)" },
-  { href: "/consult?src=lift", label: "LIFT – Life Architecture" },
+  { href: "/lift", label: "LIFT – Life Architecture" },
   { href: "/board", label: "Q&A 게시판" },
   { href: "/faq", label: "자주 묻는 질문" },
-  { href: "/coach", label: "코치 소개" },
+  { href: "/coach", label: "Transition Coach 대표코치" },
 ] as const;
 
 export function AnchorSelect({

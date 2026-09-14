@@ -91,7 +91,7 @@ export function Header({
 
       {menuOpen && (
         <div className="max-h-[calc(100vh-var(--header-h))] overflow-y-auto border-t border-ink-10 bg-white text-forest">
-          <div className="grid gap-10 px-(--gutter) py-10 lg:grid-cols-3 lg:gap-16 lg:py-14">
+          <div className="grid gap-10 px-(--gutter) py-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-16 lg:py-14">
             {(groups ?? visibleMenuGroups(DEFAULT_MENU_OFF)).map((group) => (
               <div key={group.title}>
                 <p className="c1 mb-5 tracking-[0.2em] text-stem uppercase">{group.title}</p>

@@ -10,6 +10,9 @@ export type LiftApplyState = { status: "idle" | "done" | "error"; message?: stri
 
 export async function applyLift(_prev: LiftApplyState, formData: FormData): Promise<LiftApplyState> {
   if (honeypotFilled(formData)) return { status: "done" };
+  if (formData.get("public") === "1" && formData.get("agree") !== "on") {
+    return { status: "error", message: "개인정보 수집·이용에 동의해 주세요." };
+  }
   const name = String(formData.get("name") ?? "");
   const phone = String(formData.get("phone") ?? "");
   const email = String(formData.get("email") ?? "").trim();

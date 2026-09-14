@@ -11,6 +11,8 @@ const NOW_DEFAULT_ON = [
   "/coaching/founder",
   "/coaching/leadership",
   "/coaching/founder-transition",
+  "/lift",
+  "/coach",
 ] as const;
 
 export type MenuItem = { label: string; href: string };
