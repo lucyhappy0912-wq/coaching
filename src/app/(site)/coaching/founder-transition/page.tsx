@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 export default async function FounderTransitionPage() {
   await assertPublicHref("/coaching/founder-transition");
   const { pages } = await getContent();
-  return <FounderTransition hero={pages.founder.hero} />;
+  return <FounderTransition hero={pages.founder.hero} split={pages.founder.split} />;
 }
