@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { LinedLink, PillButton } from "@/components/ui/Buttons";
+import { cn } from "@/lib/utils";
 import { BAND_COPY } from "@/lib/check/copy";
 import type { CheckScores } from "@/lib/check/compute";
 import { LIFT_NEXT } from "@/lib/check/lift-copy";
@@ -11,7 +12,9 @@ import { AREA_IDS, AREAS, type AreaId } from "@/lib/check/questions";
 
 const CARD = "border border-forest-20 bg-white p-7 lg:p-10";
 
-const NAV_BTN = "serif lined min-h-11 text-forest";
+const PREV_BTN = "serif lined min-h-11 text-forest";
+const NEXT_BTN =
+  "serif inline-flex h-11 items-center justify-center rounded-sm bg-forest px-7 text-[15px] text-white shadow-[0_4px_4px_0_rgba(0,58,64,0.1)] hover:bg-forest-90 lg:h-12 lg:px-8 lg:text-base";
 
 type Part = { key: string; label: string };
 
@@ -228,14 +231,14 @@ export function CheckReport({
       <div className="mt-6">{renderPart(current)}</div>
       <nav className="mt-10 flex items-center justify-between gap-4" aria-label="분석지 파트">
         {step > 0 ? (
-          <button type="button" className={NAV_BTN} onClick={() => setStep((s) => s - 1)}>
+          <button type="button" className={PREV_BTN} onClick={() => setStep((s) => s - 1)}>
             이전
           </button>
         ) : (
           <span />
         )}
         {step < last ? (
-          <button type="button" className={NAV_BTN} onClick={() => setStep((s) => s + 1)}>
+          <button type="button" className={cn(NEXT_BTN, step === 0 && "ml-auto")} onClick={() => setStep((s) => s + 1)}>
             다음
           </button>
         ) : (
