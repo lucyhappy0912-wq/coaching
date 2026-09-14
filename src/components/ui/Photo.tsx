@@ -21,6 +21,7 @@ export function Photo({
   className,
   sizes = "100vw",
   priority,
+  objectPosition,
 }: {
   src?: string;
   video?: string;
@@ -29,11 +30,14 @@ export function Photo({
   className?: string;
   sizes?: string;
   priority?: boolean;
+  objectPosition?: string;
 }) {
+  const fit = { objectPosition };
   if (video) {
     return (
       <video
         className={cn("size-full object-cover", className)}
+        style={fit}
         src={video}
         poster={src || undefined}
         autoPlay
@@ -53,7 +57,7 @@ export function Photo({
     return (
       // 관리자가 올린 원격 주소. next/image 호스트 허용 목록에 묶지 않는다.
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={src} alt={alt} className={cn("size-full object-cover", className)} />
+      <img src={src} alt={alt} className={cn("size-full object-cover", className)} style={fit} />
     );
   }
 
@@ -65,6 +69,7 @@ export function Photo({
       sizes={sizes}
       priority={priority}
       className={cn("size-full object-cover", className)}
+      style={fit}
     />
   );
 }

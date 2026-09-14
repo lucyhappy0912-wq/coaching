@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { imageFocusOf, parseImageFocus, sanitizeImageFocus } from "@/lib/cms/image-focus";
 import type { CmsCoach, CmsSite, PhotoTone } from "@/lib/cms/types";
 
 import { ImageSlot } from "../_components/ImageSlot";
@@ -179,9 +180,16 @@ function ContactForm({ initial, canSave }: { initial: CmsSite; canSave: boolean 
 }
 
 function CoachForm({ initial, canSave }: { initial: CmsCoach; canSave: boolean }) {
-  const [value, setValue] = useState(initial);
+  const [value, setValue] = useState({
+    ...initial,
+    imageFocus: sanitizeImageFocus(initial.imageFocus),
+  });
   const [state, action, pending] = useActionState(saveCoach, { ok: false } satisfies SaveState);
-  const saved = useSaved(initial, state, value);
+  const saved = useSaved(
+    { ...initial, imageFocus: sanitizeImageFocus(initial.imageFocus) },
+    state,
+    value,
+  );
 
   return (
     <form id="coach" action={action} className="scroll-mt-6 rounded-[6px] border border-ink-15 bg-white p-5">
@@ -219,6 +227,11 @@ function CoachForm({ initial, canSave }: { initial: CmsCoach; canSave: boolean }
             value={value.tone}
             onChange={(tone: PhotoTone) => setValue((current) => ({ ...current, tone }))}
           />
+          <ImageFocusField
+            src={value.image}
+            value={value.imageFocus}
+            onChange={(imageFocus) => setValue((current) => ({ ...current, imageFocus }))}
+          />
         </div>
         <label className="block lg:col-span-2">
           <span className="adm-label mb-1.5 block text-forest-70">소개</span>
@@ -251,5 +264,90 @@ function CoachForm({ initial, canSave }: { initial: CmsCoach; canSave: boolean }
         onReset={() => setValue(saved)}
       />
     </form>
+  );
+}
+
+function ImageFocusField({
+  src,
+  value,
+  onChange,
+}: {
+  src: string;
+  value: string;
+  onChange: (next: string) => void;
+}) {
+  const { x, y } = parseImageFocus(value);
+  const position = sanitizeImageFocus(value);
+
+  function setFromClick(event: React.MouseEvent<HTMLButtonElement>) {
+    const box = event.currentTarget.getBoundingClientRect();
+    if (!box.width || !box.height) return;
+    onChange(
+      imageFocusOf(
+        ((event.clientX - box.left) / box.width) * 100,
+        ((event.clientY - box.top) / box.height) * 100,
+      ),
+    );
+  }
+
+  return (
+    <div>
+      <span className="adm-label mb-1.5 block text-forest-70">사진에서 보여줄 위치</span>
+      <p className="adm-body mb-3 text-ink-70">
+        잘리는 면이 있으면 점을 옮기거나 슬라이더로 얼굴을 화면 안에 두세요.
+      </p>
+      <input type="hidden" name="coach.imageFocus" value={position} />
+      {src ? (
+        <div className="mb-3 grid grid-cols-2 gap-3">
+          <div>
+            <p className="adm-meta mb-1.5 text-ink-70">전체에서 고르기</p>
+            <button
+              type="button"
+              onClick={setFromClick}
+              className="relative block w-full overflow-hidden rounded-[4px] border border-ink-15 bg-ink-05"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={src} alt="" className="block w-full" />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-forest shadow-[0_0_0_1px_rgba(0,0,0,0.35)]"
+                style={{ left: `${x}%`, top: `${y}%` }}
+              />
+            </button>
+          </div>
+          <div>
+            <p className="adm-meta mb-1.5 text-ink-70">실제 잘림</p>
+            <div className="aspect-4/5 overflow-hidden rounded-[4px] border border-ink-15 bg-[#111]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={src} alt="" className="size-full object-cover" style={{ objectPosition: position }} />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <p className="adm-body mb-3 text-ink-70">사진을 먼저 올리면 여기서 위치를 맞출 수 있습니다.</p>
+      )}
+      <label className="mt-2 block">
+        <span className="adm-meta mb-1 block text-ink-70">가로 {x}%</span>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          value={x}
+          onChange={(event) => onChange(imageFocusOf(Number(event.target.value), y))}
+          className="w-full accent-forest"
+        />
+      </label>
+      <label className="mt-3 block">
+        <span className="adm-meta mb-1 block text-ink-70">세로 {y}% · 0은 위, 100은 아래</span>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          value={y}
+          onChange={(event) => onChange(imageFocusOf(x, Number(event.target.value)))}
+          className="w-full accent-forest"
+        />
+      </label>
+    </div>
   );
 }

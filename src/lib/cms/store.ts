@@ -8,6 +8,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import { cmsEnabled, cmsRest, cmsWritable } from "./client";
 import { readLocalContent, writeLocalContent } from "./local";
 import { mergePages } from "./merge-pages";
+import { sanitizeImageFocus } from "@/lib/cms/image-focus";
 import { sanitizeMenuOff, sanitizeMenuOn } from "@/lib/menu";
 
 import { cmsSeed } from "./seed";
@@ -24,6 +25,7 @@ function mergeCms(raw: Partial<CmsData> | null | undefined): CmsData {
       ...seed.coach,
       ...raw.coach,
       credentials: raw.coach?.credentials?.length ? raw.coach.credentials : seed.coach.credentials,
+      imageFocus: sanitizeImageFocus(raw.coach?.imageFocus ?? seed.coach.imageFocus),
     },
     faqs: raw.faqs?.length ? raw.faqs : seed.faqs,
     pages: mergePages(raw.pages, seed.pages),

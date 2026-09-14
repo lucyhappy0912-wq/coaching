@@ -1,6 +1,7 @@
 import { ConsultCta } from "@/components/content/Journey";
 import { LinedLink } from "@/components/ui/Buttons";
 import { Photo } from "@/components/ui/Photo";
+import { sanitizeImageFocus } from "@/lib/cms/image-focus";
 import type { CmsCoach } from "@/lib/cms/types";
 import { COACH } from "@/lib/site";
 
@@ -19,7 +20,8 @@ export function CoachBand({ coach = { ...COACH, credentials: [...COACH.credentia
             alt={coach.name}
             sizes="(min-width: 1025px) 50vw, 100vw"
             priority
-            className="absolute inset-0 object-cover object-top"
+            objectPosition={sanitizeImageFocus(coach.imageFocus)}
+            className="absolute inset-0 object-cover"
           />
         </div>
 

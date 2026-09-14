@@ -271,6 +271,7 @@ export const COACH = {
   credentials: ["○○ 코칭 자격 보유", "성인·시니어 코칭 ○○년", "리더십 코칭 프로그램 운영"],
   tone: "paper" as const,
   image: "",
+  imageFocus: "50% 20%",
 } as const;
 
 export const FAQS = [

@@ -38,6 +38,8 @@ export type CmsCoach = {
   credentials: string[];
   tone: PhotoTone;
   image: string;
+  /** object-position. 예: `50% 20%` */
+  imageFocus: string;
 };
 
 export type CmsFaq = { q: string; a: string };

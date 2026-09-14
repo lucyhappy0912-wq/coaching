@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/dal";
 import { cmsFailMessage } from "@/lib/cms/client";
+import { sanitizeImageFocus } from "@/lib/cms/image-focus";
 import { patchContent } from "@/lib/cms/store";
 import type { CmsCoach, CmsFaq, CmsSite, PhotoTone } from "@/lib/cms/types";
 
@@ -76,6 +77,7 @@ export async function saveCoach(_prev: SaveState, formData: FormData): Promise<S
       .filter(Boolean),
     tone: toneOf(String(formData.get("coach.tone") ?? ""), "paper"),
     image: String(formData.get("coach.image") ?? "").trim(),
+    imageFocus: sanitizeImageFocus(formData.get("coach.imageFocus")),
   };
   try {
     await patchContent({ coach });
