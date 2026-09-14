@@ -17,7 +17,7 @@ export default async function AdminBoardDetail({ params }: { params: Promise<{ i
   if (!row) notFound();
 
   return (
-    <AdminShell title="질문 답변">
+    <AdminShell title="게시글">
       <Link href="/admin/board" className="adm-body text-forest hover:underline">
         목록으로
       </Link>
@@ -27,7 +27,8 @@ export default async function AdminBoardDetail({ params }: { params: Promise<{ i
         </p>
         <h2 className="adm-h mt-2 text-forest">{row.title}</h2>
         <p className="adm-body mt-4 whitespace-pre-wrap text-ink-90">{row.body}</p>
-        <AnswerForm id={row.id} answer={row.answer} published={row.published} />
+        <p className="adm-meta mt-2 text-ink-70">{row.published ? "공개글" : "비밀글"}</p>
+        <AnswerForm id={row.id} answer={row.answer} />
         <form action={deleteQuestion} className="mt-4">
           <input type="hidden" name="id" value={row.id} />
           <button type="submit" className="adm-body text-danger hover:underline">

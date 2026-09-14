@@ -3,7 +3,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { cache } from "react";
 
-import { unstable_noStore as noStore } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
 
 import { cmsEnabled, cmsRest, cmsWritable } from "./client";
 import { readLocalContent, writeLocalContent } from "./local";
@@ -53,11 +53,22 @@ export async function readContentForWrite() {
   return mergeCms(await readLocalContent());
 }
 
+export const CMS_CACHE_TAG = "cms-content";
+
+export function revalidateCms() {
+  revalidateTag(CMS_CACHE_TAG, "max");
+}
+
+const getRemoteContentCached = unstable_cache(
+  async () => readRemoteContent(),
+  ["cms-content-v1"],
+  { tags: [CMS_CACHE_TAG], revalidate: 60 },
+);
+
 export const getContent = cache(async (): Promise<CmsData> => {
-  noStore();
   if (cmsEnabled()) {
     try {
-      return await readRemoteContent();
+      return await getRemoteContentCached();
     } catch {
       try {
         return await readRemoteSite();

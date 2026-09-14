@@ -12,8 +12,8 @@ export default async function AdminBoardPage() {
   const rows = await listQuestionsForAdmin();
 
   return (
-    <AdminShell title="질문 게시판">
-      <p className="adm-body text-ink-70">방문자가 남긴 질문입니다. 답을 쓰고 공개하면 사이트 게시판에 나갑니다.</p>
+    <AdminShell title="게시판">
+      <p className="adm-body text-ink-70">방문자가 올린 글입니다. 답글은 이 화면에서 답니다.</p>
       {rows.length === 0 ? (
         <p className="adm-body mt-6 rounded-[6px] border border-ink-15 bg-white p-5 text-ink-70">
           {dataStoreMode() === "jsonl"
@@ -34,7 +34,8 @@ export default async function AdminBoardPage() {
                   </p>
                 </div>
                 <span className="adm-meta text-ink-70">
-                  {row.published ? "공개" : row.answer ? "답변 있음" : "대기"}
+                  {row.published ? "공개" : "비밀"}
+                  {row.answer ? " · 답글" : ""}
                 </span>
               </Link>
             </li>

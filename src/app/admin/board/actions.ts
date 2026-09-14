@@ -37,7 +37,7 @@ export async function saveAnswer(_prev: BoardSaveState, formData: FormData): Pro
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
   try {
-    const wrote = await answerQuestion(id, String(formData.get("answer") ?? ""), formData.get("published") === "on");
+    const wrote = await answerQuestion(id, String(formData.get("answer") ?? ""));
     if (!wrote) return { ok: false, error: "질문을 찾지 못했습니다." };
   } catch (error) {
     return { ok: false, error: boardFailMessage(error) };

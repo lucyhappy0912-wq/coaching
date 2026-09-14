@@ -61,7 +61,7 @@ export const MENU_GROUPS = [
     items: [
       { label: "1:1 코칭", href: "/consult" },
       { label: "자주묻는 질문", href: "/faq" },
-      { label: "Q&A 게시판", href: "/board" },
+      { label: "게시판", href: "/board" },
       { label: "전화문의", href: `tel:${SITE.phone.replace(/-/g, "")}` },
     ],
   },
@@ -303,7 +303,7 @@ export const FOOTER_LINKS = [
       { label: "Coaching", href: "/coaching" },
       { label: "Coach", href: "/coach" },
       { label: "FAQ", href: "/faq" },
-      { label: "Q&A 게시판", href: "/board" },
+      { label: "게시판", href: "/board" },
     ],
   },
   {

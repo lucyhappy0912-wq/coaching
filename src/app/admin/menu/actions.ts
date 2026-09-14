@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/dal";
 import { cmsFailMessage } from "@/lib/cms/client";
-import { patchContent } from "@/lib/cms/store";
+import { patchContent, revalidateCms } from "@/lib/cms/store";
 import { menuToggleItems, sanitizeMenuOff, sanitizeMenuOn } from "@/lib/menu";
 
 import type { SaveState } from "../site/actions";
@@ -26,6 +26,7 @@ export async function saveMenu(_prev: SaveState, formData: FormData): Promise<Sa
   } catch (error) {
     return fail(error);
   }
+  revalidateCms();
   revalidatePath("/", "layout");
   revalidatePath("/");
   revalidatePath("/coaching");

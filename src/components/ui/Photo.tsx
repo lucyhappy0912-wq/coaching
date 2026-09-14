@@ -1,6 +1,20 @@
 import Image from "next/image";
 
+import { LazyVideo } from "@/components/ui/LazyVideo";
 import { cn } from "@/lib/utils";
+
+function supabasePublicMedia(src: string) {
+  try {
+    const url = new URL(src);
+    return (
+      url.protocol === "https:" &&
+      url.hostname.endsWith(".supabase.co") &&
+      url.pathname.includes("/storage/v1/object/public/")
+    );
+  } catch {
+    return false;
+  }
+}
 
 export type PhotoTone = "sage" | "paper" | "mist" | "dusk" | "forest";
 
@@ -35,16 +49,13 @@ export function Photo({
   const fit = { objectPosition };
   if (video) {
     return (
-      <video
-        className={cn("size-full object-cover", className)}
-        style={fit}
+      <LazyVideo
         src={video}
         poster={src || undefined}
-        autoPlay
-        muted
-        loop
-        playsInline
-        aria-hidden={!alt}
+        className={className}
+        style={fit}
+        alt={alt}
+        eager={priority}
       />
     );
   }
@@ -54,10 +65,30 @@ export function Photo({
   }
 
   if (src.startsWith("https://") || src.startsWith("http://")) {
+    if (supabasePublicMedia(src)) {
+      return (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes={sizes}
+          priority={priority}
+          className={cn("size-full object-cover", className)}
+          style={fit}
+        />
+      );
+    }
     return (
-      // 관리자가 올린 원격 주소. next/image 호스트 허용 목록에 묶지 않는다.
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={src} alt={alt} className={cn("size-full object-cover", className)} style={fit} />
+      <img
+        src={src}
+        alt={alt}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        fetchPriority={priority ? "high" : "auto"}
+        className={cn("size-full object-cover", className)}
+        style={fit}
+      />
     );
   }
 

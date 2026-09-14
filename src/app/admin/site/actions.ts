@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/dal";
 import { cmsFailMessage } from "@/lib/cms/client";
 import { sanitizeImageFocus } from "@/lib/cms/image-focus";
-import { patchContent } from "@/lib/cms/store";
+import { patchContent, revalidateCms } from "@/lib/cms/store";
 import type { CmsCoach, CmsFaq, CmsSite, PhotoTone } from "@/lib/cms/types";
 
 const TONES: PhotoTone[] = ["sage", "paper", "mist", "dusk", "forest"];
@@ -25,6 +25,7 @@ function ok(): SaveState {
 }
 
 function revalidateSite() {
+  revalidateCms();
   revalidatePath("/", "layout");
   revalidatePath("/");
   revalidatePath("/faq");

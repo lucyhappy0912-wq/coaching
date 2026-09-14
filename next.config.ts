@@ -8,6 +8,15 @@ const adminHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
   experimental: {
     // 영상 1GB + multipart 여유. 이 값보다 큰 본문은 잘린 채로 통과하므로 업로드 상한보다 크게 둔다.
     proxyClientMaxBodySize: "1200mb",

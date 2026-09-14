@@ -3,7 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { getContent } from "@/lib/cms/store";
 import { visibleMenuGroups } from "@/lib/menu";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const content = await getContent();

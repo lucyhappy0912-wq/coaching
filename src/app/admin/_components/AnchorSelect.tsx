@@ -11,7 +11,7 @@ export const PAGE_LINKS = [
   { href: "/way", label: "Meomchunja Way" },
   { href: "/check", label: "Founder Transition (Check)" },
   { href: "/lift", label: "LIFT – Life Architecture" },
-  { href: "/board", label: "Q&A 게시판" },
+  { href: "/board", label: "게시판" },
   { href: "/faq", label: "자주 묻는 질문" },
   { href: "/coach", label: "Transition Coach 대표코치" },
 ] as const;

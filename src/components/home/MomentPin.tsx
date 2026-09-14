@@ -44,6 +44,7 @@ export function MomentPin({ moment }: { moment: CmsPages["home"]["moment"] }) {
           src={moment.image}
           video={moment.video}
           tone={moment.tone}
+          priority
           className="absolute inset-0 hero-kenburns hero-tone-drift"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/25 to-black/35" />

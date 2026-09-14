@@ -77,7 +77,8 @@ export default async function AdminHomePage() {
                 </span>
               </span>
               <span className="adm-meta shrink-0 text-ink-70">
-                {row.published ? "공개" : row.answer ? "답변 있음" : "대기"}
+                {row.published ? "공개" : "비밀"}
+                {row.answer ? " · 답글" : ""}
               </span>
             </Link>
           ))}

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/dal";
-import { patchContent } from "@/lib/cms/store";
+import { patchContent, revalidateCms } from "@/lib/cms/store";
 import type { HeroSlide, PhotoTone } from "@/lib/cms/types";
 
 const TONES: PhotoTone[] = ["sage", "paper", "mist", "dusk", "forest"];
@@ -39,6 +39,7 @@ export async function saveHeroSlides(_prev: SaveState, formData: FormData): Prom
   } catch {
     return { ok: false, error: "저장하지 못했습니다. 저장소 연결을 확인하세요." };
   }
+  revalidateCms();
   revalidatePath("/");
   revalidatePath("/admin");
   return { ok: true, stamp: Date.now() };

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/dal";
 import { applyPageSlice } from "@/lib/cms/page-keys";
 import { cmsFailMessage, cmsWritable } from "@/lib/cms/client";
-import { patchContent, readContentForWrite } from "@/lib/cms/store";
+import { patchContent, readContentForWrite, revalidateCms } from "@/lib/cms/store";
 import { PAGE_KEYS, type PageKey } from "@/lib/cms/types";
 import { canToggleHref, nextMenuVisibility } from "@/lib/menu";
 
@@ -32,6 +32,7 @@ export async function savePageSlice(_prev: SaveState, formData: FormData): Promi
   } catch {
     return { ok: false, error: "저장하지 못했습니다. 저장소 연결을 확인하세요." };
   }
+  revalidateCms();
   revalidatePath("/", "layout");
   revalidatePath("/admin/pages");
   revalidatePath(`/admin/pages/${slug}`);
@@ -71,6 +72,7 @@ export async function togglePagePublic(href: string) {
   } catch (error) {
     return { ok: false as const, error: cmsFailMessage(error) };
   }
+  revalidateCms();
   revalidatePath("/", "layout");
   revalidatePath("/");
   revalidatePath("/coaching");

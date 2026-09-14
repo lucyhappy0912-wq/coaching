@@ -14,7 +14,7 @@ const GROUPS = [
     items: [
       { href: "/admin/inquiries", label: "상담 신청", countKey: "newLeads" as const },
       { href: "/admin/lift", label: "LIFT 신청", countKey: "liftNew" as const },
-      { href: "/admin/board", label: "질문 게시판", countKey: "unanswered" as const },
+      { href: "/admin/board", label: "게시판", countKey: "unanswered" as const },
       { href: "/admin/faq", label: "자주 묻는 질문" },
       { href: "/admin/checks", label: "문답" },
       { href: "/admin/members", label: "회원" },

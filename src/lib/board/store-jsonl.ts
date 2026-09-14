@@ -16,7 +16,10 @@ async function readAll(): Promise<BoardQuestion[]> {
     return raw
       .split("\n")
       .filter(Boolean)
-      .map((line) => JSON.parse(line) as BoardQuestion);
+      .map((line) => {
+        const row = JSON.parse(line) as BoardQuestion;
+        return { ...row, passwordHash: row.passwordHash ?? "", views: row.views ?? 0 };
+      });
   } catch {
     return [];
   }
@@ -50,23 +53,41 @@ async function withWrite<T>(fn: (rows: BoardQuestion[]) => Promise<T> | T) {
   return result;
 }
 
-export function validateQuestion(input: { name: string; title: string; body: string }) {
+export function validateQuestion(input: {
+  name: string;
+  title: string;
+  body: string;
+  published?: boolean;
+  password?: string;
+}) {
   const name = input.name.replace(/[\u0000-\u001f]/g, "").trim().slice(0, 20);
   const title = input.title.replace(/[\u0000-\u001f]/g, "").trim().slice(0, 80);
   const body = input.body.trim().slice(0, 1000);
+  const published = input.published !== false;
+  const password = (input.password ?? "").trim();
   if (name.length < 2 || title.length < 2 || body.length < 4) throw new Error("BOARD_INVALID");
-  return { name, title, body };
+  if (!published && (password.length < 4 || password.length > 20)) throw new Error("BOARD_PASSWORD");
+  return { name, title, body, published, password };
 }
 
-export async function createQuestionJsonl(input: { name: string; title: string; body: string }) {
-  const { name, title, body } = validateQuestion(input);
+export async function createQuestionJsonl(input: {
+  name: string;
+  title: string;
+  body: string;
+  published?: boolean;
+  password?: string;
+  passwordHash?: string;
+}) {
+  const { name, title, body, published } = validateQuestion(input);
   const row: BoardQuestion = {
     id: randomUUID(),
     name,
     title,
     body,
     answer: "",
-    published: false,
+    published,
+    passwordHash: input.passwordHash ?? "",
+    views: 0,
     createdAt: new Date().toISOString(),
     answeredAt: "",
   };
@@ -78,14 +99,13 @@ export async function createQuestionJsonl(input: { name: string; title: string; 
 }
 
 export async function listPublishedQuestionsJsonl(): Promise<BoardQuestion[]> {
-  const rows = await readAll();
-  return rows.filter((row) => row.published && row.answer);
+  return readAll();
 }
 
 export async function getPublishedQuestionJsonl(id: string): Promise<BoardQuestion | null> {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
   const rows = await readAll();
-  return rows.find((row) => row.id === id && row.published && row.answer) ?? null;
+  return rows.find((row) => row.id === id) ?? null;
 }
 
 export async function listQuestionsJsonl(): Promise<BoardQuestion[]> {
@@ -98,7 +118,7 @@ export async function getQuestionJsonl(id: string): Promise<BoardQuestion | null
   return rows.find((row) => row.id === id) ?? null;
 }
 
-export async function answerQuestionJsonl(id: string, answer: string, published: boolean) {
+export async function answerQuestionJsonl(id: string, answer: string) {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return false;
   const text = answer.trim().slice(0, 2000);
   return withWrite(async (rows) => {
@@ -107,13 +127,21 @@ export async function answerQuestionJsonl(id: string, answer: string, published:
         ? {
             ...row,
             answer: text,
-            published: published && Boolean(text),
             answeredAt: text ? new Date().toISOString() : "",
           }
         : row,
     );
     await replaceAll(next);
     return true;
+  });
+}
+
+export async function bumpViewsJsonl(id: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return;
+  await withWrite(async (rows) => {
+    await replaceAll(
+      rows.map((row) => (row.id === id ? { ...row, views: (row.views ?? 0) + 1 } : row)),
+    );
   });
 }
 

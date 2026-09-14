@@ -6,15 +6,7 @@ import { ADM_AREA } from "@/app/admin/_components/fields";
 
 import { saveAnswer, type BoardSaveState } from "./actions";
 
-export function AnswerForm({
-  id,
-  answer,
-  published,
-}: {
-  id: string;
-  answer: string;
-  published: boolean;
-}) {
+export function AnswerForm({ id, answer }: { id: string; answer: string }) {
   const [state, action, pending] = useActionState(saveAnswer, { ok: false } satisfies BoardSaveState);
   const status = pending
     ? "저장 중…"
@@ -22,18 +14,14 @@ export function AnswerForm({
       ? state.error
       : state.ok
         ? "저장했습니다."
-        : "답을 쓰고 공개하면 사이트 게시판에 나갑니다.";
+        : "답글을 쓰면 글 아래에 붙습니다. 공개·비밀은 작성자가 정합니다.";
 
   return (
     <form action={action} className="mt-6 space-y-4">
       <input type="hidden" name="id" value={id} />
       <label className="block">
-        <span className="adm-label mb-1.5 block text-forest-70">답변</span>
+        <span className="adm-label mb-1.5 block text-forest-70">답글</span>
         <textarea name="answer" defaultValue={answer} key={`${id}-${answer}-${state.stamp ?? 0}`} className={ADM_AREA} />
-      </label>
-      <label className="adm-body flex items-center gap-2 text-ink-90">
-        <input type="checkbox" name="published" defaultChecked={published} key={`pub-${id}-${published}-${state.stamp ?? 0}`} />
-        사이트에 공개
       </label>
       <div className="flex flex-wrap items-center gap-3">
         <button
