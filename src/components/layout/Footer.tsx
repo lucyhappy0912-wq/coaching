@@ -1,27 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import type { CmsSite } from "@/lib/cms/types";
-import { DEFAULT_MENU_OFF, isMenuHrefOn } from "@/lib/menu";
-import { FOOTER_LINKS, SITE } from "@/lib/site";
-
-function footerNav(site: CmsSite) {
-  const brand = FOOTER_LINKS.find((group) => group.title === "Brand");
-  return [
-    ...(brand ? [brand] : []),
-    {
-      title: "Help",
-      items: [
-        { label: "Founder Transition", href: "/coaching/founder-transition" },
-        { label: "Founder Transition Check", href: "/check" },
-        { label: "개인정보처리방침", href: "/privacy" },
-        { label: site.email, href: `mailto:${site.email}` },
-        { label: site.phone, href: `tel:${site.phone.replace(/-/g, "")}` },
-      ],
-    },
-  ];
-}
+import { DEFAULT_MENU_OFF, visibleMenuGroups } from "@/lib/menu";
+import { SITE } from "@/lib/site";
 
 export function Footer({
   site = SITE,
@@ -36,28 +20,29 @@ export function Footer({
   if (pathname === "/story") return null;
 
   return (
-    <footer className="bg-linear-to-b from-white to-grass-20 pt-24 pb-10 lg:pt-32">
-      <div className="serif grid gap-10 px-(--gutter) text-forest lg:grid-cols-[1.6fr_1fr_1fr]">
-        <div className="space-y-1 text-[13px] leading-relaxed lg:text-[15px]">
-          <p>{site.company}</p>
-          <p>
-            Owner. {site.owner} Business Reg N. {site.bizNo}
-          </p>
-          <p>
-            Tel. {site.phone} Email. {site.email}
-          </p>
-          <p>Address. {site.addressLine}</p>
-        </div>
-
-        {footerNav(site).map((group) => (
-          <nav key={group.title} className="text-[13px] lg:text-[15px]">
-            <p className="lined mb-4 inline-block">{group.title}</p>
-            <ul className="space-y-1.5">
-              {group.items.filter((item) => isMenuHrefOn(item.href, menuOff, menuOn)).map((item) => (
-                <li key={item.label}>
-                  <a href={item.href} className="transition-opacity hover:opacity-60">
-                    {item.label}
-                  </a>
+    <footer className="bg-white text-forest">
+      <div className="grid gap-10 px-(--gutter) pt-24 pb-10 lg:grid-cols-3 lg:gap-16 lg:pt-32 lg:pb-14">
+        {visibleMenuGroups(menuOff, menuOn).map((group) => (
+          <nav key={group.title}>
+            <p className="c1 mb-5 tracking-[0.2em] text-stem uppercase">{group.title}</p>
+            <ul className="space-y-3.5">
+              {group.items.map((item) => (
+                <li key={item.href}>
+                  {item.href.startsWith("tel:") || item.href.startsWith("mailto:") ? (
+                    <a
+                      href={item.href}
+                      className="serif text-[22px] leading-none transition-opacity hover:opacity-50 lg:text-[26px]"
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className="serif text-[22px] leading-none transition-opacity hover:opacity-50 lg:text-[26px]"
+                    >
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -65,8 +50,21 @@ export function Footer({
         ))}
       </div>
 
-      <div className="serif mt-16 px-(--gutter) text-[13px] text-forest-70">
-        <p>Made with Respect</p>
+      <div className="serif space-y-1 border-t border-ink-10 px-(--gutter) py-8 text-[13px] leading-relaxed text-forest-70 lg:text-[15px]">
+        <p>{site.company}</p>
+        <p>
+          Owner. {site.owner} Business Reg N. {site.bizNo}
+        </p>
+        <p>
+          Tel. {site.phone} Email. {site.email}
+        </p>
+        <p>Address. {site.addressLine}</p>
+        <p className="pt-4">
+          <Link href="/privacy" className="transition-opacity hover:opacity-60">
+            개인정보처리방침
+          </Link>
+        </p>
+        <p className="pt-4">Made with Respect</p>
       </div>
     </footer>
   );
