@@ -13,9 +13,10 @@ export type BoardUnlockState = { status: "idle" | "error"; message?: string };
 
 export async function submitQuestion(_prev: BoardAskState, formData: FormData): Promise<BoardAskState> {
   if (honeypotFilled(formData)) return { status: "done" };
-  const published = String(formData.get("visibility") ?? "public") !== "private";
+  const published = formData.get("secret") !== "on";
+  let id = "";
   try {
-    const id = await createQuestion({
+    id = await createQuestion({
       name: String(formData.get("name") ?? ""),
       title: String(formData.get("title") ?? ""),
       body: String(formData.get("body") ?? ""),
@@ -26,7 +27,7 @@ export async function submitQuestion(_prev: BoardAskState, formData: FormData): 
     revalidatePath("/admin");
     revalidatePath("/admin/board");
     revalidatePath("/board");
-    return { status: "done", id };
+    revalidatePath(`/board/${id}`);
   } catch (error) {
     const code = error instanceof Error ? error.message : "";
     if (code === "BOARD_INVALID") {
@@ -46,6 +47,7 @@ export async function submitQuestion(_prev: BoardAskState, formData: FormData): 
     }
     return { status: "error", message: "잠시 후 다시 시도해 주세요." };
   }
+  redirect(`/board/${id}`);
 }
 
 export async function unlockPost(_prev: BoardUnlockState, formData: FormData): Promise<BoardUnlockState> {

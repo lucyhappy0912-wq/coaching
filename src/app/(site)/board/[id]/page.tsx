@@ -35,7 +35,7 @@ export default async function BoardDetailPage({ params }: { params: Promise<{ id
               <p className="b2 mt-10 max-w-3xl whitespace-pre-wrap text-ink-90">{question.body}</p>
               {question.answer ? (
                 <div className="mt-10 max-w-3xl border-t border-ink-10 pt-8">
-                  <p className="c1 tracking-[0.16em] text-stem uppercase">답글</p>
+                  <p className="c1 tracking-[0.16em] text-stem uppercase">답변</p>
                   <p className="b2 mt-4 whitespace-pre-wrap text-ink-90">{question.answer}</p>
                 </div>
               ) : null}

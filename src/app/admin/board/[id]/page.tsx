@@ -6,7 +6,7 @@ import { requireAdmin } from "@/lib/auth/dal";
 import { getQuestionForAdmin } from "@/lib/board/store";
 
 import { AnswerForm } from "../AnswerForm";
-import { deleteQuestion } from "../actions";
+import { DeleteQuestionButton } from "../DeleteQuestionButton";
 
 export const dynamic = "force-dynamic";
 
@@ -29,12 +29,7 @@ export default async function AdminBoardDetail({ params }: { params: Promise<{ i
         <p className="adm-body mt-4 whitespace-pre-wrap text-ink-90">{row.body}</p>
         <p className="adm-meta mt-2 text-ink-70">{row.published ? "공개글" : "비밀글"}</p>
         <AnswerForm id={row.id} answer={row.answer} />
-        <form action={deleteQuestion} className="mt-4">
-          <input type="hidden" name="id" value={row.id} />
-          <button type="submit" className="adm-body text-danger hover:underline">
-            질문 삭제
-          </button>
-        </form>
+        <DeleteQuestionButton id={row.id} />
       </section>
     </AdminShell>
   );

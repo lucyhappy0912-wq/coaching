@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { AskForm } from "@/components/board/AskForm";
 import { SectionPage } from "@/components/layout/PageFrame";
+import { PillButton } from "@/components/ui/Buttons";
 import { listPublishedQuestions } from "@/lib/board/store";
 import { assertPublicHref } from "@/lib/cms/assert-public";
 
@@ -13,11 +13,15 @@ export default async function BoardPage() {
   return (
     <SectionPage>
       <section className="px-(--gutter) py-16 lg:py-20">
-        <p className="c1 tracking-[0.2em] text-stem uppercase">Board</p>
-        <h1 className="t2 mt-3">게시판</h1>
-        <p className="b3 mt-4 max-w-xl text-ink-70">
-          공개글은 누구나 읽을 수 있고, 비밀글은 비밀번호를 아는 분만 본문을 봅니다.
-        </p>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="c1 tracking-[0.2em] text-stem uppercase">Board</p>
+            <h1 className="t2 mt-3">게시판</h1>
+          </div>
+          <PillButton href="/board/write" size="small">
+            글쓰기
+          </PillButton>
+        </div>
 
         {posts.length === 0 ? (
           <p className="b3 mt-12 text-ink-70">아직 글이 없습니다.</p>
@@ -44,7 +48,7 @@ export default async function BoardPage() {
                       {!row.published ? (
                         <span className="c1 ml-2 text-ink-70">비밀</span>
                       ) : null}
-                      {row.answer ? <span className="c1 ml-2 text-forest-70">답글</span> : null}
+                      {row.answer ? <span className="c1 ml-2 text-forest-70">답변</span> : null}
                     </td>
                     <td className="b3 py-4 text-ink-70">{row.name}</td>
                     <td className="b3 py-4 text-ink-70">{row.createdAt.slice(0, 10)}</td>
@@ -55,10 +59,6 @@ export default async function BoardPage() {
             </table>
           </div>
         )}
-
-        <div className="mt-16 max-w-2xl">
-          <AskForm />
-        </div>
       </section>
     </SectionPage>
   );

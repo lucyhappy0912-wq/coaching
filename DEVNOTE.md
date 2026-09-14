@@ -2,7 +2,42 @@
 
 작업 이력과 결정사항을 기록한다. 새 작업을 시작할 때 이 문서를 먼저 읽는다.
 
-최종 갱신: 2026-09-14
+최종 갱신: 2026-09-15
+
+---
+
+## 게시판 글쓰기 (2026-09-15)
+
+공개 경로: `/board` 목록, `/board/write` 글쓰기, `/board/[id]` 상세. 메뉴 공개 여부는 `assertPublicHref("/board")`.
+
+### 서버 액션
+
+- `submitQuestion` (`src/app/(site)/board-actions.ts`): 혼니팟이 채워지면 저장 없이 `{ status: "done" }`. 오류는 state만 반환해 글쓰기 화면에 남긴다. 성공하면 `redirect(/board/${id})`. `redirect()` 는 try 밖에 둔다(제어 예외를 catch 하면 안 됨).
+- 비밀글: form 필드 `secret === "on"` 이면 `published=false`. 체크 안 하면 공개. 비밀글은 작성자 쿠키를 풀어 주고(`setBoardUnlock`), 비밀번호 4~20자 필수(`BOARD_PASSWORD`).
+- `deleteQuestion` (`src/app/admin/board/actions.ts`): 첫 줄 `requireAdmin()`. 확인창은 클라이언트.
+
+### 스키마 `board_questions`
+
+| 컬럼 | 의미 |
+| --- | --- |
+| id | uuid |
+| name / title / body | 작성자·제목·본문 |
+| answer / answered_at | 관리자 답글 |
+| published | true=공개, false=비밀 |
+| password_hash | 비밀글 scrypt 해시. 공개글은 빈 문자열 |
+| views | 조회수 |
+| created_at | 작성 시각 |
+
+마이그레이션: `supabase/migrations/20260913_leads_and_board.sql`, `20260915_board_visibility.sql`. RLS 켜고 anon 권한 없음. 서버 `SUPABASE_SECRET_KEY` 만 씀. 로컬은 `data/questions.jsonl`.
+
+### 환경변수 (게시판)
+
+| 이름 | 용도 |
+| --- | --- |
+| `SUPABASE_URL` | 원격 저장소. 없으면 로컬 jsonl |
+| `SUPABASE_SECRET_KEY` | service_role. `NEXT_PUBLIC_*` 금지 |
+| `ADMIN_SESSION_SECRET` | 관리자 세션 + 비밀글 열람 쿠키 HMAC |
+| `VERCEL` | 있으면 파일 저장은 readonly. 쿠키 `secure` |
 
 ---
 
