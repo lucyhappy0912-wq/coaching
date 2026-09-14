@@ -59,6 +59,19 @@ export async function POST(request: Request) {
     if (code === "CMS_STORE_READONLY") {
       return jsonError("이 환경에서는 파일을 저장할 수 없습니다.", 503);
     }
+    if (code === "CMS_STORE_FAILED" || code.startsWith("CMS_STORE_FAILED:")) {
+      const hint = code.startsWith("CMS_STORE_FAILED:") ? code.slice("CMS_STORE_FAILED:".length) : "";
+      if (/404|bucket/i.test(hint)) {
+        return jsonError(
+          "사진 보관함(media 버킷)이 없습니다. Supabase SQL Editor에서 supabase/migrations/20260914_media_bucket.sql 을 실행해 주세요.",
+          502,
+        );
+      }
+      if (/401|403|unauthorized/i.test(hint)) {
+        return jsonError("저장소가 권한을 거절했습니다. Vercel의 SUPABASE_SECRET_KEY가 비밀 키인지 확인해 주세요.", 502);
+      }
+      return jsonError(hint ? `저장소가 거절했습니다 (${hint}).` : "저장소가 거절했습니다. 버킷과 키를 확인해 주세요.", 502);
+    }
     return jsonError("업로드에 실패했습니다. 잠시 후 다시 올려 주세요.", 500);
   }
 }

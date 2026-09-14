@@ -11,13 +11,15 @@
 코치 편집 `ImageSlot` → `POST /api/admin/upload` → `uploadMedia`.
 
 - **로컬 저장 위치**: `{cwd}/public/uploads/` (이 PC는 `F:\coaching\public\uploads`). C 임시폴더·캐시를 쓰지 않는다
-- **공개 URL**: `/uploads/<timestamp>-<12hex>.<ext>`
+- **공개 URL**: 로컬은 `/uploads/<timestamp>-<12hex>.<ext>`. Vercel은 `{SUPABASE_URL}/storage/v1/object/public/media/<같은이름>`
+- **Vercel**: `process.env.VERCEL` 이면 `public/uploads` 가 아니라 `cmsStorage('object/media/...')` 로 Storage POST. 키는 anon이 아니라 `SUPABASE_SECRET_KEY`(service_role)
+- **버킷**: `storage.buckets` id=`media`, public. 표 마이그레이션만 돌리면 빠진다. 대표가 SQL Editor에서 `supabase/migrations/20260914_media_bucket.sql` 실행 (에이전트는 원격 apply 안 함)
 - **허용 사진**: JPG, PNG, GIF, WebP, AVIF. 원본 40MB까지 고르고, 브라우저에서 4MB 아래로 줄인 뒤 올린다. Vercel Function 본문은 4.5MB라 20MB를 그대로 보내면 413이 난다. HEIC는 거절하고 한글 안내
 - **허용 영상**: MP4, MOV, AVI, WMV, WebM 등 · 1GB · 로컬만
 - **인증**: `__Host-admin_session` 쿠키. API는 `redirect()` 하지 않고 JSON 401
-- **실패 코드**: `CMS_MEDIA_TYPE` / `CMS_MEDIA_HEIC` / `CMS_MEDIA_SIZE` / `CMS_MEDIA_TRUNCATED` / `CMS_MEDIA_WRITE` / `CMS_STORE_READONLY`
-- **환경변수**: 업로드 전용 시크릿 없음. `ADMIN_SESSION_SECRET` + 세션 쿠키만. `SUPABASE_*` 가 있어도 로컬 사진은 원격 Storage로 보내지 않는다
-- **saveCoach**: 올린 URL 문자열(`coach.image`)만 `data/content.json` 에 저장. 파일 자체는 올리지 않음
+- **실패 코드**: `CMS_MEDIA_TYPE` / `CMS_MEDIA_HEIC` / `CMS_MEDIA_SIZE` / `CMS_MEDIA_TRUNCATED` / `CMS_MEDIA_WRITE` / `CMS_STORE_READONLY` / `CMS_STORE_FAILED` / `CMS_STORE_FAILED:<상태>:<에러명>`
+- **환경변수**: 로컬 업로드 전용 시크릿 없음. 배포 사진은 `SUPABASE_URL` + `SUPABASE_SECRET_KEY`. `NEXT_PUBLIC_*` 에 넣지 않는다
+- **saveCoach**: 올린 URL 문자열(`coach.image`)만 콘텐츠에 저장. 파일 자체는 올리지 않음
 
 ---
 

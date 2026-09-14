@@ -1,40 +1,50 @@
+import { ConsultCta } from "@/components/content/Journey";
 import { LinedLink } from "@/components/ui/Buttons";
 import { Photo } from "@/components/ui/Photo";
 import type { CmsCoach } from "@/lib/cms/types";
 import { COACH } from "@/lib/site";
 
+const PHOTO_H = "lg:min-h-[min(960px,calc(100svh-var(--header-h)))]";
+
 export function CoachBand({ coach = { ...COACH, credentials: [...COACH.credentials] } }: { coach?: CmsCoach }) {
+  const lines = coach.credentials.map((item) => item.trim()).filter(Boolean);
+
   return (
-    <section id="coach" className="px-(--gutter) py-16 lg:py-20">
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:gap-12">
-        <div className="relative aspect-4/5 w-full overflow-hidden lg:h-[560px] lg:w-[38%]">
+    <div className="bg-[#111] text-white">
+      <section id="coach" className="grid pt-(--header-h) lg:grid-cols-2 lg:items-start">
+        <div className={`relative aspect-4/5 overflow-hidden lg:aspect-auto ${PHOTO_H}`}>
           <Photo
             src={coach.image}
             tone={coach.tone}
             alt={coach.name}
-            sizes="(min-width: 1025px) 38vw, 100vw"
+            sizes="(min-width: 1025px) 50vw, 100vw"
+            priority
+            className="absolute inset-0 object-cover object-top"
           />
         </div>
 
-        <div className="lg:flex-1 lg:pb-6">
-          <p className="c1 tracking-[0.2em] text-stem uppercase">Transition Coach 대표코치</p>
-          <h2 className="t2 mt-3">{coach.name}</h2>
-          <p className="b3 mt-2 text-ink-70">{coach.role}</p>
-          <p className="b2 mt-8 max-w-xl text-ink-90">{coach.intro}</p>
-
-          <ul className="mt-8 space-y-2 border-t border-ink-10 pt-6">
-            {coach.credentials.map((item) => (
-              <li key={item} className="b3 text-ink-70">
-                {item}
-              </li>
-            ))}
-          </ul>
-
-          <LinedLink href="/consult" className="mt-8">
-            코치와 상담하기
-          </LinedLink>
+        <div className={`flex items-start px-(--gutter) py-16 lg:px-16 lg:py-24 ${PHOTO_H}`}>
+          <div className="max-w-(--measure-narrow)">
+            <p className="c1 tracking-[0.2em] text-white/55 uppercase">Transition Coach 대표코치</p>
+            <h1 className="t2 mt-3 text-white">{coach.name}</h1>
+            <p className="c1 mt-3 text-white/55">{coach.role}</p>
+            <p className="b2 mt-8 text-white/75">{coach.intro}</p>
+            {lines.length > 0 ? (
+              <ul className="mt-12">
+                {lines.map((item) => (
+                  <li key={item} className="b3 border-t border-white/12 py-4 text-white/70 last:border-b">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <LinedLink href="/consult" className="mt-10 inline-block text-white">
+              코치와 상담하기
+            </LinedLink>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <ConsultCta showCheck={false} title="전환이 필요하다면" />
+    </div>
   );
 }

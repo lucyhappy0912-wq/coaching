@@ -17,8 +17,14 @@ export function cmsFailMessage(error: unknown) {
   if (code.includes("PGRST205")) {
     return "저장 표(cms_content)가 없습니다. Supabase SQL Editor에서 CMS 마이그레이션을 실행해 주세요.";
   }
-  if (code.startsWith("CMS_STORE_FAILED:")) {
-    const hint = code.slice("CMS_STORE_FAILED:".length);
+  if (code === "CMS_STORE_FAILED" || code.startsWith("CMS_STORE_FAILED:")) {
+    const hint = code.startsWith("CMS_STORE_FAILED:") ? code.slice("CMS_STORE_FAILED:".length) : "";
+    if (/404|bucket/i.test(hint)) {
+      return "사진 보관함(media 버킷)이 없습니다. Supabase SQL Editor에서 미디어 버킷 SQL을 실행해 주세요.";
+    }
+    if (/401|403|unauthorized/i.test(hint)) {
+      return "저장소가 권한을 거절했습니다. 서버 비밀 키를 확인해 주세요.";
+    }
     return hint ? `저장소가 거절했습니다 (${hint}).` : "저장소가 거절했습니다.";
   }
   return "저장하지 못했습니다. 저장소 연결을 확인하세요.";

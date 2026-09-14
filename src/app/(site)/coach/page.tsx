@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { SectionPage } from "@/components/layout/PageFrame";
 import { CoachBand } from "@/components/sections/CoachBand";
 import { assertPublicHref } from "@/lib/cms/assert-public";
 import { getContent } from "@/lib/cms/store";
@@ -13,9 +12,5 @@ export const metadata: Metadata = {
 export default async function CoachPage() {
   await assertPublicHref("/coach");
   const content = await getContent();
-  return (
-    <SectionPage>
-      <CoachBand coach={content.coach} />
-    </SectionPage>
-  );
+  return <CoachBand coach={content.coach} />;
 }

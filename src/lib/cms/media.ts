@@ -197,8 +197,22 @@ export async function uploadMedia(file: File, expect?: "image" | "video") {
     },
     body: new Uint8Array(buf),
   });
-  if (!res.ok) throw new Error("CMS_STORE_FAILED");
+  if (!res.ok) throw new Error(`CMS_STORE_FAILED:${await storageRejectHint(res)}`);
   return { name, url: mediaPublicUrl(name) };
+}
+
+/** Storage 거절 본문은 넣지 않는다. 상태코드와 에러명만. */
+async function storageRejectHint(res: Response) {
+  let name = "";
+  try {
+    const json = (await res.json()) as { error?: unknown };
+    if (typeof json.error === "string") {
+      name = json.error.replace(/[^A-Za-z0-9 ._-]/g, "").replace(/\s+/g, " ").trim().slice(0, 48);
+    }
+  } catch {
+    /* 본문은 힌트에 쓰지 않는다 */
+  }
+  return name ? `${res.status}:${name}` : String(res.status);
 }
 
 export async function removeMedia(name: string) {
