@@ -65,7 +65,7 @@ export function validateQuestion(input: {
   const body = input.body.trim().slice(0, 1000);
   const published = input.published !== false;
   const password = (input.password ?? "").trim();
-  if (name.length < 2 || title.length < 2 || body.length < 4) throw new Error("BOARD_INVALID");
+  if (!name || !title || !body) throw new Error("BOARD_INVALID");
   if (!published && (password.length < 4 || password.length > 20)) throw new Error("BOARD_PASSWORD");
   return { name, title, body, published, password };
 }

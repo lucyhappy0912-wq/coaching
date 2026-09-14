@@ -31,7 +31,7 @@ export async function submitQuestion(_prev: BoardAskState, formData: FormData): 
   } catch (error) {
     const code = error instanceof Error ? error.message : "";
     if (code === "BOARD_INVALID") {
-      return { status: "error", message: "이름·제목·본문을 조금 더 적어 주세요." };
+      return { status: "error", message: "이름, 제목, 내용을 모두 적어 주세요." };
     }
     if (code === "BOARD_PASSWORD") {
       return { status: "error", message: "비밀글은 비밀번호를 4자 이상 정해 주세요." };
