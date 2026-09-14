@@ -4,7 +4,7 @@ import { useActionState } from "react";
 
 import { findCheckReport } from "@/app/(site)/check/actions";
 import type { FindCheckState } from "@/app/(site)/check/find-state";
-import { CheckReport } from "@/components/check/CheckReport";
+import { CheckResultView } from "@/components/check/CheckResultView";
 import { HoneypotField } from "@/components/ui/HoneypotField";
 
 const initial: FindCheckState = { error: null, scores: null };
@@ -66,7 +66,7 @@ export function CheckViewForm() {
 
       {state.scores ? (
         <div className="mt-12">
-          <CheckReport scores={state.scores} />
+          <CheckResultView name={state.name} scores={state.scores} />
         </div>
       ) : null}
     </>

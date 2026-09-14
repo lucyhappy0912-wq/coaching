@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { deleteCheck } from "@/app/admin/checks/actions";
 import { AdminCheckAreas } from "@/app/admin/checks/AdminCheckAreas";
 import { AdminShell } from "@/app/admin/_components/AdminShell";
-import { CheckReport } from "@/components/check/CheckReport";
+import { CheckResultView } from "@/components/check/CheckResultView";
+import { Container } from "@/components/ui/Container";
 import { requireAdmin } from "@/lib/auth/dal";
 import { BAND_COPY } from "@/lib/check/copy";
 import { formatPhoneDisplay } from "@/lib/check/mask";
@@ -15,14 +16,13 @@ export const dynamic = "force-dynamic";
 
 const VIEWS = [
   { id: "answers", label: "영역 응답", href: "" },
-  { id: "top", label: "상위 3개 분석지", href: "?view=top" },
-  { id: "full", label: "전체 분석지", href: "?view=full" },
+  { id: "report", label: "분석지", href: "?view=report" },
 ] as const;
 
 type AdminCheckView = (typeof VIEWS)[number]["id"];
 
 function parseView(value: string | undefined): AdminCheckView {
-  if (value === "top" || value === "full") return value;
+  if (value === "report") return value;
   return "answers";
 }
 
@@ -130,15 +130,11 @@ export default async function AdminCheckDetailPage({
 
       {view === "answers" ? <AdminCheckAreas answers={record.answers} scores={scores} /> : null}
 
-      {view === "top" ? (
-        <div className="mt-6">
-          <CheckReport scores={scores} showCta={false} variant="priority" />
-        </div>
-      ) : null}
-
-      {view === "full" ? (
-        <div className="mt-6">
-          <CheckReport scores={scores} showCta={false} variant="full" />
+      {view === "report" ? (
+        <div className="mt-6 bg-grass-10 py-8 sm:py-16 lg:py-24">
+          <Container className="mx-auto max-w-3xl">
+            <CheckResultView name={record.identity.name} scores={scores} showCta />
+          </Container>
         </div>
       ) : null}
 
