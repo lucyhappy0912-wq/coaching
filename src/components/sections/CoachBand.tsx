@@ -1,4 +1,3 @@
-import { ConsultCta } from "@/components/content/Journey";
 import { LinedLink } from "@/components/ui/Buttons";
 import { Photo } from "@/components/ui/Photo";
 import { sanitizeImageFocus } from "@/lib/cms/image-focus";
@@ -49,7 +48,6 @@ export function CoachBand({ coach = { ...COACH, credentials: [...COACH.credentia
           </div>
         </div>
       </section>
-      <ConsultCta showCheck={false} title="전환이 필요하다면" />
     </div>
   );
 }
