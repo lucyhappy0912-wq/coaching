@@ -103,9 +103,11 @@ export function ImageSlot({
         setPending(null);
         const code = error instanceof Error ? error.message : "";
         setError(
-          code === "CMS_MEDIA_STILL_LARGE"
-            ? "사진을 4MB 아래로 줄이지 못했습니다. 더 작은 파일로 올려 주세요."
-            : "이 사진은 줄일 수 없습니다. JPG 또는 PNG로 바꿔 주세요.",
+          code === "CMS_MEDIA_HEIC"
+            ? "아이폰 HEIC는 올릴 수 없습니다. 사진 앱에서 JPG로 저장한 뒤 올려 주세요."
+            : code === "CMS_MEDIA_STILL_LARGE"
+              ? "사진을 4MB 아래로 줄이지 못했습니다. 더 작은 파일로 올려 주세요."
+              : "이 사진은 줄일 수 없습니다. JPG 또는 PNG로 바꿔 주세요.",
         );
         return;
       }
@@ -153,7 +155,9 @@ export function ImageSlot({
         {children}
         <span className="absolute inset-x-3 top-3 z-10 adm-body text-white/90">
           {pending === "image"
-            ? `사진 올리는 중… ${progress}%`
+            ? progress > 0
+              ? `사진 올리는 중… ${progress}%`
+              : "사진 줄이는 중…"
             : value
               ? "클릭해서 사진 바꾸기"
               : label}

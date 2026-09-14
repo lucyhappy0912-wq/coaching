@@ -1,7 +1,7 @@
 /** 원본을 고를 때 허용. 올리기 전에 4MB 이하로 줄인다. */
 export const IMAGE_MAX_BYTES = 40 * 1024 * 1024;
-/** Vercel Function 본문 4.5MB. multipart 여유를 빼 4MB. */
-export const IMAGE_UPLOAD_BYTES = 4 * 1024 * 1024;
+/** Vercel Function 본문 4.5MB. multipart 여유를 빼 3.5MB. */
+export const IMAGE_UPLOAD_BYTES = Math.round(3.5 * 1024 * 1024);
 export const VIDEO_MAX_BYTES = 1024 * 1024 * 1024;
 
 export const IMAGE_ACCEPT =
