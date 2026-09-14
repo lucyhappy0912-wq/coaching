@@ -8,6 +8,11 @@ const PHOTO_H = "lg:min-h-[min(960px,calc(100svh-var(--header-h)))]";
 
 export function CoachBand({ coach = { ...COACH, credentials: [...COACH.credentials] } }: { coach?: CmsCoach }) {
   const lines = coach.credentials.map((item) => item.trim()).filter(Boolean);
+  const role = !coach.role.trim() || /^대표\s*코치$/.test(coach.role.trim()) ? "인생 전환 코치" : coach.role.trim();
+  const paragraphs = coach.intro
+    .split(/\n+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
 
   return (
     <div className="bg-[#111] text-white">
@@ -28,8 +33,16 @@ export function CoachBand({ coach = { ...COACH, credentials: [...COACH.credentia
           <div className="max-w-(--measure-narrow)">
             <p className="c1 tracking-[0.2em] text-white/55 uppercase">Transition Coach 대표코치</p>
             <h1 className="t2 mt-3 text-white">{coach.name}</h1>
-            <p className="c1 mt-3 text-white/55">{coach.role}</p>
-            <p className="b2 mt-8 text-white/75">{coach.intro}</p>
+            <p className="c1 mt-3 text-white/55">{role}</p>
+            {paragraphs.length > 0 ? (
+              <div className="reading mt-8">
+                {paragraphs.map((paragraph) => (
+                  <p key={paragraph} className="b2 text-white/75">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            ) : null}
             {lines.length > 0 ? (
               <div className="mt-12">
                 <p className="c1 tracking-[0.2em] text-white/55">프로필</p>

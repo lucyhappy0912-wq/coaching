@@ -234,7 +234,7 @@ function CoachForm({ initial, canSave }: { initial: CmsCoach; canSave: boolean }
           />
         </div>
         <label className="block lg:col-span-2">
-          <span className="adm-label mb-1.5 block text-forest-70">소개</span>
+          <span className="adm-label mb-1.5 block text-forest-70">소개 (문단마다 엔터)</span>
           <textarea
             className={ADM_AREA}
             name="coach.intro"
