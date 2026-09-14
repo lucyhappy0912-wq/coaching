@@ -13,6 +13,7 @@ function footerNav(site: CmsSite) {
     {
       title: "Help",
       items: [
+        { label: "Founder Transition", href: "/coaching/founder-transition" },
         { label: "Founder Transition Check", href: "/check" },
         { label: "개인정보처리방침", href: "/privacy" },
         { label: site.email, href: `mailto:${site.email}` },

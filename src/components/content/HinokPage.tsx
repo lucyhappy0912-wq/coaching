@@ -143,15 +143,16 @@ export function HinokShell({
 }
 
 export const MOMENT_LINKS = [
-  { href: "/story", label: "왜멈춘자인가" },
-  { href: "/way", label: "멈춘자가 만든 전환" },
   { href: "/belief", label: "Our Belief" },
+  { href: "/way", label: "Meomchunja Way" },
+  { href: "/story", label: "How we transition" },
 ];
 
 export const COACHING_LINKS = [
-  { href: "/coaching/stage", label: "Stage Transition" },
-  { href: "/coaching/next-chapter", label: "Next Chapter Transition" },
-  { href: "/coaching/founder", label: "From founder to leader" },
-  { href: "/check", label: "founder transition 진단" },
-  { href: "/coaching/leadership", label: "your next leadership" },
+  { href: "/coaching", label: "Founder Coaching" },
+  { href: "/coaching/founder", label: "6-week founder transition" },
+  { href: "/coaching/leadership", label: "from Founder to Leader" },
+  { href: "/coaching/founder-transition", label: "Founder Transition" },
+  { href: "/check", label: "Founder Transition (Check)" },
+  { href: "/consult?src=lift", label: "LIFT – Life Architecture" },
 ];

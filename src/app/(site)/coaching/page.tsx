@@ -8,7 +8,7 @@ import { isMenuHrefOn } from "@/lib/menu";
 
 export const metadata: Metadata = {
   title: "Coaching",
-  description: "Stage, Next Chapter, Founder. 세 가지 전환 가운데 지금 가까운 곳을 고르면 됩니다.",
+  description: "Founder Coaching. 창업자에서 리더로 가는 전환을 함께합니다.",
 };
 
 export default async function CoachingIndexPage() {
@@ -39,11 +39,9 @@ export default async function CoachingIndexPage() {
       programs={programs}
       openHrefs={[
         ...programs.filter((item) => isMenuHrefOn(item.href, menuOff, menuOn)).map((item) => item.href),
-        ...COACHING_LINKS.filter(
-          (item) =>
-            (item.href === "/check" || item.href === "/coaching/leadership") &&
-            isMenuHrefOn(item.href, menuOff, menuOn),
-        ).map((item) => item.href),
+        ...COACHING_LINKS.filter((item) => isMenuHrefOn(item.href, menuOff, menuOn)).map(
+          (item) => item.href,
+        ),
       ]}
     />
   );

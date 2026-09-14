@@ -35,19 +35,22 @@ export const MENU_GROUPS = [
   {
     title: "The Moment",
     items: [
-      { label: "왜멈춘자인가", href: "/story" },
-      { label: "멈춘자가 만든 전환", href: "/way" },
       { label: "Our Belief", href: "/belief" },
+      { label: "Meomchunja Way", href: "/way" },
+      { label: "How we transition", href: "/story" },
     ],
   },
   {
     title: "Coaching",
     items: [
+      { label: "Founder Coaching", href: "/coaching" },
+      { label: "6-week founder transition", href: "/coaching/founder" },
+      { label: "from Founder to Leader", href: "/coaching/leadership" },
+      { label: "Founder Transition", href: "/coaching/founder-transition" },
+      { label: "Founder Transition (Check)", href: "/check" },
+      { label: "LIFT – Life Architecture", href: "/consult?src=lift" },
       { label: "Stage Transition", href: "/coaching/stage" },
       { label: "Next Chapter Transition", href: "/coaching/next-chapter" },
-      { label: "From founder to leader", href: "/coaching/founder" },
-      { label: "founder transition 진단", href: "/check" },
-      { label: "your next leadership", href: "/coaching/leadership" },
     ],
   },
   {
@@ -290,9 +293,9 @@ export const FOOTER_LINKS = [
   {
     title: "Brand",
     items: [
-      { label: "왜멈춘자인가", href: "/story" },
-      { label: "멈춘자가 만든 전환", href: "/way" },
       { label: "Our Belief", href: "/belief" },
+      { label: "Meomchunja Way", href: "/way" },
+      { label: "How we transition", href: "/story" },
       { label: "Coaching", href: "/coaching" },
       { label: "Coach", href: "/coach" },
       { label: "FAQ", href: "/faq" },
@@ -303,6 +306,7 @@ export const FOOTER_LINKS = [
     title: "Help",
     items: [
       { label: "무료 상담 신청", href: "/consult" },
+      { label: "Founder Transition", href: "/coaching/founder-transition" },
       { label: "Founder Transition Check", href: "/check" },
       { label: "개인정보처리방침", href: "/privacy" },
       { label: SITE.email, href: `mailto:${SITE.email}` },

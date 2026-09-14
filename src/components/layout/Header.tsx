@@ -97,7 +97,7 @@ export function Header({
                 <p className="c1 mb-5 tracking-[0.2em] text-stem uppercase">{group.title}</p>
                 <ul className="space-y-3.5">
                   {group.items.map((item) => (
-                    <li key={item.label}>
+                    <li key={item.href}>
                       {item.href.startsWith("tel:") || item.href.startsWith("mailto:") ? (
                         <a
                           href={item.href}

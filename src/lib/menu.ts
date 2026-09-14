@@ -2,9 +2,15 @@ import { MENU_GROUPS } from "@/lib/site";
 
 /** 메뉴에서 기본으로 내려 두는 코칭 페이지. 관리자가 직접 켜기 전에는 공개하지 않는다. */
 export const DEFAULT_MENU_OFF = [
+  "/coaching/stage",
   "/coaching/next-chapter",
+] as const;
+
+/** 예전에 기본 숨김이었다가 이번 메뉴에서 다시 켠 주소. 저장된 예전 off를 풀어 준다. */
+const NOW_DEFAULT_ON = [
   "/coaching/founder",
   "/coaching/leadership",
+  "/coaching/founder-transition",
 ] as const;
 
 export type MenuItem = { label: string; href: string };
@@ -42,6 +48,7 @@ export function sanitizeMenuOff(raw: unknown, menuOn: unknown = []): string[] {
     : [...DEFAULT_MENU_OFF];
   const off = new Set<string>([...DEFAULT_MENU_OFF, ...extra]);
   for (const href of enabled) off.delete(href);
+  for (const href of NOW_DEFAULT_ON) off.delete(href);
   return [...off];
 }
 

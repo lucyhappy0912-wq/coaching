@@ -6,7 +6,7 @@ import { getContent } from "@/lib/cms/store";
 import { BRAND_WHY } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "왜멈춘자인가",
+  title: "How we transition",
   description: BRAND_WHY.lead,
 };
 

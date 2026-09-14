@@ -6,7 +6,7 @@ import { getContent } from "@/lib/cms/store";
 import { WAY } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "멈춘자가 만든 전환",
+  title: "Meomchunja Way",
   description: WAY.title,
 };
 

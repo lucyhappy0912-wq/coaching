@@ -10,6 +10,11 @@ function pickHomeCta(raw: string | undefined, seed: string) {
   return raw;
 }
 
+function pickWayEyebrow(raw: string | undefined, seed: string) {
+  if (raw === undefined || /momchunja/i.test(raw)) return seed;
+  return raw;
+}
+
 function mediaOf(raw: Partial<MediaRef> | undefined, seed: MediaRef): MediaRef {
   return {
     tone: raw?.tone ?? seed.tone,
@@ -90,7 +95,7 @@ export function mergePages(raw: Partial<CmsPages> | undefined, seed: CmsPages): 
     way: {
       hero: {
         ...mediaOf(raw.way?.hero, seed.way.hero),
-        eyebrow: pick(raw.way?.hero?.eyebrow, seed.way.hero.eyebrow),
+        eyebrow: pickWayEyebrow(raw.way?.hero?.eyebrow, seed.way.hero.eyebrow),
         title: pick(raw.way?.hero?.title, seed.way.hero.title),
       },
       items: seed.way.items.map((item, index) => {

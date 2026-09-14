@@ -11,7 +11,32 @@ function menuLabel(href: string) {
 
 function momentScenes(pages: CmsPages): CmsHomeProgram[] {
   const story = pages.story.slides[0];
-  const scenes: CmsHomeProgram[] = [];
+  const scenes: CmsHomeProgram[] = [
+    {
+      id: "belief",
+      eyebrow: pages.belief.hero.chain,
+      line: menuLabel("/belief"),
+      title: menuLabel("/belief"),
+      lead: [pages.belief.hero.line],
+      href: "/belief",
+      cta: "Our Belief 보기",
+      tone: "sage",
+      image: pages.belief.hero.image,
+      video: pages.belief.hero.video,
+    },
+    {
+      id: "way",
+      eyebrow: pages.way.hero.eyebrow,
+      line: menuLabel("/way"),
+      title: menuLabel("/way"),
+      lead: [pages.way.hero.title],
+      href: "/way",
+      cta: "Meomchunja Way 보기",
+      tone: "paper",
+      image: pages.way.hero.image,
+      video: pages.way.hero.video,
+    },
+  ];
 
   if (story) {
     scenes.push({
@@ -21,38 +46,12 @@ function momentScenes(pages: CmsPages): CmsHomeProgram[] {
       title: menuLabel("/story"),
       lead: [story.lines[1] || story.title.replace(/\n/g, " ")],
       href: "/story",
-      cta: "이야기 보기",
+      cta: "How we transition 보기",
       tone: "forest",
       image: story.image,
       video: story.video,
     });
   }
-
-  scenes.push({
-    id: "way",
-    eyebrow: pages.way.hero.eyebrow,
-    line: menuLabel("/way"),
-    title: menuLabel("/way"),
-    lead: [pages.way.hero.title],
-    href: "/way",
-    cta: "전환 보기",
-    tone: "paper",
-    image: pages.way.hero.image,
-    video: pages.way.hero.video,
-  });
-
-  scenes.push({
-    id: "belief",
-    eyebrow: pages.belief.hero.chain,
-    line: menuLabel("/belief"),
-    title: menuLabel("/belief"),
-    lead: [pages.belief.hero.line],
-    href: "/belief",
-    cta: "Belief 보기",
-    tone: "sage",
-    image: pages.belief.hero.image,
-    video: pages.belief.hero.video,
-  });
 
   return scenes;
 }

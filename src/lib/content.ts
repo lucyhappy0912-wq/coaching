@@ -160,7 +160,7 @@ export const BELIEF_CLOSE = {
 } as const;
 
 export const WAY = {
-  eyebrow: "The Momchunja Way",
+  eyebrow: "The Meomchunja Way",
   title: "존재에서 시작해, 삶의 변화로 나아갑니다.",
   lead: "멈춘자는 눈앞의 문제를 해결하거나 목표를 달성하는 것에만 머물지 않습니다. 한 사람의 존재를 깊이 이해하는 것에서 시작해, 그 발견이 더 나은 선택과 삶의 실제 변화로 이어지도록 합니다.",
   tone: "mist" as const,
