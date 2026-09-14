@@ -43,10 +43,9 @@ export const MENU_GROUPS = [
   {
     title: "Coaching",
     items: [
-      { label: "Founder Coaching", href: "/coaching" },
+      { label: "Founder Transition", href: "/coaching/founder-transition" },
       { label: "6-week founder transition", href: "/coaching/founder" },
       { label: "from Founder to Leader", href: "/coaching/leadership" },
-      { label: "Founder Transition", href: "/coaching/founder-transition" },
       { label: "Founder Transition (Check)", href: "/check" },
       { label: "LIFT – Life Architecture", href: "/consult?src=lift" },
       { label: "Stage Transition", href: "/coaching/stage" },

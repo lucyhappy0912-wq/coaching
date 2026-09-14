@@ -149,10 +149,9 @@ export const MOMENT_LINKS = [
 ];
 
 export const COACHING_LINKS = [
-  { href: "/coaching", label: "Founder Coaching" },
+  { href: "/coaching/founder-transition", label: "Founder Transition" },
   { href: "/coaching/founder", label: "6-week founder transition" },
   { href: "/coaching/leadership", label: "from Founder to Leader" },
-  { href: "/coaching/founder-transition", label: "Founder Transition" },
   { href: "/check", label: "Founder Transition (Check)" },
   { href: "/consult?src=lift", label: "LIFT – Life Architecture" },
 ];
