@@ -27,7 +27,7 @@ function mergeCms(raw: Partial<CmsData> | null | undefined): CmsData {
       credentials: raw.coach?.credentials?.length ? raw.coach.credentials : seed.coach.credentials,
       imageFocus: sanitizeImageFocus(raw.coach?.imageFocus ?? seed.coach.imageFocus),
     },
-    faqs: raw.faqs?.length ? raw.faqs : seed.faqs,
+    faqs: Array.isArray(raw.faqs) ? raw.faqs : seed.faqs,
     pages: mergePages(raw.pages, seed.pages),
     menuOn: sanitizeMenuOn(raw.menuOn),
     menuOff: sanitizeMenuOff(raw.menuOff, raw.menuOn),

@@ -9,7 +9,7 @@ export async function dataRest<T>(path: string, init: RequestInit = {}): Promise
   const prefer =
     method === "GET"
       ? "return=representation"
-      : method === "DELETE" || method === "POST"
+      : method === "DELETE" || method === "POST" || method === "PATCH"
         ? "return=representation"
         : "return=minimal";
   const res = await fetch(`${url}/rest/v1/${path}`, {
@@ -37,6 +37,13 @@ export async function dataRest<T>(path: string, init: RequestInit = {}): Promise
     }
     throw new Error(`STORE_WRITE_FAILED:${hint}`);
   }
-  if (!text) return [] as T;
-  return JSON.parse(text) as T;
+  if (!text) {
+    if (method === "PATCH") throw new Error("STORE_WRITE_FAILED:0");
+    return [] as T;
+  }
+  const data = JSON.parse(text) as T;
+  if (method === "PATCH" && Array.isArray(data) && data.length === 0) {
+    throw new Error("STORE_WRITE_FAILED:0");
+  }
+  return data;
 }

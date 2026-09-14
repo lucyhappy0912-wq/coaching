@@ -25,6 +25,9 @@ export function cmsFailMessage(error: unknown) {
     if (/401|403|unauthorized/i.test(hint)) {
       return "저장소가 권한을 거절했습니다. 서버 비밀 키를 확인해 주세요.";
     }
+    if (hint === "0") {
+      return "저장소에 쓸 행이 없습니다. 표와 서버 비밀 키를 확인해 주세요.";
+    }
     return hint ? `저장소가 거절했습니다 (${hint}).` : "저장소가 거절했습니다.";
   }
   return "저장하지 못했습니다. 저장소 연결을 확인하세요.";
@@ -38,7 +41,7 @@ export async function cmsRest<T>(path: string, init: RequestInit = {}): Promise<
     method === "GET"
       ? "return=representation"
       : method === "PATCH"
-        ? "return=minimal"
+        ? "return=representation"
         : method === "DELETE"
           ? "return=representation"
           : "return=representation,resolution=merge-duplicates";
@@ -58,8 +61,15 @@ export async function cmsRest<T>(path: string, init: RequestInit = {}): Promise<
     const hint = /PGRST\d+/.exec(text)?.[0] ?? /22P02|23502|23505/.exec(text)?.[0] ?? String(res.status);
     throw new Error(`CMS_STORE_FAILED:${hint}`);
   }
-  if (!text) return [] as T;
-  return JSON.parse(text) as T;
+  if (!text) {
+    if (method === "PATCH") throw new Error("CMS_STORE_FAILED:0");
+    return [] as T;
+  }
+  const data = JSON.parse(text) as T;
+  if (method === "PATCH" && Array.isArray(data) && data.length === 0) {
+    throw new Error("CMS_STORE_FAILED:0");
+  }
+  return data;
 }
 
 export async function cmsStorage(path: string, init: RequestInit = {}) {

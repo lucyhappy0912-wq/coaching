@@ -2,11 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AdminShell } from "@/app/admin/_components/AdminShell";
-import { ADM_AREA } from "@/app/admin/_components/fields";
 import { requireAdmin } from "@/lib/auth/dal";
 import { getQuestionForAdmin } from "@/lib/board/store";
 
-import { deleteQuestion, saveAnswer } from "../actions";
+import { AnswerForm } from "../AnswerForm";
+import { deleteQuestion } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -27,20 +27,7 @@ export default async function AdminBoardDetail({ params }: { params: Promise<{ i
         </p>
         <h2 className="adm-h mt-2 text-forest">{row.title}</h2>
         <p className="adm-body mt-4 whitespace-pre-wrap text-ink-90">{row.body}</p>
-        <form action={saveAnswer} className="mt-6 space-y-4">
-          <input type="hidden" name="id" value={row.id} />
-          <label className="block">
-            <span className="adm-label mb-1.5 block text-forest-70">답변</span>
-            <textarea name="answer" defaultValue={row.answer} className={ADM_AREA} />
-          </label>
-          <label className="adm-body flex items-center gap-2 text-ink-90">
-            <input type="checkbox" name="published" defaultChecked={row.published} />
-            사이트에 공개
-          </label>
-          <button type="submit" className="adm-body h-10 rounded-[4px] bg-forest px-5 text-white">
-            저장
-          </button>
-        </form>
+        <AnswerForm id={row.id} answer={row.answer} published={row.published} />
         <form action={deleteQuestion} className="mt-4">
           <input type="hidden" name="id" value={row.id} />
           <button type="submit" className="adm-body text-danger hover:underline">
