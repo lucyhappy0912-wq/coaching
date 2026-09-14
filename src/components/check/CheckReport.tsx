@@ -1,5 +1,6 @@
 import { BAND_COPY } from "@/lib/check/copy";
 import type { CheckScores } from "@/lib/check/compute";
+import { LIFT_NEXT } from "@/lib/check/lift-copy";
 import { PRIORITY_AREA_COPY, PRIORITY_CLOSE, PRIORITY_INTRO } from "@/lib/check/priority-copy";
 import { AREA_IDS, AREAS } from "@/lib/check/questions";
 import { PillButton } from "@/components/ui/Buttons";
@@ -75,6 +76,23 @@ function PrioritySheets({
   );
 }
 
+function LiftNextSheet() {
+  return (
+    <section className="mt-8 border border-forest-20 bg-white p-7 lg:p-10">
+      <p className="c1 tracking-[0.2em] text-forest-70 uppercase">{LIFT_NEXT.eyebrow}</p>
+      <p className="serif t3 mt-3">{LIFT_NEXT.title}</p>
+      {LIFT_NEXT.stanzas.map((stanza, i) => (
+        <p
+          key={stanza}
+          className={`b3 whitespace-pre-line text-ink-70 ${i === 0 ? "mt-5" : "mt-4"}`}
+        >
+          {stanza}
+        </p>
+      ))}
+    </section>
+  );
+}
+
 export function CheckReport({
   scores,
   showCta = true,
@@ -94,9 +112,10 @@ export function CheckReport({
           scores={scores}
           empty="10점 이상 영역이 없어 상위 3개 분석표가 없습니다."
         />
+        <LiftNextSheet />
         {showCta ? (
           <section className="mt-16 flex flex-col gap-4">
-            <PillButton href="/consult">상담 신청</PillButton>
+            <PillButton href={LIFT_NEXT.href}>{LIFT_NEXT.cta}</PillButton>
             <a href="/" className="lined b3 text-forest">
               홈으로
             </a>
@@ -153,9 +172,11 @@ export function CheckReport({
 
       <PrioritySheets scores={scores} />
 
+      <LiftNextSheet />
+
       {showCta ? (
         <section className="mt-16 flex flex-col gap-4">
-          <PillButton href="/consult">상담 신청</PillButton>
+          <PillButton href={LIFT_NEXT.href}>{LIFT_NEXT.cta}</PillButton>
           <a href="/" className="lined b3 text-forest">
             홈으로
           </a>
