@@ -23,7 +23,6 @@ export async function submitQuestion(_prev: BoardAskState, formData: FormData): 
       published,
       password: String(formData.get("password") ?? ""),
     });
-    if (!published) await setBoardUnlock(id);
     revalidatePath("/admin");
     revalidatePath("/admin/board");
     revalidatePath("/board");

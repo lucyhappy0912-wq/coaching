@@ -43,7 +43,7 @@ export default async function BoardPage() {
                     <td className="b3 py-4 text-ink-70">{posts.length - index}</td>
                     <td className="py-4 pr-4">
                       <Link href={`/board/${row.id}`} className="serif text-[17px] text-forest hover:opacity-60">
-                        {row.title}
+                        {row.published ? row.title : "비밀글입니다"}
                       </Link>
                       {!row.published ? (
                         <span className="c1 ml-2 text-ink-70">비밀</span>
