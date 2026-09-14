@@ -24,22 +24,16 @@ export function Footer({
       <div className="grid gap-10 px-(--gutter) pt-24 pb-10 lg:grid-cols-3 lg:gap-16 lg:pt-32 lg:pb-14">
         {visibleMenuGroups(menuOff, menuOn).map((group) => (
           <nav key={group.title}>
-            <p className="c1 mb-5 tracking-[0.2em] text-stem uppercase">{group.title}</p>
-            <ul className="space-y-3.5">
+            <p className="c1 mb-4 tracking-[0.2em] text-stem uppercase">{group.title}</p>
+            <ul className="space-y-1.5">
               {group.items.map((item) => (
                 <li key={item.href}>
                   {item.href.startsWith("tel:") || item.href.startsWith("mailto:") ? (
-                    <a
-                      href={item.href}
-                      className="serif text-[22px] leading-none transition-opacity hover:opacity-50 lg:text-[26px]"
-                    >
+                    <a href={item.href} className="serif text-[13px] transition-opacity hover:opacity-60 lg:text-[15px]">
                       {item.label}
                     </a>
                   ) : (
-                    <Link
-                      href={item.href}
-                      className="serif text-[22px] leading-none transition-opacity hover:opacity-50 lg:text-[26px]"
-                    >
+                    <Link href={item.href} className="serif text-[13px] transition-opacity hover:opacity-60 lg:text-[15px]">
                       {item.label}
                     </Link>
                   )}
