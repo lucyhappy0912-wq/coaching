@@ -21,7 +21,7 @@ function PrioritySheets({
     <>
       <section className="mt-8 border border-forest-20 bg-white p-7 first:mt-0 lg:p-10">
         <p className="c1 tracking-[0.2em] text-forest-70 uppercase">{PRIORITY_INTRO.eyebrow}</p>
-        <p className="serif t3 mt-3">{PRIORITY_INTRO.title}</p>
+        <p className="serif t3 mt-3 break-keep">{PRIORITY_INTRO.title}</p>
         <p className="b3 mt-5 text-ink-70">{PRIORITY_INTRO.lead}</p>
         <p className="b3 mt-4 text-ink-70">{PRIORITY_INTRO.body}</p>
       </section>
@@ -38,7 +38,7 @@ function PrioritySheets({
             <p className="c1 tracking-[0.2em] text-forest-70 uppercase">
               {copy.no}. {copy.title} · {score}점
             </p>
-            <p className="serif t3 mt-3">{copy.lead}</p>
+            <p className="serif t3 mt-3 break-keep">{copy.lead}</p>
 
             <p className="b2 mt-8 font-semibold text-forest">현재 나타나고 있을 가능성이 높은 모습</p>
             {copy.now.map((p) => (
@@ -80,7 +80,7 @@ function LiftNextSheet() {
   return (
     <section className="mt-8 border border-forest-20 bg-white p-7 lg:p-10">
       <p className="c1 tracking-[0.2em] text-forest-70 uppercase">{LIFT_NEXT.eyebrow}</p>
-      <p className="serif t3 mt-3">{LIFT_NEXT.title}</p>
+      <p className="serif t3 mt-3 break-keep">{LIFT_NEXT.title}</p>
       {LIFT_NEXT.stanzas.map((stanza, i) => (
         <p
           key={stanza}
@@ -131,7 +131,7 @@ export function CheckReport({
         <p className="c1 tracking-[0.2em] text-forest-70 uppercase">
           {band.label} · {band.range}
         </p>
-        <p className="serif t3 mt-3">총점 {scores.total}점</p>
+        <p className="serif t3 mt-3 break-keep">총점 {scores.total}점</p>
         <p className="b3 mt-5 text-ink-70">{band.lead}</p>
         <p className="b3 mt-4 text-ink-70">{band.need}</p>
         <p className="b3 mt-4 text-ink-70">{band.help}</p>
@@ -139,7 +139,7 @@ export function CheckReport({
 
       <section className="mt-8 border border-forest-20 bg-white p-7 lg:p-10">
         <p className="c1 tracking-[0.2em] text-forest-70 uppercase">AREA PROFILE</p>
-        <p className="serif t3 mt-3">7개 영역 결과</p>
+        <p className="serif t3 mt-3 break-keep">7개 영역 결과</p>
         <p className="b3 mt-4 text-ink-70">
           영역당 3~15점입니다. 10점 미만도 결과에 포함됩니다. 분석표는 10점 이상 상위 3개만
           아래에 따로 있습니다.

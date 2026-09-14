@@ -31,7 +31,7 @@ export default async function CheckPage({
         <div className="absolute inset-0 bg-black/45" />
         <div className="relative z-10 flex min-h-[46vh] flex-col justify-end px-(--gutter) pt-(--header-h) pb-12">
           <p className="c1 tracking-[0.22em] text-white/55 uppercase">{check.eyebrow}</p>
-          <h1 className="serif mt-4 max-w-3xl text-[32px] leading-[1.15] whitespace-pre-line lg:text-[48px]">
+          <h1 className="serif mt-4 max-w-3xl break-keep text-[32px] leading-[1.15] whitespace-pre-line lg:text-[48px]">
             {check.title}
           </h1>
         </div>
