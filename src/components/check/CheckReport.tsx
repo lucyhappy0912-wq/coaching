@@ -208,11 +208,20 @@ function LiftNextSheet({
     <>
       <section className={CARD}>
         <p className="c1 tracking-[0.2em] text-forest-70 uppercase">{LIFT_NEXT.eyebrow}</p>
-        <p className="serif t3 mt-3 whitespace-pre-line break-keep">{LIFT_NEXT.title}</p>
+        <p className="serif t3 mt-3 whitespace-pre-line break-keep lg:hidden">{LIFT_NEXT.titleMobile}</p>
+        <p className="serif t3 mt-3 break-keep hidden lg:block">{LIFT_NEXT.title}</p>
+        {LIFT_NEXT.stanzasMobile.map((stanza, i) => (
+          <p
+            key={`m-${stanza}`}
+            className={`b3 whitespace-pre-line text-ink-70 lg:hidden ${i === 0 ? "mt-5" : "mt-4"}`}
+          >
+            {liftStanza(stanza)}
+          </p>
+        ))}
         {LIFT_NEXT.stanzas.map((stanza, i) => (
           <p
-            key={stanza}
-            className={`b3 whitespace-pre-line text-ink-70 ${i === 0 ? "mt-5" : "mt-4"}`}
+            key={`d-${stanza}`}
+            className={`b3 whitespace-pre-line text-ink-70 hidden lg:block ${i === 0 ? "mt-5" : "mt-4"}`}
           >
             {liftStanza(stanza)}
           </p>
