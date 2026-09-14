@@ -95,28 +95,50 @@ function isImage(kind: MediaKind): kind is ImageKind {
   return kind.startsWith("image/");
 }
 
-function imageLooksComplete(kind: ImageKind, buf: Buffer) {
-  if (kind === "image/jpeg") return buf.length >= 2 && buf[buf.length - 2] === 0xff && buf[buf.length - 1] === 0xd9;
-  if (kind === "image/png") return buf.includes(Buffer.from("IEND"));
-  if (kind === "image/gif") return buf[buf.length - 1] === 0x3b;
-  if (kind === "image/webp") {
-    const declared = buf.readUInt32LE(4);
-    return buf.length >= 8 && declared + 8 === buf.length;
-  }
-  return buf.length >= 16;
+function looksHeic(buf: Buffer) {
+  const brands = ftypBrands(buf);
+  if (brands.some((item) => item === "avif" || item === "avis" || item === "avia")) return false;
+  return brands.some((item) => ["heic", "heix", "hevc", "hevx", "mif1", "msf1"].includes(item));
+}
+
+/** 로컬 업로드는 프로젝트의 public/uploads (이 PC는 F:\coaching). C 임시폴더를 쓰지 않는다. */
+function uploadDir() {
+  return path.join(process.cwd(), "public", "uploads");
 }
 
 async function writeLocal(file: File, name: string) {
-  const dir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(dir, { recursive: true });
-  const dest = path.join(dir, name);
-  await pipeline(
-    Readable.fromWeb(file.stream() as import("node:stream/web").ReadableStream),
-    createWriteStream(dest),
-  );
-  const info = await stat(dest);
-  if (info.size !== file.size) throw new Error("CMS_MEDIA_SIZE");
-  return { name, url: `/uploads/${name}` };
+  const dir = uploadDir();
+  try {
+    await mkdir(dir, { recursive: true });
+    const dest = path.join(dir, name);
+    if (path.dirname(dest) !== dir) throw new Error("CMS_MEDIA_WRITE");
+    await pipeline(
+      Readable.fromWeb(file.stream() as import("node:stream/web").ReadableStream),
+      createWriteStream(dest),
+    );
+    const info = await stat(dest);
+    if (info.size !== file.size) throw new Error("CMS_MEDIA_TRUNCATED");
+    return { name, url: `/uploads/${name}` };
+  } catch (error) {
+    if (error instanceof Error && (error.message === "CMS_MEDIA_TRUNCATED" || error.message === "CMS_MEDIA_WRITE")) {
+      throw error;
+    }
+    throw new Error("CMS_MEDIA_WRITE");
+  }
+}
+
+async function writeLocalBuffer(buf: Buffer, name: string) {
+  const dir = uploadDir();
+  try {
+    await mkdir(dir, { recursive: true });
+    const dest = path.join(dir, name);
+    if (path.dirname(dest) !== dir) throw new Error("CMS_MEDIA_WRITE");
+    await writeFile(dest, buf);
+    return { name, url: `/uploads/${name}` };
+  } catch (error) {
+    if (error instanceof Error && error.message === "CMS_MEDIA_WRITE") throw error;
+    throw new Error("CMS_MEDIA_WRITE");
+  }
 }
 
 export async function listMedia(): Promise<MediaItem[]> {
@@ -141,6 +163,7 @@ export async function uploadMedia(file: File, expect?: "image" | "video") {
   if (!cmsWritable()) throw new Error("CMS_STORE_READONLY");
   if (file.size <= 0) throw new Error("CMS_MEDIA_SIZE");
   const head = Buffer.from(await file.slice(0, 64).arrayBuffer());
+  if (looksHeic(head)) throw new Error("CMS_MEDIA_HEIC");
   const kind = sniff(head);
   if (!kind) throw new Error("CMS_MEDIA_TYPE");
   if (expect === "image" && !isImage(kind)) throw new Error("CMS_MEDIA_TYPE");
@@ -152,20 +175,19 @@ export async function uploadMedia(file: File, expect?: "image" | "video") {
   const ext = isImage(kind) ? IMAGE_EXT[kind] : VIDEO_EXT[kind];
   const name = `${Date.now()}-${randomBytes(6).toString("hex")}.${ext}`;
 
-  if (!isImage(kind)) {
-    if (process.env.VERCEL) throw new Error("CMS_STORE_READONLY");
-    return writeLocal(file, name);
+  // 로컬(이 PC)은 항상 F:\coaching\public\uploads. 문답표용 Supabase 키가 있어도 사진을 원격으로 보내지 않는다.
+  if (!process.env.VERCEL) {
+    if (!isImage(kind)) return writeLocal(file, name);
+    const buf = Buffer.from(await file.arrayBuffer());
+    if (buf.length !== file.size) throw new Error("CMS_MEDIA_TRUNCATED");
+    return writeLocalBuffer(buf, name);
   }
+
+  if (!isImage(kind)) throw new Error("CMS_STORE_READONLY");
+  if (!cmsEnabled()) throw new Error("CMS_STORE_READONLY");
 
   const buf = Buffer.from(await file.arrayBuffer());
-  if (buf.length !== file.size || !imageLooksComplete(kind, buf)) throw new Error("CMS_MEDIA_SIZE");
-
-  if (!cmsEnabled()) {
-    const dir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(dir, { recursive: true });
-    await writeFile(path.join(dir, name), buf);
-    return { name, url: `/uploads/${name}` };
-  }
+  if (buf.length !== file.size) throw new Error("CMS_MEDIA_TRUNCATED");
 
   const res = await cmsStorage(`object/media/${name}`, {
     method: "POST",

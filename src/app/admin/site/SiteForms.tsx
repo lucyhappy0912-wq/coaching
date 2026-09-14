@@ -14,7 +14,7 @@ import { PasswordForm } from "./PasswordForm";
 
 const JUMP = [
   { href: "#contact", label: "연락처" },
-  { href: "#coach", label: "코치" },
+  { href: "#coach", label: "Transition Coach 대표코치" },
   { href: "#password", label: "관리자 비밀번호" },
 ];
 
@@ -185,15 +185,15 @@ function CoachForm({ initial, canSave }: { initial: CmsCoach; canSave: boolean }
 
   return (
     <form id="coach" action={action} className="scroll-mt-6 rounded-[6px] border border-ink-15 bg-white p-5">
-      <h2 className="adm-h text-forest">코치</h2>
-      <p className="adm-body mt-1 text-ink-70">소개 페이지와 홈 코치 띠에 나갑니다.</p>
+      <h2 className="adm-h text-forest">Transition Coach 대표코치</h2>
+      <p className="adm-body mt-1 text-ink-70">/coach 소개 페이지에 그대로 나갑니다.</p>
       <div className="mt-4 grid gap-5 lg:grid-cols-2">
         <ImageSlot
           name="coach.image"
           value={value.image}
           tone={value.tone}
           onChange={(url) => setValue((current) => ({ ...current, image: url }))}
-          label="코치 사진을 올려 주세요"
+          label="Transition Coach 대표코치 사진을 올려 주세요"
         />
         <div className="space-y-5">
           <label className="block">

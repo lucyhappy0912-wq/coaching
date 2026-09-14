@@ -2,7 +2,22 @@
 
 작업 이력과 결정사항을 기록한다. 새 작업을 시작할 때 이 문서를 먼저 읽는다.
 
-최종 갱신: 2026-09-10
+최종 갱신: 2026-09-14
+
+---
+
+## 관리자 사진 업로드 (2026-09-14)
+
+코치 편집 `ImageSlot` → `POST /api/admin/upload` → `uploadMedia`.
+
+- **로컬 저장 위치**: `{cwd}/public/uploads/` (이 PC는 `F:\coaching\public\uploads`). C 임시폴더·캐시를 쓰지 않는다
+- **공개 URL**: `/uploads/<timestamp>-<12hex>.<ext>`
+- **허용 사진**: JPG, PNG, GIF, WebP, AVIF · 20MB. HEIC는 거절하고 한글 안내
+- **허용 영상**: MP4, MOV, AVI, WMV, WebM 등 · 1GB · 로컬만
+- **인증**: `__Host-admin_session` 쿠키. API는 `redirect()` 하지 않고 JSON 401
+- **실패 코드**: `CMS_MEDIA_TYPE` / `CMS_MEDIA_HEIC` / `CMS_MEDIA_SIZE` / `CMS_MEDIA_TRUNCATED` / `CMS_MEDIA_WRITE` / `CMS_STORE_READONLY`
+- **환경변수**: 업로드 전용 시크릿 없음. `ADMIN_SESSION_SECRET` + 세션 쿠키만. `SUPABASE_*` 가 있어도 로컬 사진은 원격 Storage로 보내지 않는다
+- **saveCoach**: 올린 URL 문자열(`coach.image`)만 `data/content.json` 에 저장. 파일 자체는 올리지 않음
 
 ---
 

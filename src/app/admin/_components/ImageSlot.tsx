@@ -13,23 +13,44 @@ import {
 } from "@/lib/cms/media-limits";
 import { cn } from "@/lib/utils";
 
+function readUploadResponse(xhr: XMLHttpRequest): { url?: string; error?: string } {
+  const status = xhr.status;
+  const text = xhr.responseText?.trim() ?? "";
+  if (status === 401 || status === 403) {
+    return { error: "로그인이 만료되었습니다. 다시 로그인해 주세요." };
+  }
+  if (status === 413) {
+    return { error: "파일이 너무 큽니다. 더 작은 파일로 올려 주세요." };
+  }
+  if (!text) {
+    return { error: status ? `서버가 비어 있는 답을 보냈습니다. (${status})` : "서버에 연결하지 못했습니다." };
+  }
+  try {
+    const json = JSON.parse(text) as { url?: string; error?: string };
+    if (json.url) return { url: json.url };
+    return { error: json.error ?? `올리지 못했습니다. (서버 ${status || "응답 오류"})` };
+  } catch {
+    if (text.startsWith("<") || text.includes("<!DOCTYPE")) {
+      return { error: "서버가 파일을 받지 못했습니다. 다시 로그인한 뒤 올려 주세요." };
+    }
+    return { error: "서버 답을 읽지 못했습니다. 잠시 후 다시 올려 주세요." };
+  }
+}
+
 function postFile(file: File, kind: "image" | "video", onProgress: (percent: number) => void) {
   return new Promise<{ url?: string; error?: string }>((resolve) => {
     const data = new FormData();
     data.append("file", file);
     data.append("kind", kind);
     const xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.timeout = 15 * 60 * 1000;
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) onProgress(Math.round((event.loaded / event.total) * 100));
     };
-    xhr.onload = () => {
-      try {
-        resolve(JSON.parse(xhr.responseText) as { url?: string; error?: string });
-      } catch {
-        resolve({ error: "올리지 못했습니다." });
-      }
-    };
-    xhr.onerror = () => resolve({ error: "올리지 못했습니다." });
+    xhr.onload = () => resolve(readUploadResponse(xhr));
+    xhr.onerror = () => resolve({ error: "연결이 끊어졌습니다. 네트워크를 확인하고 다시 올려 주세요." });
+    xhr.ontimeout = () => resolve({ error: "시간이 초과되었습니다. 다시 올려 주세요." });
     xhr.open("POST", "/api/admin/upload");
     xhr.send(data);
   });

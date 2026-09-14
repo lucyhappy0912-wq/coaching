@@ -6,9 +6,13 @@ import { redirect } from "next/navigation";
 
 import { ADMIN_COOKIE, verifySessionToken } from "./session";
 
-export const requireAdmin = cache(async () => {
+export async function getAdminSession() {
   const token = (await cookies()).get(ADMIN_COOKIE)?.value;
-  const session = verifySessionToken(token);
+  return verifySessionToken(token);
+}
+
+export const requireAdmin = cache(async () => {
+  const session = await getAdminSession();
   if (!session) redirect("/admin/login");
   return session;
 });
