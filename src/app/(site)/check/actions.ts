@@ -82,7 +82,7 @@ export async function submitCheck(
   }
 
   revalidatePath("/admin/checks");
-  redirect(`/check/r/${token}`);
+  redirect(`/check/r/${token}`, "replace");
 }
 
 export async function findCheckReport(

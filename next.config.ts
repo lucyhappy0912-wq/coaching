@@ -38,6 +38,8 @@ const nextConfig: NextConfig = {
       },
       { source: "/admin", headers: adminHeaders },
       { source: "/admin/:path*", headers: adminHeaders },
+      { source: "/check/view", headers: adminHeaders },
+      { source: "/check/r/:path*", headers: adminHeaders },
     ];
   },
 };

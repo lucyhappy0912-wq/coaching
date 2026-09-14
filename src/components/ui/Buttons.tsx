@@ -42,14 +42,17 @@ export function LinedLink({
   href,
   children,
   className,
+  replace = false,
 }: {
   href: string;
   children: React.ReactNode;
   className?: string;
+  replace?: boolean;
 }) {
   return (
     <Link
       href={href}
+      replace={replace}
       className={cn("lined b3 transition-opacity duration-200 hover:opacity-60", className)}
     >
       {children}

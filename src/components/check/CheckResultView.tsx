@@ -1,3 +1,4 @@
+import { CheckLeaveReplace } from "@/components/check/CheckLeaveReplace";
 import { CheckReport, type LiftApplicant } from "@/components/check/CheckReport";
 import { BAND_RESULT_NAME } from "@/lib/check/copy";
 import type { CheckScores } from "@/lib/check/compute";
@@ -17,6 +18,7 @@ export function CheckResultView({
 
   return (
     <>
+      <CheckLeaveReplace />
       <p className="c1 tracking-[0.2em] text-forest-70 uppercase">Founder Transition Check</p>
       <h1 className="serif t3 mt-4 break-keep">Founder Transition 결과 분석</h1>
       {trimmed ? (

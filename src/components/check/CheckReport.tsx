@@ -197,6 +197,39 @@ function LiftApply({ applicant }: { applicant: LiftApplicant }) {
   );
 }
 
+function LiftCopy({
+  title,
+  stanzas,
+}: {
+  title: string;
+  stanzas: readonly string[];
+}) {
+  const [intro, questions, ...rest] = stanzas;
+  const close = rest.at(-1);
+  const middle = rest.slice(0, -1);
+  return (
+    <>
+      <p className="serif t3 mt-3 whitespace-pre-line break-keep">{title}</p>
+      {intro ? <p className="b3 mt-5 whitespace-pre-line text-ink-70">{liftStanza(intro)}</p> : null}
+      {questions ? (
+        <blockquote className="serif mt-8 border-l-[3px] border-stem pl-5 text-[16px] leading-[1.55] whitespace-pre-line break-keep text-forest lg:pl-7 lg:text-[20px] lg:leading-[1.45]">
+          {liftStanza(questions)}
+        </blockquote>
+      ) : null}
+      {middle.map((stanza) => (
+        <p key={stanza} className="b3 mt-5 whitespace-pre-line text-ink-70">
+          {liftStanza(stanza)}
+        </p>
+      ))}
+      {close ? (
+        <p className="serif mt-10 border-t border-forest-20 pt-6 text-[18px] leading-snug whitespace-pre-line break-keep text-forest lg:text-[22px]">
+          {liftStanza(close)}
+        </p>
+      ) : null}
+    </>
+  );
+}
+
 function LiftNextSheet({
   showCta,
   applicant,
@@ -206,31 +239,25 @@ function LiftNextSheet({
 }) {
   return (
     <>
-      <section className={CARD}>
-        <p className="c1 tracking-[0.2em] text-forest-70 uppercase">{LIFT_NEXT.eyebrow}</p>
-        <p className="serif t3 mt-3 whitespace-pre-line break-keep lg:hidden">{LIFT_NEXT.titleMobile}</p>
-        <p className="serif t3 mt-3 break-keep hidden lg:block">{LIFT_NEXT.title}</p>
-        {LIFT_NEXT.stanzasMobile.map((stanza, i) => (
-          <p
-            key={`m-${stanza}`}
-            className={`b3 whitespace-pre-line text-ink-70 lg:hidden ${i === 0 ? "mt-5" : "mt-4"}`}
-          >
-            {liftStanza(stanza)}
-          </p>
-        ))}
-        {LIFT_NEXT.stanzas.map((stanza, i) => (
-          <p
-            key={`d-${stanza}`}
-            className={`b3 whitespace-pre-line text-ink-70 hidden lg:block ${i === 0 ? "mt-5" : "mt-4"}`}
-          >
-            {liftStanza(stanza)}
-          </p>
-        ))}
+      <section className="relative overflow-hidden border border-forest-20 bg-grass-10 px-5 py-6 sm:p-7 lg:p-10">
+        <p
+          aria-hidden
+          className="serif pointer-events-none absolute -right-2 top-2 select-none text-[80px] leading-none text-forest/[0.06] lg:-right-1 lg:top-0 lg:text-[128px]"
+        >
+          LIFT
+        </p>
+        <p className="c1 relative tracking-[0.2em] text-forest-70 uppercase">LIFT · Life Architecture</p>
+        <div className="relative lg:hidden">
+          <LiftCopy title={LIFT_NEXT.titleMobile} stanzas={LIFT_NEXT.stanzasMobile} />
+        </div>
+        <div className="relative hidden lg:block">
+          <LiftCopy title={LIFT_NEXT.title} stanzas={LIFT_NEXT.stanzas} />
+        </div>
       </section>
       {showCta ? (
         <section className="mt-16 flex flex-col gap-4">
           {applicant ? <LiftApply applicant={applicant} /> : null}
-          <LinedLink href="/" className="text-forest">
+          <LinedLink href="/" replace className="text-forest">
             홈으로
           </LinedLink>
         </section>
