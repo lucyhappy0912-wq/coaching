@@ -32,16 +32,19 @@ export function CoachBand({ coach = { ...COACH, credentials: [...COACH.credentia
             <p className="c1 mt-3 text-white/55">{coach.role}</p>
             <p className="b2 mt-8 text-white/75">{coach.intro}</p>
             {lines.length > 0 ? (
-              <ul className="mt-12">
-                {lines.map((item) => (
-                  <li key={item} className="b3 border-t border-white/12 py-4 text-white/70 last:border-b">
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              <div className="mt-12">
+                <p className="c1 tracking-[0.2em] text-white/55">프로필</p>
+                <ul className="mt-4">
+                  {lines.map((item) => (
+                    <li key={item} className="b3 border-t border-white/12 py-4 text-white/70 last:border-b">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ) : null}
-            <LinedLink href="/consult" className="mt-10 inline-block text-white">
-              코치와 상담하기
+            <LinedLink href="/lift" className="mt-10 inline-block text-white">
+              LIFT – Life Architecture
             </LinedLink>
           </div>
         </div>
