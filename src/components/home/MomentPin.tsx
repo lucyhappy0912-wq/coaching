@@ -48,10 +48,10 @@ export function MomentPin({ moment }: { moment: CmsPages["home"]["moment"] }) {
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/25 to-black/35" />
 
-        <div className="absolute inset-x-(--gutter) bottom-16 z-10 max-w-xl lg:bottom-24">
+        <div className="absolute inset-x-(--gutter) bottom-16 z-10 max-w-4xl lg:bottom-24">
           <h1
             className={cn(
-              "serif text-[28px] leading-[1.25] transition-opacity duration-700 md:text-[34px] lg:text-[44px]",
+              "serif break-keep text-[28px] leading-[1.25] transition-opacity duration-700 md:text-[34px] lg:text-[44px]",
               !reduce && progress >= 0.38 ? "opacity-55" : "opacity-100"
             )}
           >
@@ -59,7 +59,7 @@ export function MomentPin({ moment }: { moment: CmsPages["home"]["moment"] }) {
           </h1>
           <p
             className={cn(
-              "serif mt-8 text-[20px] tracking-[0.08em] text-white/80 transition-all duration-700 md:text-[24px] lg:text-[28px]",
+              "serif mt-8 break-keep text-[20px] tracking-[0.08em] text-white/80 transition-all duration-700 md:text-[24px] lg:text-[28px]",
               show(0.18) ? "translate-y-0 opacity-100" : "translate-y-3.5 opacity-0"
             )}
           >
@@ -67,7 +67,7 @@ export function MomentPin({ moment }: { moment: CmsPages["home"]["moment"] }) {
           </p>
           <p
             className={cn(
-              "serif mt-3 max-w-xl text-[26px] leading-[1.25] transition-all duration-700 md:text-[32px] lg:text-[40px]",
+              "serif mt-3 break-keep whitespace-nowrap text-[clamp(20px,3.4vw,40px)] leading-[1.25] transition-all duration-700",
               show(0.38) ? "translate-y-0 opacity-100" : "translate-y-3.5 opacity-0"
             )}
           >
