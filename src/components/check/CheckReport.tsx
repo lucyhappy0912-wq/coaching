@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useActionState, useEffect, useRef, useState } from "react";
 
-import { LinedLink, PillButton } from "@/components/ui/Buttons";
+import { applyLift, type LiftApplyState } from "@/app/(site)/check/lift-actions";
+import { LinedLink } from "@/components/ui/Buttons";
+import { HoneypotField } from "@/components/ui/HoneypotField";
 import { cn } from "@/lib/utils";
 import { BAND_COPY } from "@/lib/check/copy";
 import type { CheckScores } from "@/lib/check/compute";
@@ -10,7 +12,9 @@ import { LIFT_NEXT } from "@/lib/check/lift-copy";
 import { PRIORITY_AREA_COPY, PRIORITY_CLOSE, PRIORITY_INTRO } from "@/lib/check/priority-copy";
 import { AREA_IDS, AREAS, type AreaId } from "@/lib/check/questions";
 
-const CARD = "border border-forest-20 bg-white p-7 lg:p-10";
+export type LiftApplicant = { name: string; phone: string; email: string };
+
+const CARD = "border border-forest-20 bg-white px-5 py-6 sm:p-7 lg:p-10";
 
 const PREV_BTN = "serif lined min-h-11 text-forest";
 const NEXT_BTN =
@@ -154,24 +158,69 @@ function PriorityClose() {
   );
 }
 
-function LiftNextSheet({ showCta }: { showCta: boolean }) {
+const LIFT_NAME = "LIFT – Life Architecture";
+
+function liftStanza(text: string) {
+  const chunks = text.split(LIFT_NAME);
+  return chunks.map((chunk, i) => (
+    <Fragment key={i}>
+      {i > 0 ? <span className="whitespace-nowrap">{LIFT_NAME}</span> : null}
+      {chunk}
+    </Fragment>
+  ));
+}
+
+const APPLY_BTN =
+  "serif inline-flex h-11 w-full items-center justify-center rounded-sm bg-forest px-7 text-[15px] text-white shadow-[0_4px_4px_0_rgba(0,58,64,0.1)] hover:bg-forest-90 disabled:opacity-60 lg:h-12 lg:px-8 lg:text-base";
+
+function LiftApply({ applicant }: { applicant: LiftApplicant }) {
+  const [state, action, pending] = useActionState(applyLift, { status: "idle" } satisfies LiftApplyState);
+  if (state.status === "done") {
+    return (
+      <div className="flex min-h-28 flex-col items-center justify-center border border-forest-20 bg-white px-6 py-8 text-center">
+        <p className="serif t3">신청이 완료되었습니다.</p>
+        <p className="b3 mt-3 text-ink-70">남겨 주신 연락처로 안내드리겠습니다.</p>
+      </div>
+    );
+  }
+  return (
+    <form action={action} className="flex flex-col gap-4">
+      <HoneypotField />
+      <input type="hidden" name="name" value={applicant.name} />
+      <input type="hidden" name="phone" value={applicant.phone} />
+      <input type="hidden" name="email" value={applicant.email} />
+      <button type="submit" disabled={pending} className={APPLY_BTN}>
+        {pending ? "신청 중…" : LIFT_NEXT.cta}
+      </button>
+      {state.status === "error" ? <p className="b3 text-[#c0392b]">{state.message}</p> : null}
+    </form>
+  );
+}
+
+function LiftNextSheet({
+  showCta,
+  applicant,
+}: {
+  showCta: boolean;
+  applicant?: LiftApplicant;
+}) {
   return (
     <>
       <section className={CARD}>
         <p className="c1 tracking-[0.2em] text-forest-70 uppercase">{LIFT_NEXT.eyebrow}</p>
-        <p className="serif t3 mt-3 break-keep">{LIFT_NEXT.title}</p>
+        <p className="serif t3 mt-3 whitespace-pre-line break-keep">{LIFT_NEXT.title}</p>
         {LIFT_NEXT.stanzas.map((stanza, i) => (
           <p
             key={stanza}
             className={`b3 whitespace-pre-line text-ink-70 ${i === 0 ? "mt-5" : "mt-4"}`}
           >
-            {stanza}
+            {liftStanza(stanza)}
           </p>
         ))}
       </section>
       {showCta ? (
         <section className="mt-16 flex flex-col gap-4">
-          <PillButton href={LIFT_NEXT.href}>{LIFT_NEXT.cta}</PillButton>
+          {applicant ? <LiftApply applicant={applicant} /> : null}
           <LinedLink href="/" className="text-forest">
             홈으로
           </LinedLink>
@@ -184,9 +233,11 @@ function LiftNextSheet({ showCta }: { showCta: boolean }) {
 export function CheckReport({
   scores,
   showCta = true,
+  applicant,
 }: {
   scores: CheckScores;
   showCta?: boolean;
+  applicant?: LiftApplicant;
 }) {
   const parts = buildParts(scores.priorityAreas);
   const [step, setStep] = useState(0);
@@ -215,7 +266,7 @@ export function CheckReport({
     if (part.key === "areas") return <AreaProfile scores={scores} onOpenSheet={openAreaSheet} />;
     if (part.key === "intro") return <PriorityIntro />;
     if (part.key === "close") return <PriorityClose />;
-    if (part.key === "lift") return <LiftNextSheet showCta={showCta} />;
+    if (part.key === "lift") return <LiftNextSheet showCta={showCta} applicant={applicant} />;
     if (part.key.startsWith("priority-")) {
       const id = part.key.slice("priority-".length) as AreaId;
       return <PriorityArticle id={id} score={scores.areas[id]} />;

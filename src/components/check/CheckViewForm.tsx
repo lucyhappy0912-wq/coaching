@@ -66,7 +66,15 @@ export function CheckViewForm() {
 
       {state.scores ? (
         <div className="mt-12">
-          <CheckResultView name={state.name} scores={state.scores} />
+          <CheckResultView
+            name={state.name}
+            scores={state.scores}
+            applicant={
+              state.name && state.phone
+                ? { name: state.name, phone: state.phone, email: state.email ?? "" }
+                : undefined
+            }
+          />
         </div>
       ) : null}
     </>

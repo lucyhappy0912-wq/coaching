@@ -46,7 +46,7 @@ export function ConsultCta({
 }) {
   return (
     <section className="bg-forest px-(--gutter) py-16 text-white lg:py-20">
-      <p className="c1 tracking-[0.2em] text-white/70 uppercase">Consult</p>
+      <p className="c1 tracking-[0.2em] text-white/70 uppercase">Coaching</p>
       <h2 className="t2 mt-3 max-w-(--measure-narrow)">{title}</h2>
       <p className="b2 mt-5 max-w-(--measure-narrow) text-white/85">{body}</p>
       <div className="mt-8 flex flex-wrap items-center gap-6">

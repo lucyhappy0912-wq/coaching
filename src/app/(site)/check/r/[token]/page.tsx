@@ -24,7 +24,11 @@ export default async function CheckResultPage({
   return (
     <div className="bg-grass-10 pt-(--header-h)">
       <Container className="mx-auto max-w-3xl py-8 sm:py-16 lg:py-24">
-        <CheckResultView name={found.record.identity.name} scores={found.scores} />
+        <CheckResultView
+          name={found.record.identity.name}
+          scores={found.scores}
+          applicant={found.record.identity}
+        />
       </Container>
     </div>
   );

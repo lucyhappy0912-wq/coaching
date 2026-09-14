@@ -112,7 +112,7 @@ export async function findCheckReport(
   try {
     const scores = await getScoresByIdentity(name, phone, email);
     if (!scores) return done(miss);
-    return done({ error: null, scores, name });
+    return done({ error: null, scores, name, phone, email });
   } catch {
     return done(miss);
   }

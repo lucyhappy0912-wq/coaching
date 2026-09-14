@@ -211,7 +211,7 @@ export const STORY_TABS = [
 /** 서비스 4종 */
 export const SERVICES = [
   {
-    title: "Free Consulting",
+    title: "Free Coaching",
     body: "지금 어떤 상황인지 듣고 코칭이 필요한지부터 솔직하게 말씀드립니다.",
     link: { label: "무료 상담 신청하기", href: "/consult" },
     tone: "sage" as const,

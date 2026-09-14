@@ -4,4 +4,6 @@ export type FindCheckState = {
   error: string | null;
   scores: CheckScores | null;
   name?: string;
+  phone?: string;
+  email?: string;
 };

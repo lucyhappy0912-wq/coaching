@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AdminShell } from "@/app/admin/_components/AdminShell";
 import { requireAdmin } from "@/lib/auth/dal";
 import { formatPhoneDisplay } from "@/lib/check/mask";
+import { isLiftLead, LIFT_MESSAGE } from "@/lib/leads/kind";
 import { getLeadForAdmin, markNewLeadsSeen } from "@/lib/leads/store";
 
 import { deleteLead, updateLeadStatus } from "../actions";
@@ -18,16 +19,20 @@ export default async function AdminInquiryDetail({ params }: { params: Promise<{
   if (!row) notFound();
 
   return (
-    <AdminShell title="상담 신청">
-      <Link href="/admin/inquiries" className="adm-body text-forest hover:underline">
+    <AdminShell title={isLiftLead(row) ? "LIFT 신청" : "상담 신청"}>
+      <Link
+        href={isLiftLead(row) ? "/admin/lift" : "/admin/inquiries"}
+        className="adm-body text-forest hover:underline"
+      >
         목록으로
       </Link>
       <section className="mt-6 rounded-[6px] border border-ink-15 bg-white p-5">
         <dl className="space-y-4">
+          <Item label="구분">{isLiftLead(row) ? LIFT_MESSAGE : "무료 상담"}</Item>
           <Item label="이름">{row.name}</Item>
           <Item label="연락처">{formatPhoneDisplay(row.phone)}</Item>
-          <Item label="희망 시간">{row.preferredTime || "없음"}</Item>
-          <Item label="고민">{row.message || "없음"}</Item>
+          <Item label="희망 시간">{isLiftLead(row) ? "—" : row.preferredTime || "없음"}</Item>
+          <Item label="내용">{row.message || "없음"}</Item>
           <Item label="접수">{row.receivedAt.slice(0, 16).replace("T", " ")}</Item>
         </dl>
         <form action={updateLeadStatus} className="mt-6 flex flex-wrap gap-2">

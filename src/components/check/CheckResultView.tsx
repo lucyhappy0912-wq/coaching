@@ -1,4 +1,4 @@
-import { CheckReport } from "@/components/check/CheckReport";
+import { CheckReport, type LiftApplicant } from "@/components/check/CheckReport";
 import { BAND_RESULT_NAME } from "@/lib/check/copy";
 import type { CheckScores } from "@/lib/check/compute";
 
@@ -6,10 +6,12 @@ export function CheckResultView({
   name,
   scores,
   showCta = true,
+  applicant,
 }: {
   name?: string;
   scores: CheckScores;
   showCta?: boolean;
+  applicant?: LiftApplicant;
 }) {
   const trimmed = name?.trim() ?? "";
 
@@ -31,6 +33,7 @@ export function CheckResultView({
           key={[scores.band, scores.total, ...scores.priorityAreas].join("-")}
           scores={scores}
           showCta={showCta}
+          applicant={applicant}
         />
       </div>
     </>

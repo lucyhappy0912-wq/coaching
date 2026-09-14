@@ -120,6 +120,8 @@ body {
 .b3 {
   line-height: 160%;
   word-break: keep-all;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
 }
 
 .b1 {

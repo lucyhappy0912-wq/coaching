@@ -7,6 +7,7 @@ import { maskName, maskPhone } from "@/lib/check/mask";
 import { listChecksForAdmin } from "@/lib/check/store";
 import { PAGE_META } from "@/lib/cms/page-keys";
 import { getContent } from "@/lib/cms/store";
+import { isLiftLead } from "@/lib/leads/kind";
 import { listLeadsForAdmin } from "@/lib/leads/store";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,7 @@ export default async function AdminHomePage() {
   ]);
 
   const newLeads = leads.filter((row) => row.status === "new");
+  const liftLeads = leads.filter(isLiftLead);
   const unanswered = questions.filter((row) => !row.answer);
   const faqs = content.faqs.filter((item) => item.q && item.a);
 
@@ -36,6 +38,7 @@ export default async function AdminHomePage() {
 
       <ul className="mt-6 grid gap-3 sm:grid-cols-2">
         <Stat href="/admin/inquiries" label="신규 상담" value={newLeads.length} hint="연락이 필요한 신청" />
+        <Stat href="/admin/lift" label="LIFT 신청" value={liftLeads.length} hint="분석지에서 신청한 응답자" />
         <Stat href="/admin/board" label="미답변 질문" value={unanswered.length} hint="게시판에 올라온 질문" />
         <Stat href="/admin/faq" label="자주 묻는 질문" value={faqs.length} hint="사이트 FAQ에 나가는 칸" />
         <Stat href="/admin/checks" label="문답" value={checks.length} hint="진단 응답" />

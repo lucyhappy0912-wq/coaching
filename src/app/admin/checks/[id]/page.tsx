@@ -133,7 +133,12 @@ export default async function AdminCheckDetailPage({
       {view === "report" ? (
         <div className="mt-6 bg-grass-10 py-8 sm:py-16 lg:py-24">
           <Container className="mx-auto max-w-3xl">
-            <CheckResultView name={record.identity.name} scores={scores} showCta />
+            <CheckResultView
+              name={record.identity.name}
+              scores={scores}
+              showCta
+              applicant={record.identity}
+            />
           </Container>
         </div>
       ) : null}
