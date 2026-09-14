@@ -13,7 +13,6 @@ function footerNav(site: CmsSite) {
     {
       title: "Help",
       items: [
-        { label: "무료 상담 신청", href: "/consult" },
         { label: "Founder Transition Check", href: "/check" },
         { label: "개인정보처리방침", href: "/privacy" },
         { label: site.email, href: `mailto:${site.email}` },
