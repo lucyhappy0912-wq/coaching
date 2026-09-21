@@ -308,18 +308,23 @@ export async function countChecksSupabase() {
 
 export async function listChecksSupabase(): Promise<CheckListItem[]> {
   const now = new Date().toISOString();
-  const path = (select: string) =>
-    `check_responses?purge_at=gt.${encodeURIComponent(now)}&select=${select}&order=created_at.desc`;
-  let rows: CheckListRow[];
-  try {
-    rows = await rest<CheckListRow[]>(path(LIST_SELECT_PROFILE));
-  } catch (error) {
-    if (!(error instanceof Error) || !error.message.startsWith("CHECK_STORE_MISSING_COLUMN")) {
-      throw error;
+  const encoded = encodeURIComponent(now);
+  const attempts = [
+    `check_responses?or=(purge_at.is.null,purge_at.gt.${encoded})&select=${LIST_SELECT_PROFILE}&order=created_at.desc`,
+    `check_responses?or=(purge_at.is.null,purge_at.gt.${encoded})&select=${LIST_SELECT_CORE}&order=created_at.desc`,
+    `check_responses?purge_at=gt.${encoded}&select=*&order=created_at.desc`,
+    `check_responses?select=id,created_at,name,phone,email,instrument,band,total,source,contact_consent,industry,founder_journey&order=created_at.desc`,
+    `check_responses?select=*&order=created_at.desc`,
+  ];
+  let lastError: unknown;
+  for (const path of attempts) {
+    try {
+      return (await rest<CheckListRow[]>(path)).map(mapCheckListRow);
+    } catch (error) {
+      lastError = error;
     }
-    rows = await rest<CheckListRow[]>(path(LIST_SELECT_CORE));
   }
-  return rows.map(mapCheckListRow);
+  throw lastError;
 }
 
 export async function getCheckSupabase(id: string) {
