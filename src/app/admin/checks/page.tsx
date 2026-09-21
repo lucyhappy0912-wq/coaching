@@ -8,6 +8,20 @@ import { requireAdmin } from "@/lib/auth/dal";
 import { BAND_COPY } from "@/lib/check/copy";
 import { formatPhoneDisplay } from "@/lib/check/mask";
 import { listChecksForAdmin } from "@/lib/check/store";
+import { PAUSE_BAND_COPY } from "@/lib/pause/copy";
+import type { PauseBand } from "@/lib/pause/questions";
+import type { Band } from "@/lib/check/questions";
+
+function instrumentLabel(instrument: string) {
+  return instrument === "pause-check" ? "PAUSE" : "FT";
+}
+
+function bandLabel(instrument: string, band: string) {
+  if (instrument === "pause-check") {
+    return PAUSE_BAND_COPY[band as PauseBand]?.label ?? band;
+  }
+  return BAND_COPY[band as Band]?.label ?? band;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +85,7 @@ export default async function AdminChecksPage() {
             <thead>
               <tr className="border-b border-ink-15">
                 <th className="adm-label whitespace-nowrap py-3 pr-6 text-forest-70">제출</th>
+                <th className="adm-label whitespace-nowrap py-3 pr-6 text-forest-70">문답</th>
                 <th className="adm-label whitespace-nowrap py-3 pr-6 text-forest-70">이름</th>
                 <th className="adm-label whitespace-nowrap py-3 pr-6 text-forest-70">전화</th>
                 <th className="adm-label whitespace-nowrap py-3 pr-6 text-forest-70">이메일</th>
@@ -87,6 +102,9 @@ export default async function AdminChecksPage() {
                 <tr key={row.id} className="border-b border-ink-10 last:border-0">
                   <td className="adm-meta whitespace-nowrap py-3.5 pr-6 text-ink-70">
                     {formatWhen(row.createdAt)}
+                  </td>
+                  <td className="adm-body whitespace-nowrap py-3.5 pr-6 text-ink-90">
+                    {instrumentLabel(row.instrument)}
                   </td>
                   <td className="whitespace-nowrap py-3.5 pr-6">
                     <Link
@@ -107,20 +125,24 @@ export default async function AdminChecksPage() {
                     {row.founderJourney}
                   </td>
                   <td className="adm-body whitespace-nowrap py-3.5 pr-6 text-ink-90">
-                    {BAND_COPY[row.band].label}
+                    {bandLabel(row.instrument, row.band)}
                   </td>
                   <td className="adm-body whitespace-nowrap py-3.5 pr-6 text-ink-90">{row.total}</td>
                   <td className="adm-meta whitespace-nowrap py-3.5 pr-6 text-ink-70">
                     {row.contactConsent ? "동의" : "거부"}
                   </td>
                   <td className="adm-body whitespace-nowrap py-3.5">
-                    <Link
-                      href={`/admin/checks/${row.id}/edit`}
-                      className="text-forest underline-offset-2 hover:underline"
-                    >
-                      수정
-                    </Link>
-                    <span className="mx-2 text-ink-30">·</span>
+                    {row.instrument === "pause-check" ? null : (
+                      <>
+                        <Link
+                          href={`/admin/checks/${row.id}/edit`}
+                          className="text-forest underline-offset-2 hover:underline"
+                        >
+                          수정
+                        </Link>
+                        <span className="mx-2 text-ink-30">·</span>
+                      </>
+                    )}
                     <Link
                       href={`/admin/checks/${row.id}#purge`}
                       className="text-danger underline-offset-2 hover:underline"

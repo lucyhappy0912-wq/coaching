@@ -10,6 +10,7 @@ export const PAGE_LINKS = [
   { href: "/coaching/founder-transition", label: "Founder Transition" },
   { href: "/way", label: "Meomchunja Way" },
   { href: "/check", label: "Founder Transition (Check)" },
+  { href: "/pause", label: "PAUSE CHECK" },
   { href: "/lift", label: "LIFT – Life Architecture" },
   { href: "/board", label: "게시판" },
   { href: "/faq", label: "자주 묻는 질문" },

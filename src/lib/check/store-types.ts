@@ -22,6 +22,8 @@ export type CheckRecord = {
   scores: Pick<CheckScores, "total" | "band" | "areas">;
 };
 
+export type CheckInstrument = "founder-transition-check" | "pause-check";
+
 export type CheckListItem = {
   id: string;
   createdAt: string;
@@ -30,7 +32,8 @@ export type CheckListItem = {
   email: string;
   industry: string;
   founderJourney: string;
-  band: CheckScores["band"];
+  instrument: CheckInstrument;
+  band: string;
   total: number;
   source: string;
   contactConsent: boolean;

@@ -4,39 +4,30 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { appendFile, mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { compute, type CheckScores } from "./compute";
+import { computePause, type PauseScores } from "./compute";
 import { CONSENT_VERSION, INSTRUMENT_VERSION, RETENTION_DAYS } from "./questions";
-import { hashToken, issueResultToken } from "./token";
-import type { CheckListItem, CheckRecord, CheckUpdateInput, NewCheckInput } from "./store-types";
+import { hashToken, issueResultToken } from "@/lib/check/token";
+import type { NewPauseInput, PauseListItem, PauseRecord } from "./store-types";
 
-const FILE = path.join(process.cwd(), "data", "checks.jsonl");
-const PURGE_LOG = path.join(process.cwd(), "data", "check-purge-log.jsonl");
+const FILE = path.join(process.cwd(), "data", "pause.jsonl");
+const PURGE_LOG = path.join(process.cwd(), "data", "pause-purge-log.jsonl");
 
 let writeChain: Promise<void> = Promise.resolve();
 
-async function readAll(): Promise<CheckRecord[]> {
+async function readAll(): Promise<PauseRecord[]> {
   try {
     const raw = await readFile(FILE, "utf8");
     return raw
       .split("\n")
       .filter(Boolean)
-      .map((line) => {
-        const row = JSON.parse(line) as CheckRecord;
-        return {
-          ...row,
-          identity: {
-            ...row.identity,
-            industry: row.identity.industry ?? "",
-            founderJourney: row.identity.founderJourney ?? "",
-          },
-        };
-      });
+      .map((line) => JSON.parse(line) as PauseRecord)
+      .filter((row) => row.instrument === "pause-check");
   } catch {
     return [];
   }
 }
 
-async function replaceAll(rows: CheckRecord[]) {
+async function replaceAll(rows: PauseRecord[]) {
   await mkdir(path.dirname(FILE), { recursive: true });
   const tmp = `${FILE}.tmp-${randomBytes(8).toString("hex")}`;
   const body = rows.length ? `${rows.map((row) => JSON.stringify(row)).join("\n")}\n` : "";
@@ -69,7 +60,7 @@ async function purgeExpired() {
   writeChain = writeChain.then(async () => {
     const rows = await readAll();
     const now = Date.now();
-    const keep: CheckRecord[] = [];
+    const keep: PauseRecord[] = [];
     const gone: string[] = [];
     for (const row of rows) {
       if (new Date(row.purgeAt).getTime() <= now) gone.push(row.id);
@@ -82,27 +73,25 @@ async function purgeExpired() {
   await writeChain;
 }
 
-function isFresh(record: CheckRecord) {
+function isFresh(record: PauseRecord) {
   return new Date(record.purgeAt).getTime() > Date.now();
 }
 
-export async function saveCheckJsonl(input: NewCheckInput) {
+export async function savePauseJsonl(input: NewPauseInput) {
   await purgeExpired();
-  const scores = compute(input.answers);
+  const scores = computePause(input.answers);
   const createdAt = new Date();
   const { token, hash } = issueResultToken();
-  const record: CheckRecord = {
+  const record: PauseRecord = {
     id: randomUUID(),
     createdAt: createdAt.toISOString(),
-    instrument: "founder-transition-check",
+    instrument: "pause-check",
     instrumentVersion: INSTRUMENT_VERSION,
     answers: input.answers,
     identity: {
       name: input.name,
       phone: input.phone,
       email: input.email,
-      industry: input.industry,
-      founderJourney: input.founderJourney,
       contactConsent: input.contactConsent,
       consentAt: createdAt.toISOString(),
       consentVersion: CONSENT_VERSION,
@@ -110,7 +99,7 @@ export async function saveCheckJsonl(input: NewCheckInput) {
     resultTokenHash: hash,
     source: input.source,
     purgeAt: new Date(createdAt.getTime() + RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString(),
-    scores: { total: scores.total, band: scores.band, areas: scores.areas },
+    scores: { total: scores.total, band: scores.band },
   };
 
   writeChain = writeChain.then(async () => {
@@ -121,11 +110,11 @@ export async function saveCheckJsonl(input: NewCheckInput) {
   return { token, record, scores };
 }
 
-export async function getScoresByIdentityJsonl(
+export async function getPauseScoresByIdentityJsonl(
   name: string,
   phone: string,
   email: string,
-): Promise<CheckScores | null> {
+): Promise<PauseScores | null> {
   await purgeExpired();
   const match = (await readAll())
     .filter(isFresh)
@@ -137,19 +126,19 @@ export async function getScoresByIdentityJsonl(
     )
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))[0];
   if (!match) return null;
-  return compute(match.answers);
+  return computePause(match.answers);
 }
 
-export async function getByTokenJsonl(token: string) {
+export async function getPauseByTokenJsonl(token: string) {
   await purgeExpired();
   const hash = hashToken(token);
   const rows = await readAll();
   const record = rows.find((row) => row.resultTokenHash === hash);
   if (!record || !isFresh(record)) return null;
-  return { record, scores: compute(record.answers) };
+  return { record, scores: computePause(record.answers) };
 }
 
-export async function listChecksJsonl(): Promise<CheckListItem[]> {
+export async function listPauseJsonl(): Promise<PauseListItem[]> {
   await purgeExpired();
   const rows = (await readAll()).filter(isFresh);
   rows.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
@@ -159,9 +148,6 @@ export async function listChecksJsonl(): Promise<CheckListItem[]> {
     name: row.identity.name,
     phone: row.identity.phone,
     email: row.identity.email,
-    industry: row.identity.industry ?? "",
-    founderJourney: row.identity.founderJourney ?? "",
-    instrument: "founder-transition-check",
     band: row.scores.band,
     total: row.scores.total,
     source: row.source,
@@ -169,48 +155,17 @@ export async function listChecksJsonl(): Promise<CheckListItem[]> {
   }));
 }
 
-export async function getCheckJsonl(id: string) {
+export async function getPauseJsonl(id: string) {
   await purgeExpired();
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
   const rows = await readAll();
   const record = rows.find((row) => row.id === id);
   if (!record || !isFresh(record)) return null;
   const { resultTokenHash: _hash, ...safe } = record;
-  return { record: safe, scores: compute(record.answers) };
+  return { record: safe, scores: computePause(record.answers) };
 }
 
-export async function updateCheckJsonl(id: string, input: CheckUpdateInput) {
-  if (!/^[0-9a-f-]{36}$/i.test(id)) return false;
-  await purgeExpired();
-  const scores = compute(input.answers);
-  let updated = false;
-  writeChain = writeChain.then(async () => {
-    const rows = await readAll();
-    const index = rows.findIndex((row) => row.id === id);
-    if (index < 0 || !isFresh(rows[index])) return;
-    const prev = rows[index];
-    rows[index] = {
-      ...prev,
-      answers: input.answers,
-      identity: {
-        ...prev.identity,
-        name: input.name,
-        phone: input.phone,
-        email: input.email,
-        industry: input.industry,
-        founderJourney: input.founderJourney,
-        contactConsent: prev.identity.contactConsent && input.contactConsent,
-      },
-      scores: { total: scores.total, band: scores.band, areas: scores.areas },
-    };
-    await replaceAll(rows);
-    updated = true;
-  });
-  await writeChain;
-  return updated;
-}
-
-export async function removeCheckJsonl(id: string) {
+export async function removePauseJsonl(id: string) {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return false;
   let removed = false;
   writeChain = writeChain.then(async () => {

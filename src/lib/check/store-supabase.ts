@@ -4,7 +4,16 @@ import { randomUUID } from "node:crypto";
 
 import { compute, isLikert, type Answers, type CheckScores } from "./compute";
 import { CONSENT_VERSION, INSTRUMENT_VERSION, QUESTIONS, RETENTION_DAYS } from "./questions";
-import type { CheckListItem, CheckRecord, CheckUpdateInput, NewCheckInput } from "./store-types";
+import { computePause, isLikert as isPauseLikert, type PauseAnswers } from "@/lib/pause/compute";
+import {
+  CONSENT_VERSION as PAUSE_CONSENT_VERSION,
+  INSTRUMENT_VERSION as PAUSE_INSTRUMENT_VERSION,
+  PAUSE_INSTRUMENT,
+  PAUSE_QUESTIONS,
+  RETENTION_DAYS as PAUSE_RETENTION_DAYS,
+} from "@/lib/pause/questions";
+import type { NewPauseInput, PauseRecord } from "@/lib/pause/store-types";
+import type { CheckInstrument, CheckListItem, CheckRecord, CheckUpdateInput, NewCheckInput } from "./store-types";
 import { supabaseConfig } from "./store-mode";
 import { hashToken, issueResultToken } from "./token";
 
@@ -26,7 +35,7 @@ type Row = {
   source: string;
   purge_at: string;
   total: number;
-  band: CheckRecord["scores"]["band"];
+  band: string;
   areas: CheckRecord["scores"]["areas"];
 };
 
@@ -96,6 +105,21 @@ function unpackAnswers(raw: unknown) {
   };
 }
 
+function unpackPauseAnswers(raw: unknown): PauseAnswers | null {
+  const obj = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+  const answers = {} as PauseAnswers;
+  for (const q of PAUSE_QUESTIONS) {
+    const n = Number(obj[q.key]);
+    if (!isPauseLikert(n)) return null;
+    answers[q.key] = n;
+  }
+  return answers;
+}
+
+function isPauseInstrument(value: string) {
+  return value === PAUSE_INSTRUMENT;
+}
+
 function toRecord(row: Row): CheckRecord {
   const packed = unpackAnswers(row.answers);
   return {
@@ -117,7 +141,7 @@ function toRecord(row: Row): CheckRecord {
     resultTokenHash: row.result_token_hash,
     source: row.source,
     purgeAt: row.purge_at,
-    scores: { total: row.total, band: row.band, areas: row.areas },
+    scores: { total: row.total, band: row.band as CheckRecord["scores"]["band"], areas: row.areas },
   };
 }
 
@@ -225,11 +249,11 @@ export async function getScoresByIdentitySupabase(
   await purgeExpired();
   const now = new Date().toISOString();
   const rows = await rest<Pick<Row, "answers">[]>(
-    `check_responses?name=eq.${encodeURIComponent(name)}&phone=eq.${encodeURIComponent(phone)}&email=eq.${encodeURIComponent(email)}&purge_at=gt.${encodeURIComponent(now)}&select=answers&order=created_at.desc&limit=1`,
+    `check_responses?instrument=eq.founder-transition-check&name=eq.${encodeURIComponent(name)}&phone=eq.${encodeURIComponent(phone)}&email=eq.${encodeURIComponent(email)}&purge_at=gt.${encodeURIComponent(now)}&select=answers&order=created_at.desc&limit=1`,
   );
   const row = rows[0];
   if (!row) return null;
-  return compute(row.answers);
+  return compute(unpackAnswers(row.answers).answers);
 }
 
 export async function getByTokenSupabase(token: string) {
@@ -237,10 +261,10 @@ export async function getByTokenSupabase(token: string) {
   const hash = hashToken(token);
   const now = new Date().toISOString();
   const rows = await rest<Row[]>(
-    `check_responses?result_token_hash=eq.${encodeURIComponent(hash)}&purge_at=gt.${encodeURIComponent(now)}&select=*`,
+    `check_responses?instrument=eq.founder-transition-check&result_token_hash=eq.${encodeURIComponent(hash)}&purge_at=gt.${encodeURIComponent(now)}&select=*`,
   );
   const row = rows[0];
-  if (!row) return null;
+  if (!row || isPauseInstrument(row.instrument)) return null;
   const record = toRecord(row);
   return { record, scores: compute(record.answers) };
 }
@@ -252,19 +276,22 @@ export async function listChecksSupabase(): Promise<CheckListItem[]> {
     `check_responses?purge_at=gt.${encodeURIComponent(now)}&select=*&order=created_at.desc`,
   );
   return rows.map((row) => {
-    const record = toRecord(row);
+    const instrument: CheckInstrument = isPauseInstrument(row.instrument)
+      ? "pause-check"
+      : "founder-transition-check";
     return {
-      id: record.id,
-      createdAt: record.createdAt,
-      name: record.identity.name,
-      phone: record.identity.phone,
-      email: record.identity.email,
-      industry: record.identity.industry,
-      founderJourney: record.identity.founderJourney,
-      band: record.scores.band,
-      total: record.scores.total,
-      source: record.source,
-      contactConsent: record.identity.contactConsent,
+      id: row.id,
+      createdAt: row.created_at,
+      name: row.name,
+      phone: row.phone,
+      email: row.email,
+      industry: (row.industry ?? "").trim(),
+      founderJourney: (row.founder_journey ?? "").trim(),
+      instrument,
+      band: row.band,
+      total: row.total,
+      source: row.source,
+      contactConsent: row.contact_consent,
     };
   });
 }
@@ -274,13 +301,157 @@ export async function getCheckSupabase(id: string) {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
   const now = new Date().toISOString();
   const rows = await rest<Row[]>(
-    `check_responses?id=eq.${encodeURIComponent(id)}&purge_at=gt.${encodeURIComponent(now)}&select=*`,
+    `check_responses?instrument=eq.founder-transition-check&id=eq.${encodeURIComponent(id)}&purge_at=gt.${encodeURIComponent(now)}&select=*`,
   );
   const row = rows[0];
-  if (!row) return null;
+  if (!row || isPauseInstrument(row.instrument)) return null;
   const record = toRecord(row);
   const { resultTokenHash: _hash, ...safe } = record;
   return { record: safe, scores: compute(record.answers) };
+}
+
+export async function savePauseSupabase(input: NewPauseInput) {
+  await purgeExpired();
+  const scores = computePause(input.answers);
+  const createdAt = new Date();
+  const { token, hash } = issueResultToken();
+  const record: PauseRecord = {
+    id: randomUUID(),
+    createdAt: createdAt.toISOString(),
+    instrument: PAUSE_INSTRUMENT,
+    instrumentVersion: PAUSE_INSTRUMENT_VERSION,
+    answers: input.answers,
+    identity: {
+      name: input.name,
+      phone: input.phone,
+      email: input.email,
+      contactConsent: input.contactConsent,
+      consentAt: createdAt.toISOString(),
+      consentVersion: PAUSE_CONSENT_VERSION,
+    },
+    resultTokenHash: hash,
+    source: input.source,
+    purgeAt: new Date(createdAt.getTime() + PAUSE_RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString(),
+    scores: { total: scores.total, band: scores.band },
+  };
+  const row = {
+    id: record.id,
+    created_at: record.createdAt,
+    instrument: record.instrument,
+    instrument_version: record.instrumentVersion,
+    answers: record.answers,
+    name: record.identity.name,
+    phone: record.identity.phone,
+    email: record.identity.email,
+    industry: "",
+    founder_journey: "",
+    contact_consent: record.identity.contactConsent,
+    consent_at: record.identity.consentAt,
+    consent_version: record.identity.consentVersion,
+    result_token_hash: record.resultTokenHash,
+    source: record.source,
+    purge_at: record.purgeAt,
+    total: record.scores.total,
+    band: record.scores.band,
+    areas: {},
+  };
+  try {
+    await rest<Row[]>("check_responses", {
+      method: "POST",
+      body: JSON.stringify(row),
+    });
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.startsWith("CHECK_STORE_MISSING_COLUMN")) {
+      throw error;
+    }
+    const { industry: _i, founder_journey: _j, ...withoutProfileColumns } = row;
+    await rest<Row[]>("check_responses", {
+      method: "POST",
+      body: JSON.stringify(withoutProfileColumns),
+    });
+  }
+  return { token, record, scores };
+}
+
+export async function getPauseScoresByIdentitySupabase(name: string, phone: string, email: string) {
+  await purgeExpired();
+  const now = new Date().toISOString();
+  const rows = await rest<Pick<Row, "answers">[]>(
+    `check_responses?instrument=eq.pause-check&name=eq.${encodeURIComponent(name)}&phone=eq.${encodeURIComponent(phone)}&email=eq.${encodeURIComponent(email)}&purge_at=gt.${encodeURIComponent(now)}&select=answers&order=created_at.desc&limit=1`,
+  );
+  const row = rows[0];
+  if (!row) return null;
+  const answers = unpackPauseAnswers(row.answers);
+  if (!answers) return null;
+  return computePause(answers);
+}
+
+export async function getPauseByTokenSupabase(token: string) {
+  await purgeExpired();
+  const hash = hashToken(token);
+  const now = new Date().toISOString();
+  const rows = await rest<Row[]>(
+    `check_responses?instrument=eq.pause-check&result_token_hash=eq.${encodeURIComponent(hash)}&purge_at=gt.${encodeURIComponent(now)}&select=*`,
+  );
+  const row = rows[0];
+  if (!row || !isPauseInstrument(row.instrument)) return null;
+  const answers = unpackPauseAnswers(row.answers);
+  if (!answers) return null;
+  const record: PauseRecord = {
+    id: row.id,
+    createdAt: row.created_at,
+    instrument: PAUSE_INSTRUMENT,
+    instrumentVersion: row.instrument_version,
+    answers,
+    identity: {
+      name: row.name,
+      phone: row.phone,
+      email: row.email,
+      contactConsent: row.contact_consent,
+      consentAt: row.consent_at,
+      consentVersion: row.consent_version,
+    },
+    resultTokenHash: row.result_token_hash,
+    source: row.source,
+    purgeAt: row.purge_at,
+    scores: { total: row.total, band: computePause(answers).band },
+  };
+  return { record, scores: computePause(answers) };
+}
+
+export async function getPauseSupabase(id: string) {
+  await purgeExpired();
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+  const now = new Date().toISOString();
+  const rows = await rest<Row[]>(
+    `check_responses?instrument=eq.pause-check&id=eq.${encodeURIComponent(id)}&purge_at=gt.${encodeURIComponent(now)}&select=*`,
+  );
+  const row = rows[0];
+  if (!row || !isPauseInstrument(row.instrument)) return null;
+  const answers = unpackPauseAnswers(row.answers);
+  if (!answers) return null;
+  const scores = computePause(answers);
+  const record: PauseRecord = {
+    id: row.id,
+    createdAt: row.created_at,
+    instrument: PAUSE_INSTRUMENT,
+    instrumentVersion: row.instrument_version,
+    answers,
+    identity: {
+      name: row.name,
+      phone: row.phone,
+      email: row.email,
+      contactConsent: row.contact_consent,
+      consentAt: row.consent_at,
+      consentVersion: row.consent_version,
+    },
+    resultTokenHash: row.result_token_hash,
+    source: row.source,
+    purgeAt: row.purge_at,
+    scores: { total: scores.total, band: scores.band },
+  };
+  const { resultTokenHash: _hash, ...safe } = record;
+  return { record: safe, scores };
 }
 
 export async function updateCheckSupabase(id: string, input: CheckUpdateInput) {

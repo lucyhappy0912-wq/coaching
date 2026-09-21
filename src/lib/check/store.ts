@@ -15,12 +15,26 @@ import { checkStoreMode } from "./store-mode";
 import {
   getByTokenSupabase,
   getCheckSupabase,
+  getPauseByTokenSupabase,
+  getPauseScoresByIdentitySupabase,
+  getPauseSupabase,
   getScoresByIdentitySupabase,
   listChecksSupabase,
   removeCheckSupabase,
   saveCheckSupabase,
+  savePauseSupabase,
   updateCheckSupabase,
 } from "./store-supabase";
+import {
+  getPauseByTokenJsonl,
+  getPauseJsonl,
+  getPauseScoresByIdentityJsonl,
+  listPauseJsonl,
+  removePauseJsonl,
+  savePauseJsonl,
+} from "@/lib/pause/store-jsonl";
+import type { PauseScores } from "@/lib/pause/compute";
+import type { NewPauseInput } from "@/lib/pause/store-types";
 import type { CheckScores } from "./compute";
 import type { CheckListItem, CheckUpdateInput, NewCheckInput } from "./store-types";
 
@@ -44,6 +58,12 @@ export async function saveCheck(input: NewCheckInput) {
   return saveCheckJsonl(input);
 }
 
+export async function savePauseCheck(input: NewPauseInput) {
+  assertWritable();
+  if (checkStoreMode() === "supabase") return savePauseSupabase(input);
+  return savePauseJsonl(input);
+}
+
 export async function getByToken(token: string) {
   const mode = checkStoreMode();
   if (mode === "readonly") return null;
@@ -62,11 +82,60 @@ export async function getScoresByIdentity(
   return getScoresByIdentityJsonl(name, phone, email);
 }
 
+export async function getPauseByToken(token: string) {
+  const mode = checkStoreMode();
+  if (mode === "readonly") return null;
+  if (mode === "supabase") return getPauseByTokenSupabase(token);
+  return getPauseByTokenJsonl(token);
+}
+
+export async function getPauseScoresByIdentity(
+  name: string,
+  phone: string,
+  email: string,
+): Promise<PauseScores | null> {
+  const mode = checkStoreMode();
+  if (mode === "readonly") return null;
+  if (mode === "supabase") return getPauseScoresByIdentitySupabase(name, phone, email);
+  return getPauseScoresByIdentityJsonl(name, phone, email);
+}
+
+function toPauseListItem(row: {
+  id: string;
+  createdAt: string;
+  name: string;
+  phone: string;
+  email: string;
+  band: string;
+  total: number;
+  source: string;
+  contactConsent: boolean;
+}): CheckListItem {
+  return {
+    id: row.id,
+    createdAt: row.createdAt,
+    name: row.name,
+    phone: row.phone,
+    email: row.email,
+    industry: "",
+    founderJourney: "",
+    instrument: "pause-check",
+    band: row.band,
+    total: row.total,
+    source: row.source,
+    contactConsent: row.contactConsent,
+  };
+}
+
 export async function listChecksForAdmin(nameQuery?: string): Promise<CheckListItem[]> {
   await requireAdmin();
   const mode = checkStoreMode();
   if (mode === "readonly") return [];
-  const rows = mode === "supabase" ? await listChecksSupabase() : await listChecksJsonl();
+  if (mode === "supabase") return filterByName(await listChecksSupabase(), nameQuery);
+  const [founder, pause] = await Promise.all([listChecksJsonl(), listPauseJsonl()]);
+  const rows = [...founder, ...pause.map(toPauseListItem)].sort((a, b) =>
+    a.createdAt < b.createdAt ? 1 : -1,
+  );
   return filterByName(rows, nameQuery);
 }
 
@@ -76,6 +145,14 @@ export async function getCheckForAdmin(id: string) {
   if (mode === "readonly") return null;
   if (mode === "supabase") return getCheckSupabase(id);
   return getCheckJsonl(id);
+}
+
+export async function getPauseCheckForAdmin(id: string) {
+  await requireAdmin();
+  const mode = checkStoreMode();
+  if (mode === "readonly") return null;
+  if (mode === "supabase") return getPauseSupabase(id);
+  return getPauseJsonl(id);
 }
 
 export async function updateCheckForAdmin(id: string, input: CheckUpdateInput) {
@@ -89,5 +166,7 @@ export async function removeCheckForAdmin(id: string) {
   await requireAdmin();
   assertWritable();
   if (checkStoreMode() === "supabase") return removeCheckSupabase(id);
-  return removeCheckJsonl(id);
+  const founder = await removeCheckJsonl(id);
+  if (founder) return true;
+  return removePauseJsonl(id);
 }

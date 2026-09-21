@@ -3,13 +3,16 @@ import { notFound } from "next/navigation";
 
 import { deleteCheck } from "@/app/admin/checks/actions";
 import { AdminCheckAreas } from "@/app/admin/checks/AdminCheckAreas";
+import { AdminPauseAnswers } from "@/app/admin/checks/AdminPauseAnswers";
 import { AdminShell } from "@/app/admin/_components/AdminShell";
 import { CheckResultView } from "@/components/check/CheckResultView";
+import { PauseResultView } from "@/components/pause/PauseResultView";
 import { Container } from "@/components/ui/Container";
 import { requireAdmin } from "@/lib/auth/dal";
 import { BAND_COPY } from "@/lib/check/copy";
 import { formatPhoneDisplay } from "@/lib/check/mask";
-import { getCheckForAdmin } from "@/lib/check/store";
+import { getCheckForAdmin, getPauseCheckForAdmin } from "@/lib/check/store";
+import { PAUSE_BAND_COPY } from "@/lib/pause/copy";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -37,11 +40,23 @@ export default async function AdminCheckDetailPage({
   const { id } = await params;
   const { view: viewParam } = await searchParams;
   const view = parseView(viewParam);
-  const found = await getCheckForAdmin(id);
-  if (!found) notFound();
+  const founder = await getCheckForAdmin(id);
+  const pause = founder ? null : await getPauseCheckForAdmin(id);
+  if (!founder && !pause) notFound();
 
-  const { record, scores } = found;
-  const band = BAND_COPY[scores.band];
+  const isPause = Boolean(pause);
+  const name = founder?.record.identity.name ?? pause!.record.identity.name;
+  const phone = founder?.record.identity.phone ?? pause!.record.identity.phone;
+  const email = founder?.record.identity.email ?? pause!.record.identity.email;
+  const contactConsent =
+    founder?.record.identity.contactConsent ?? pause!.record.identity.contactConsent;
+  const source = founder?.record.source ?? pause!.record.source;
+  const purgeAt = founder?.record.purgeAt ?? pause!.record.purgeAt;
+  const total = founder?.scores.total ?? pause!.scores.total;
+  const bandLabel = founder
+    ? BAND_COPY[founder.scores.band].label
+    : PAUSE_BAND_COPY[pause!.scores.band].label;
+  const recordId = founder?.record.id ?? pause!.record.id;
 
   return (
     <AdminShell title="문답 · 상세">
@@ -54,46 +69,48 @@ export default async function AdminCheckDetailPage({
       <section className="rounded-[6px] border border-ink-15 bg-white p-5">
         <h2 className="adm-h text-forest">응답자</h2>
         <p className="adm-body mt-2 text-ink-70">
-          {band.label} · 총점 {scores.total}점
+          {isPause ? "PAUSE CHECK" : "Founder Transition"} · {bandLabel} · 총점 {total}점
         </p>
         <dl className="mt-4 grid gap-3 sm:grid-cols-2">
           <div>
             <dt className="adm-label text-forest-70">이름</dt>
-            <dd className="adm-body mt-1 text-ink-90">{record.identity.name}</dd>
+            <dd className="adm-body mt-1 text-ink-90">{name}</dd>
           </div>
           <div>
             <dt className="adm-label text-forest-70">전화</dt>
-            <dd className="adm-body mt-1 text-ink-90">{formatPhoneDisplay(record.identity.phone)}</dd>
+            <dd className="adm-body mt-1 text-ink-90">{formatPhoneDisplay(phone)}</dd>
           </div>
           <div>
             <dt className="adm-label text-forest-70">이메일</dt>
-            <dd className="adm-body mt-1 break-all text-ink-90">{record.identity.email}</dd>
+            <dd className="adm-body mt-1 break-all text-ink-90">{email}</dd>
           </div>
-          {record.identity.industry ? (
+          {founder?.record.identity.industry ? (
             <div>
               <dt className="adm-label text-forest-70">Industry (업종)</dt>
-              <dd className="adm-body mt-1 whitespace-nowrap text-ink-90">{record.identity.industry}</dd>
+              <dd className="adm-body mt-1 whitespace-nowrap text-ink-90">
+                {founder.record.identity.industry}
+              </dd>
             </div>
           ) : null}
-          {record.identity.founderJourney ? (
+          {founder?.record.identity.founderJourney ? (
             <div>
               <dt className="adm-label text-forest-70">Founder Journey</dt>
-              <dd className="adm-body mt-1 whitespace-nowrap text-ink-90">{record.identity.founderJourney}</dd>
+              <dd className="adm-body mt-1 whitespace-nowrap text-ink-90">
+                {founder.record.identity.founderJourney}
+              </dd>
             </div>
           ) : null}
           <div>
             <dt className="adm-label text-forest-70">프로그램 연락</dt>
-            <dd className="adm-body mt-1 text-ink-90">
-              {record.identity.contactConsent ? "동의" : "거부"}
-            </dd>
+            <dd className="adm-body mt-1 text-ink-90">{contactConsent ? "동의" : "거부"}</dd>
           </div>
           <div>
             <dt className="adm-label text-forest-70">출처</dt>
-            <dd className="adm-body mt-1 text-ink-90">{record.source}</dd>
+            <dd className="adm-body mt-1 text-ink-90">{source}</dd>
           </div>
           <div>
             <dt className="adm-label text-forest-70">파기 예정</dt>
-            <dd className="adm-body mt-1 text-ink-90">{record.purgeAt.slice(0, 10)}</dd>
+            <dd className="adm-body mt-1 text-ink-90">{purgeAt.slice(0, 10)}</dd>
           </div>
         </dl>
       </section>
@@ -110,16 +127,18 @@ export default async function AdminCheckDetailPage({
                 active ? "bg-forest text-white" : "border border-ink-15 bg-white text-forest hover:border-forest-30",
               )}
             >
-              {item.label}
+              {isPause && item.id === "answers" ? "문항 응답" : item.label}
             </Link>
           );
         })}
-        <Link
-          href={`/admin/checks/${id}/edit`}
-          className="adm-body rounded-[4px] border border-ink-15 bg-white px-3 py-2 text-forest hover:border-forest-30"
-        >
-          수정
-        </Link>
+        {founder ? (
+          <Link
+            href={`/admin/checks/${id}/edit`}
+            className="adm-body rounded-[4px] border border-ink-15 bg-white px-3 py-2 text-forest hover:border-forest-30"
+          >
+            수정
+          </Link>
+        ) : null}
         <a
           href="#purge"
           className="adm-body rounded-[4px] border border-danger/30 bg-white px-3 py-2 text-danger"
@@ -128,17 +147,29 @@ export default async function AdminCheckDetailPage({
         </a>
       </nav>
 
-      {view === "answers" ? <AdminCheckAreas answers={record.answers} scores={scores} /> : null}
+      {view === "answers" && founder ? (
+        <AdminCheckAreas answers={founder.record.answers} scores={founder.scores} />
+      ) : null}
+      {view === "answers" && pause ? (
+        <AdminPauseAnswers answers={pause.record.answers} scores={pause.scores} />
+      ) : null}
 
-      {view === "report" ? (
+      {view === "report" && founder ? (
         <div className="mt-6 bg-grass-10 py-8 sm:py-16 lg:py-24">
           <Container className="mx-auto max-w-3xl">
             <CheckResultView
-              name={record.identity.name}
-              scores={scores}
+              name={founder.record.identity.name}
+              scores={founder.scores}
               showCta
-              applicant={record.identity}
+              applicant={founder.record.identity}
             />
+          </Container>
+        </div>
+      ) : null}
+      {view === "report" && pause ? (
+        <div className="mt-6 bg-grass-10 py-8 sm:py-16 lg:py-24">
+          <Container className="mx-auto max-w-3xl">
+            <PauseResultView name={pause.record.identity.name} scores={pause.scores} />
           </Container>
         </div>
       ) : null}
@@ -148,7 +179,7 @@ export default async function AdminCheckDetailPage({
         action={deleteCheck}
         className="mt-16 scroll-mt-6 rounded-[6px] border border-danger/30 bg-white p-5"
       >
-        <input type="hidden" name="id" value={record.id} />
+        <input type="hidden" name="id" value={recordId} />
         <h2 className="adm-h text-danger">이 제출 파기</h2>
         <p className="adm-body mt-2 text-ink-70">
           복구할 수 없습니다. 확인하려면 아래 칸에 삭제 라고 입력하세요.

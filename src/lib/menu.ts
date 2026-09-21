@@ -11,6 +11,8 @@ const NOW_DEFAULT_ON = [
   "/coaching/founder",
   "/coaching/leadership",
   "/coaching/founder-transition",
+  "/check",
+  "/pause",
   "/lift",
   "/coach",
 ] as const;

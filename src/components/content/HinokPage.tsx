@@ -153,5 +153,6 @@ export const COACHING_LINKS = [
   { href: "/coaching/founder", label: "6-week founder transition" },
   { href: "/coaching/leadership", label: "from Founder to Leader" },
   { href: "/check", label: "Founder Transition (Check)" },
+  { href: "/pause", label: "PAUSE CHECK" },
   { href: "/lift", label: "LIFT – Life Architecture" },
 ];
