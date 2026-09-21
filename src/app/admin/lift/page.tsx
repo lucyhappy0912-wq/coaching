@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth/dal";
 import { maskName, maskPhone } from "@/lib/check/mask";
 import { dataStoreMode } from "@/lib/check/store-mode";
 import { isLiftLead, LIFT_MESSAGE } from "@/lib/leads/kind";
-import { listLeadsForAdmin, markNewLeadsSeen } from "@/lib/leads/store";
+import { listLeadsForAdmin, setLeadStatus } from "@/lib/leads/store";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +19,9 @@ export default async function AdminLiftPage() {
   await requireAdmin();
   const all = await listLeadsForAdmin();
   const rows = all.filter(isLiftLead);
-  await Promise.all(rows.filter((row) => row.status === "new").map((row) => markNewLeadsSeen(row.id)));
+  await Promise.all(
+    rows.filter((row) => row.status === "new").map((row) => setLeadStatus(row.id, "contacted")),
+  );
 
   return (
     <AdminShell title="LIFT 신청">

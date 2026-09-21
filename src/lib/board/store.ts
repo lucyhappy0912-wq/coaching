@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 
+import { revalidateAdminNav } from "@/lib/admin/nav-counts";
 import { requireAdmin } from "@/lib/auth/dal";
 import { dataStoreMode } from "@/lib/check/store-mode";
 
@@ -51,8 +52,10 @@ export async function createQuestion(input: {
   const parsed = validateQuestion(input);
   const passwordHash = parsed.published ? "" : await hashPassword(parsed.password);
   const next = { ...parsed, passwordHash };
-  if (dataStoreMode() === "supabase") return createQuestionSupabase(next);
-  return createQuestionJsonl(next);
+  const id =
+    dataStoreMode() === "supabase" ? await createQuestionSupabase(next) : await createQuestionJsonl(next);
+  revalidateAdminNav();
+  return id;
 }
 
 export async function listPublishedQuestions(): Promise<BoardQuestion[]> {
@@ -108,8 +111,12 @@ export async function getQuestionForAdmin(id: string): Promise<BoardQuestion | n
 export async function answerQuestion(id: string, answer: string) {
   await requireAdmin();
   assertWritable();
-  if (dataStoreMode() === "supabase") return answerQuestionSupabase(id, answer);
-  return answerQuestionJsonl(id, answer);
+  const ok =
+    dataStoreMode() === "supabase"
+      ? await answerQuestionSupabase(id, answer)
+      : await answerQuestionJsonl(id, answer);
+  if (ok) revalidateAdminNav();
+  return ok;
 }
 
 export async function bumpBoardViews(id: string) {
@@ -125,6 +132,8 @@ export async function bumpBoardViews(id: string) {
 export async function removeQuestion(id: string) {
   await requireAdmin();
   assertWritable();
-  if (dataStoreMode() === "supabase") return removeQuestionSupabase(id);
-  return removeQuestionJsonl(id);
+  const ok =
+    dataStoreMode() === "supabase" ? await removeQuestionSupabase(id) : await removeQuestionJsonl(id);
+  if (ok) revalidateAdminNav();
+  return ok;
 }

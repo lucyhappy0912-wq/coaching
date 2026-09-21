@@ -269,12 +269,34 @@ export async function getByTokenSupabase(token: string) {
   return { record, scores: compute(record.answers) };
 }
 
-export async function listChecksSupabase(): Promise<CheckListItem[]> {
-  await purgeExpired();
+const LIST_SELECT =
+  "id,created_at,name,phone,email,industry,founder_journey,instrument,band,total,source,contact_consent";
+
+export async function countChecksSupabase() {
   const now = new Date().toISOString();
-  const rows = await rest<Row[]>(
-    `check_responses?purge_at=gt.${encodeURIComponent(now)}&select=*&order=created_at.desc`,
+  const rows = await rest<{ id: string }[]>(
+    `check_responses?purge_at=gt.${encodeURIComponent(now)}&select=id`,
   );
+  return rows.length;
+}
+
+export async function listChecksSupabase(): Promise<CheckListItem[]> {
+  const now = new Date().toISOString();
+  const rows = await rest<Pick<
+    Row,
+    | "id"
+    | "created_at"
+    | "name"
+    | "phone"
+    | "email"
+    | "industry"
+    | "founder_journey"
+    | "instrument"
+    | "band"
+    | "total"
+    | "source"
+    | "contact_consent"
+  >[]>(`check_responses?purge_at=gt.${encodeURIComponent(now)}&select=${LIST_SELECT}&order=created_at.desc`);
   return rows.map((row) => {
     const instrument: CheckInstrument = isPauseInstrument(row.instrument)
       ? "pause-check"

@@ -4,7 +4,7 @@ import { AdminShell } from "@/app/admin/_components/AdminShell";
 import { requireAdmin } from "@/lib/auth/dal";
 import { listQuestionsForAdmin } from "@/lib/board/store";
 import { maskName, maskPhone } from "@/lib/check/mask";
-import { listChecksForAdmin } from "@/lib/check/store";
+import { countChecksForAdmin } from "@/lib/check/store";
 import { PAGE_META } from "@/lib/cms/page-keys";
 import { getContent } from "@/lib/cms/store";
 import { isLiftLead } from "@/lib/leads/kind";
@@ -20,10 +20,10 @@ const STATUS: Record<string, string> = {
 
 export default async function AdminHomePage() {
   await requireAdmin();
-  const [leads, questions, checks, content] = await Promise.all([
+  const [leads, questions, checkCount, content] = await Promise.all([
     listLeadsForAdmin(),
     listQuestionsForAdmin(),
-    listChecksForAdmin(),
+    countChecksForAdmin(),
     getContent(),
   ]);
 
@@ -41,7 +41,7 @@ export default async function AdminHomePage() {
         <Stat href="/admin/lift" label="LIFT 신청" value={liftLeads.length} hint="분석지에서 신청한 응답자" />
         <Stat href="/admin/board" label="미답변 질문" value={unanswered.length} hint="게시판에 올라온 질문" />
         <Stat href="/admin/faq" label="자주 묻는 질문" value={faqs.length} hint="사이트 FAQ에 나가는 칸" />
-        <Stat href="/admin/checks" label="문답" value={checks.length} hint="진단 응답" />
+        <Stat href="/admin/checks" label="문답" value={checkCount} hint="진단 응답" />
       </ul>
 
       <section className="mt-8 grid gap-4 lg:grid-cols-2">

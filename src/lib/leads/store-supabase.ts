@@ -71,12 +71,31 @@ export async function createLeadSupabase(input: {
   return row.id;
 }
 
+const LIST_SELECT = "id,name,phone,preferred_time,message,status,received_at";
+
 export async function listLeadsSupabase(): Promise<LeadListItem[]> {
   const now = new Date().toISOString();
   const rows = await dataRest<Row[]>(
-    `leads?purge_at=gt.${encodeURIComponent(now)}&select=*&order=received_at.desc`,
+    `leads?purge_at=gt.${encodeURIComponent(now)}&select=${LIST_SELECT}&order=received_at.desc`,
   );
-  return rows.map((row) => toList(toLead(row)));
+  return rows.map((row) =>
+    toList(
+      toLead({
+        ...row,
+        closed_at: row.closed_at ?? null,
+        purge_at: row.purge_at ?? "",
+        consent_version: row.consent_version ?? "",
+      }),
+    ),
+  );
+}
+
+export async function markAllNewLeadsContactedSupabase() {
+  const now = new Date().toISOString();
+  await dataRest<unknown>(`leads?status=eq.new&purge_at=gt.${encodeURIComponent(now)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status: "contacted" }),
+  });
 }
 
 export async function getLeadSupabase(id: string): Promise<Lead | null> {

@@ -62,7 +62,7 @@ export function revalidateCms() {
 const getRemoteContentCached = unstable_cache(
   async () => readRemoteContent(),
   ["cms-content-v1"],
-  { tags: [CMS_CACHE_TAG], revalidate: 60 },
+  { tags: [CMS_CACHE_TAG], revalidate: 300 },
 );
 
 export const getContent = cache(async (): Promise<CmsData> => {

@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+
 import { requireAdmin } from "@/lib/auth/dal";
 
 import {
@@ -13,6 +15,7 @@ import {
 } from "./store-jsonl";
 import { checkStoreMode } from "./store-mode";
 import {
+  countChecksSupabase,
   getByTokenSupabase,
   getCheckSupabase,
   getPauseByTokenSupabase,
@@ -127,7 +130,7 @@ function toPauseListItem(row: {
   };
 }
 
-export async function listChecksForAdmin(nameQuery?: string): Promise<CheckListItem[]> {
+export const listChecksForAdmin = cache(async (nameQuery?: string): Promise<CheckListItem[]> => {
   await requireAdmin();
   const mode = checkStoreMode();
   if (mode === "readonly") return [];
@@ -137,6 +140,15 @@ export async function listChecksForAdmin(nameQuery?: string): Promise<CheckListI
     a.createdAt < b.createdAt ? 1 : -1,
   );
   return filterByName(rows, nameQuery);
+});
+
+export async function countChecksForAdmin() {
+  await requireAdmin();
+  const mode = checkStoreMode();
+  if (mode === "readonly") return 0;
+  if (mode === "supabase") return countChecksSupabase();
+  const [founder, pause] = await Promise.all([listChecksJsonl(), listPauseJsonl()]);
+  return founder.length + pause.length;
 }
 
 export async function getCheckForAdmin(id: string) {

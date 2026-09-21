@@ -1,6 +1,4 @@
-import { listQuestionsForAdmin } from "@/lib/board/store";
-import { isLiftLead } from "@/lib/leads/kind";
-import { listLeadsForAdmin } from "@/lib/leads/store";
+import { getAdminNavCounts } from "@/lib/admin/nav-counts";
 
 import { AdminFrame } from "./AdminFrame";
 
@@ -15,12 +13,7 @@ export async function AdminShell({
   wide?: boolean;
   children: React.ReactNode;
 }) {
-  const [leads, questions] = await Promise.all([listLeadsForAdmin(), listQuestionsForAdmin()]);
-  const counts = {
-    newLeads: leads.filter((row) => row.status === "new").length,
-    liftNew: leads.filter((row) => row.status === "new" && isLiftLead(row)).length,
-    unanswered: questions.filter((row) => !row.answer).length,
-  };
+  const counts = await getAdminNavCounts();
 
   return (
     <AdminFrame title={title} subtitle={subtitle} wide={wide} counts={counts}>

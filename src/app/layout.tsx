@@ -1,30 +1,8 @@
 import type { Metadata } from "next";
-import { Cormorant, Mulish, Noto_Sans_KR } from "next/font/google";
 
 import { SITE } from "@/lib/site";
 import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
-
-const cormorant = Cormorant({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const mulish = Mulish({
-  variable: "--font-mulish",
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  display: "swap",
-});
-
-const notoSansKr = Noto_Sans_KR({
-  variable: "--font-noto-sans-kr",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-});
 
 const SHARE_TITLE = "멈춘자 | 스타트업 창업자를 리더로.";
 
@@ -56,10 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="ko"
-      className={`${cormorant.variable} ${mulish.variable} ${notoSansKr.variable}`}
-    >
+    <html lang="ko">
       <body>{children}</body>
     </html>
   );

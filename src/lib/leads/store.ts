@@ -16,9 +16,11 @@ import {
   createLeadSupabase,
   getLeadSupabase,
   listLeadsSupabase,
+  markAllNewLeadsContactedSupabase,
   removeLeadSupabase,
   setLeadStatusSupabase,
 } from "./store-supabase";
+import { revalidateAdminNav } from "@/lib/admin/nav-counts";
 import type { Lead, LeadListItem, LeadStatus } from "./types";
 
 export type { Lead, LeadListItem, LeadStatus } from "./types";
@@ -38,8 +40,10 @@ export async function createLead(input: {
   message: string;
 }) {
   assertWritable();
-  if (dataStoreMode() === "supabase") return createLeadSupabase(input);
-  return createLeadJsonl(input);
+  const id =
+    dataStoreMode() === "supabase" ? await createLeadSupabase(input) : await createLeadJsonl(input);
+  revalidateAdminNav();
+  return id;
 }
 
 export const listLeadsForAdmin = cache(async (): Promise<LeadListItem[]> => {
@@ -71,25 +75,37 @@ export async function getLeadForAdmin(id: string): Promise<Lead | null> {
 export async function setLeadStatus(id: string, status: LeadStatus) {
   await requireAdmin();
   assertWritable();
-  if (dataStoreMode() === "supabase") return setLeadStatusSupabase(id, status);
-  return setLeadStatusJsonl(id, status);
+  const ok =
+    dataStoreMode() === "supabase"
+      ? await setLeadStatusSupabase(id, status)
+      : await setLeadStatusJsonl(id, status);
+  if (ok) revalidateAdminNav();
+  return ok;
 }
 
-/** 목록·상세를 열면 신규 뱃지를 내린다. React cache를 거치지 않는다. */
+/** 목록·상세를 열면 신규 뱃지를 내린다. 전체를 다시 읽지 않는다. */
 export async function markNewLeadsSeen(id?: string) {
   await requireAdmin();
   if (dataStoreMode() === "readonly") return;
-  const rows =
-    dataStoreMode() === "supabase" ? await listLeadsSupabase() : await listLeadsJsonl();
-  const targets = id
-    ? rows.filter((row) => row.id === id && row.status === "new")
-    : rows.filter((row) => row.status === "new");
-  await Promise.all(targets.map((row) => setLeadStatus(row.id, "contacted")));
+  if (id) {
+    await setLeadStatus(id, "contacted");
+    return;
+  }
+  if (dataStoreMode() === "supabase") {
+    await markAllNewLeadsContactedSupabase();
+    revalidateAdminNav();
+    return;
+  }
+  const rows = (await listLeadsJsonl()).filter((row) => row.status === "new");
+  await Promise.all(rows.map((row) => setLeadStatusJsonl(row.id, "contacted")));
+  revalidateAdminNav();
 }
 
 export async function removeLead(id: string) {
   await requireAdmin();
   assertWritable();
-  if (dataStoreMode() === "supabase") return removeLeadSupabase(id);
-  return removeLeadJsonl(id);
+  const ok =
+    dataStoreMode() === "supabase" ? await removeLeadSupabase(id) : await removeLeadJsonl(id);
+  if (ok) revalidateAdminNav();
+  return ok;
 }

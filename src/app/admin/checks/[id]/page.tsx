@@ -40,8 +40,7 @@ export default async function AdminCheckDetailPage({
   const { id } = await params;
   const { view: viewParam } = await searchParams;
   const view = parseView(viewParam);
-  const founder = await getCheckForAdmin(id);
-  const pause = founder ? null : await getPauseCheckForAdmin(id);
+  const [founder, pause] = await Promise.all([getCheckForAdmin(id), getPauseCheckForAdmin(id)]);
   if (!founder && !pause) notFound();
 
   const isPause = Boolean(pause);

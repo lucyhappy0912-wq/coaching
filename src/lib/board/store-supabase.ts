@@ -58,8 +58,21 @@ export async function createQuestionSupabase(input: {
   return row.id;
 }
 
+const LIST_SELECT =
+  "id,name,title,body,answer,published,password_hash,views,created_at,answered_at";
+const PUBLIC_LIST_SELECT = "id,name,title,answer,published,views,created_at,answered_at";
+
 export async function listPublishedQuestionsSupabase(): Promise<BoardQuestion[]> {
-  return (await dataRest<Row[]>("board_questions?select=*&order=created_at.desc")).map(toQuestion);
+  const rows = await dataRest<Row[]>(
+    `board_questions?select=${PUBLIC_LIST_SELECT}&order=created_at.desc`,
+  );
+  return rows.map((row) =>
+    toQuestion({
+      ...row,
+      body: "",
+      password_hash: "",
+    }),
+  );
 }
 
 export async function getPublishedQuestionSupabase(id: string): Promise<BoardQuestion | null> {
@@ -69,7 +82,9 @@ export async function getPublishedQuestionSupabase(id: string): Promise<BoardQue
 }
 
 export async function listQuestionsSupabase(): Promise<BoardQuestion[]> {
-  return (await dataRest<Row[]>("board_questions?select=*&order=created_at.desc")).map(toQuestion);
+  return (await dataRest<Row[]>(`board_questions?select=${LIST_SELECT}&order=created_at.desc`)).map(
+    toQuestion,
+  );
 }
 
 export async function getQuestionSupabase(id: string): Promise<BoardQuestion | null> {
