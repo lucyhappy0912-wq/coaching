@@ -134,12 +134,16 @@ export const listChecksForAdmin = cache(async (nameQuery?: string): Promise<Chec
   await requireAdmin();
   const mode = checkStoreMode();
   if (mode === "readonly") return [];
-  if (mode === "supabase") return filterByName(await listChecksSupabase(), nameQuery);
-  const [founder, pause] = await Promise.all([listChecksJsonl(), listPauseJsonl()]);
-  const rows = [...founder, ...pause.map(toPauseListItem)].sort((a, b) =>
-    a.createdAt < b.createdAt ? 1 : -1,
-  );
-  return filterByName(rows, nameQuery);
+  try {
+    if (mode === "supabase") return filterByName(await listChecksSupabase(), nameQuery);
+    const [founder, pause] = await Promise.all([listChecksJsonl(), listPauseJsonl()]);
+    const rows = [...founder, ...pause.map(toPauseListItem)].sort((a, b) =>
+      a.createdAt < b.createdAt ? 1 : -1,
+    );
+    return filterByName(rows, nameQuery);
+  } catch {
+    return [];
+  }
 });
 
 export async function countChecksForAdmin() {

@@ -17,8 +17,12 @@ const STATUS: Record<string, string> = {
 
 export default async function AdminInquiriesPage() {
   await requireAdmin();
-  await markNewLeadsSeen();
   const rows = await listLeadsForAdmin();
+  try {
+    await markNewLeadsSeen();
+  } catch {
+    // 뱃지를 내리지 못해도 목록은 보여 준다.
+  }
 
   return (
     <AdminShell title="상담 신청">

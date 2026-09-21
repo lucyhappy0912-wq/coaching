@@ -55,7 +55,7 @@ export const listLeadsForAdmin = cache(async (): Promise<LeadListItem[]> => {
     return await listLeadsJsonl();
   } catch (error) {
     if (missingTable(error)) return [];
-    throw error;
+    return [];
   }
 });
 
@@ -92,7 +92,11 @@ export async function markNewLeadsSeen(id?: string) {
     return;
   }
   if (dataStoreMode() === "supabase") {
-    await markAllNewLeadsContactedSupabase();
+    try {
+      await markAllNewLeadsContactedSupabase();
+    } catch {
+      return;
+    }
     revalidateAdminNav();
     return;
   }

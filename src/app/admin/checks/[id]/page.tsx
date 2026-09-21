@@ -53,8 +53,8 @@ export default async function AdminCheckDetailPage({
   const purgeAt = founder?.record.purgeAt ?? pause!.record.purgeAt;
   const total = founder?.scores.total ?? pause!.scores.total;
   const bandLabel = founder
-    ? BAND_COPY[founder.scores.band].label
-    : PAUSE_BAND_COPY[pause!.scores.band].label;
+    ? (BAND_COPY[founder.scores.band]?.label ?? founder.scores.band)
+    : (PAUSE_BAND_COPY[pause!.scores.band]?.label ?? pause!.scores.band);
   const recordId = founder?.record.id ?? pause!.record.id;
 
   return (

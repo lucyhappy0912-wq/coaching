@@ -15,7 +15,10 @@ const field = "adm-input mt-1 h-10 w-full rounded-[4px] border border-ink-50 bg-
 
 export default async function AdminMembersPage() {
   await requireAdmin();
-  const [manual, checks] = await Promise.all([listMembers(), listChecksForAdmin()]);
+  const [manual, checks] = await Promise.all([
+    listMembers().catch(() => []),
+    listChecksForAdmin().catch(() => []),
+  ]);
 
   return (
     <AdminShell title="회원">

@@ -28,16 +28,14 @@ async function fetchAdminNavCounts(): Promise<AdminCounts> {
       dataRest<{ preferred_time: string; message: string }[]>(
         `leads?status=eq.new&purge_at=gt.${encodeURIComponent(now)}&select=preferred_time,message`,
       ),
-      dataRest<{ id: string }[]>(
-        "board_questions?or=(answer.is.null,answer.eq.)&select=id",
-      ),
+      dataRest<{ answer: string | null }[]>("board_questions?select=answer"),
     ]);
     return {
       newLeads: newLeads.length,
       liftNew: newLeads.filter((row) =>
         isLiftLead({ preferredTime: row.preferred_time, message: row.message }),
       ).length,
-      unanswered: unanswered.length,
+      unanswered: unanswered.filter((row) => !row.answer).length,
     };
   }
 

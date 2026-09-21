@@ -34,7 +34,13 @@ function formatWhen(iso: string) {
 export default async function AdminChecksPage() {
   await requireAdmin();
   const q = ((await cookies()).get(CHECK_NAME_SEARCH_COOKIE)?.value ?? "").trim();
-  const rows = await listChecksForAdmin(q);
+  let rows: Awaited<ReturnType<typeof listChecksForAdmin>> = [];
+  let loadError: string | null = null;
+  try {
+    rows = await listChecksForAdmin(q);
+  } catch {
+    loadError = "문답 목록을 읽지 못했습니다. 잠시 후 다시 열어 주세요.";
+  }
 
   return (
     <AdminShell title="문답" wide>
@@ -72,12 +78,15 @@ export default async function AdminChecksPage() {
         ) : null}
       </form>
       {q ? <p className="adm-meta mt-2 text-ink-70">이름에 “{q}”가 포함된 제출</p> : null}
+      {loadError ? <p className="adm-body mt-6 text-danger">{loadError}</p> : null}
 
       {rows.length === 0 ? (
         <p className="adm-body mt-8 rounded-[6px] border border-ink-15 bg-white p-5 text-ink-70">
-          {q
-            ? "이름에 맞는 제출이 없습니다."
-            : "아직 제출이 없습니다. 공개 문답표에서 제출이 끝나면 여기에 고객과 문항 답이 나타납니다."}
+          {loadError
+            ? "목록을 다시 열어 주세요."
+            : q
+              ? "이름에 맞는 제출이 없습니다."
+              : "아직 제출이 없습니다. 공개 문답표에서 제출이 끝나면 여기에 고객과 문항 답이 나타납니다."}
         </p>
       ) : (
         <div className="mt-6 overflow-x-auto">

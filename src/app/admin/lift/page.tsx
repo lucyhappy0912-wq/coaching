@@ -19,9 +19,13 @@ export default async function AdminLiftPage() {
   await requireAdmin();
   const all = await listLeadsForAdmin();
   const rows = all.filter(isLiftLead);
-  await Promise.all(
-    rows.filter((row) => row.status === "new").map((row) => setLeadStatus(row.id, "contacted")),
-  );
+  try {
+    await Promise.all(
+      rows.filter((row) => row.status === "new").map((row) => setLeadStatus(row.id, "contacted")),
+    );
+  } catch {
+    // 뱃지를 내리지 못해도 목록은 보여 준다.
+  }
 
   return (
     <AdminShell title="LIFT 신청">

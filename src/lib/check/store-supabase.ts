@@ -269,8 +269,34 @@ export async function getByTokenSupabase(token: string) {
   return { record, scores: compute(record.answers) };
 }
 
-const LIST_SELECT =
-  "id,created_at,name,phone,email,industry,founder_journey,instrument,band,total,source,contact_consent";
+const LIST_SELECT_CORE =
+  "id,created_at,name,phone,email,instrument,band,total,source,contact_consent";
+const LIST_SELECT_PROFILE = `${LIST_SELECT_CORE},industry,founder_journey`;
+
+type CheckListRow = Pick<
+  Row,
+  "id" | "created_at" | "name" | "phone" | "email" | "instrument" | "band" | "total" | "source" | "contact_consent"
+> & {
+  industry?: string;
+  founder_journey?: string;
+};
+
+function mapCheckListRow(row: CheckListRow): CheckListItem {
+  return {
+    id: row.id,
+    createdAt: row.created_at,
+    name: row.name,
+    phone: row.phone,
+    email: row.email,
+    industry: (row.industry ?? "").trim(),
+    founderJourney: (row.founder_journey ?? "").trim(),
+    instrument: isPauseInstrument(row.instrument) ? "pause-check" : "founder-transition-check",
+    band: row.band,
+    total: row.total,
+    source: row.source,
+    contactConsent: row.contact_consent,
+  };
+}
 
 export async function countChecksSupabase() {
   const now = new Date().toISOString();
@@ -282,40 +308,18 @@ export async function countChecksSupabase() {
 
 export async function listChecksSupabase(): Promise<CheckListItem[]> {
   const now = new Date().toISOString();
-  const rows = await rest<Pick<
-    Row,
-    | "id"
-    | "created_at"
-    | "name"
-    | "phone"
-    | "email"
-    | "industry"
-    | "founder_journey"
-    | "instrument"
-    | "band"
-    | "total"
-    | "source"
-    | "contact_consent"
-  >[]>(`check_responses?purge_at=gt.${encodeURIComponent(now)}&select=${LIST_SELECT}&order=created_at.desc`);
-  return rows.map((row) => {
-    const instrument: CheckInstrument = isPauseInstrument(row.instrument)
-      ? "pause-check"
-      : "founder-transition-check";
-    return {
-      id: row.id,
-      createdAt: row.created_at,
-      name: row.name,
-      phone: row.phone,
-      email: row.email,
-      industry: (row.industry ?? "").trim(),
-      founderJourney: (row.founder_journey ?? "").trim(),
-      instrument,
-      band: row.band,
-      total: row.total,
-      source: row.source,
-      contactConsent: row.contact_consent,
-    };
-  });
+  const path = (select: string) =>
+    `check_responses?purge_at=gt.${encodeURIComponent(now)}&select=${select}&order=created_at.desc`;
+  let rows: CheckListRow[];
+  try {
+    rows = await rest<CheckListRow[]>(path(LIST_SELECT_PROFILE));
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.startsWith("CHECK_STORE_MISSING_COLUMN")) {
+      throw error;
+    }
+    rows = await rest<CheckListRow[]>(path(LIST_SELECT_CORE));
+  }
+  return rows.map(mapCheckListRow);
 }
 
 export async function getCheckSupabase(id: string) {

@@ -75,9 +75,14 @@ const LIST_SELECT = "id,name,phone,preferred_time,message,status,received_at";
 
 export async function listLeadsSupabase(): Promise<LeadListItem[]> {
   const now = new Date().toISOString();
-  const rows = await dataRest<Row[]>(
-    `leads?purge_at=gt.${encodeURIComponent(now)}&select=${LIST_SELECT}&order=received_at.desc`,
-  );
+  const path = (select: string) =>
+    `leads?purge_at=gt.${encodeURIComponent(now)}&select=${select}&order=received_at.desc`;
+  let rows: Row[];
+  try {
+    rows = await dataRest<Row[]>(path(LIST_SELECT));
+  } catch {
+    rows = await dataRest<Row[]>(path("*"));
+  }
   return rows.map((row) =>
     toList(
       toLead({
@@ -92,10 +97,15 @@ export async function listLeadsSupabase(): Promise<LeadListItem[]> {
 
 export async function markAllNewLeadsContactedSupabase() {
   const now = new Date().toISOString();
-  await dataRest<unknown>(`leads?status=eq.new&purge_at=gt.${encodeURIComponent(now)}`, {
-    method: "PATCH",
-    body: JSON.stringify({ status: "contacted" }),
-  });
+  try {
+    await dataRest<unknown>(`leads?status=eq.new&purge_at=gt.${encodeURIComponent(now)}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: "contacted" }),
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "STORE_WRITE_FAILED:0") return;
+    throw error;
+  }
 }
 
 export async function getLeadSupabase(id: string): Promise<Lead | null> {
