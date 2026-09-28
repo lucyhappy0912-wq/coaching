@@ -27,6 +27,8 @@ export const LIFT_POSTER = {
   footTitle: "LIFT LIFE ARCHITECTURE",
   footCta: "세미나 신청하기",
   footLead: "간단한 진단 후,\n지금 바로 신청할 수 있습니다.",
+  qrHref: "https://meomchunja.com/pause",
+  qrLabel: "사전 진단하고 신청하기",
   steps: [
     "사전 진단 (약 3분)",
     "결과 확인",

@@ -115,13 +115,26 @@ export function LiftArchitectureBoard() {
         </ul>
       </section>
 
-      <footer className="grid gap-8 bg-[#111] px-6 py-8 text-white sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:px-10">
+      <footer className="grid gap-8 bg-[#111] px-6 py-8 text-white sm:px-8 lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:px-10">
         <div>
           <p className="c1 tracking-[0.16em] text-white/45 uppercase">{copy.footTitle}</p>
           <p className="serif mt-3 text-[24px] leading-snug">{copy.footCta}</p>
           <div className="mt-4 h-px w-10 bg-white/30" />
           <p className="b3 mt-4 whitespace-pre-line text-white/65">{copy.footLead}</p>
         </div>
+        <a href={copy.qrHref} className="justify-self-start lg:justify-self-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/media/lift-qr.svg"
+            alt="PAUSE CHECK로 이동하는 QR"
+            width={148}
+            height={148}
+            className="block size-[148px] bg-white p-2"
+          />
+          <span className="c1 mt-3 block tracking-[0.12em] text-white/55 uppercase">
+            {copy.qrLabel} →
+          </span>
+        </a>
         <ol className="space-y-3">
           {copy.steps.map((step, index) => (
             <li key={step} className="b2 flex gap-3 text-white/85">
