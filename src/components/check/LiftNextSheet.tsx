@@ -71,9 +71,15 @@ function LiftDone() {
   );
 }
 
-function LiftApply({ applicant }: { applicant: LiftApplicant }) {
+function LiftApply({
+  applicant,
+  done,
+}: {
+  applicant: LiftApplicant;
+  done?: React.ReactNode;
+}) {
   const [state, action, pending] = useActionState(applyLift, { status: "idle" } satisfies LiftApplyState);
-  if (state.status === "done") return <LiftDone />;
+  if (state.status === "done") return done ?? <LiftDone />;
   return (
     <form action={action} className="flex flex-col gap-4">
       <HoneypotField />
@@ -88,10 +94,10 @@ function LiftApply({ applicant }: { applicant: LiftApplicant }) {
   );
 }
 
-function LiftPublicApply() {
+function LiftPublicApply({ done }: { done?: React.ReactNode }) {
   const [state, action, pending] = useActionState(applyLift, { status: "idle" } satisfies LiftApplyState);
   const [phone, setPhone] = useState("");
-  if (state.status === "done") return <LiftDone />;
+  if (state.status === "done") return done ?? <LiftDone />;
   return (
     <form action={action} className="flex flex-col gap-7 border border-forest-20 bg-white px-5 py-6 sm:p-7">
       <HoneypotField />
@@ -150,6 +156,16 @@ function LiftPublicApply() {
       {state.status === "error" ? <p className="b3 text-[#c0392b]">{state.message}</p> : null}
     </form>
   );
+}
+
+export function LiftApplyBlock({
+  applicant,
+  done,
+}: {
+  applicant?: LiftApplicant;
+  done?: React.ReactNode;
+}) {
+  return applicant ? <LiftApply applicant={applicant} done={done} /> : <LiftPublicApply done={done} />;
 }
 
 export function LiftNextSheet({

@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { LiftNextSheet, type LiftApplicant } from "@/components/check/LiftNextSheet";
+import type { LiftApplicant } from "@/components/check/LiftNextSheet";
+import { PauseLiftClose } from "@/components/pause/PauseLiftClose";
 import { cn } from "@/lib/utils";
 import type { PauseScores } from "@/lib/pause/compute";
 import { PAUSE_BAND_COPY, PAUSE_DISCLAIMER, PAUSE_PROCESS, PAUSE_SIGNAL_COPY } from "@/lib/pause/copy";
@@ -126,7 +127,7 @@ export function PauseReport({
     if (key === "score") return <ScoreCard scores={scores} />;
     if (key === "signal") return <SignalCard />;
     if (key === "process") return <ProcessCard />;
-    if (key === "lift") return <LiftNextSheet showCta={showCta} applicant={applicant} />;
+    if (key === "lift") return <PauseLiftClose showCta={showCta} applicant={applicant} />;
     return <NoteCard />;
   }
 
