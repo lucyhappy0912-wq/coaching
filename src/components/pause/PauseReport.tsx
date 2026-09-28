@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { LiftNextSheet, type LiftApplicant } from "@/components/check/LiftNextSheet";
 import { cn } from "@/lib/utils";
 import type { PauseScores } from "@/lib/pause/compute";
 import { PAUSE_BAND_COPY, PAUSE_DISCLAIMER, PAUSE_PROCESS, PAUSE_SIGNAL_COPY } from "@/lib/pause/copy";
-import { PAUSE_QUESTIONS } from "@/lib/pause/questions";
+
+export type { LiftApplicant };
 
 const CARD = "border border-forest-20 bg-white px-5 py-6 sm:p-7 lg:p-10";
 
@@ -18,6 +20,7 @@ const PARTS = [
   { key: "signal", label: "SIGNAL" },
   { key: "process", label: "NEXT" },
   { key: "note", label: "안내" },
+  { key: "lift", label: "LIFT" },
 ] as const;
 
 function ScoreCard({ scores }: { scores: PauseScores }) {
@@ -40,8 +43,7 @@ function ScoreCard({ scores }: { scores: PauseScores }) {
   );
 }
 
-function SignalCard({ scores }: { scores: PauseScores }) {
-  const highs = PAUSE_QUESTIONS.filter((q) => scores.highKeys.includes(q.key));
+function SignalCard() {
   return (
     <section className={CARD}>
       <p className="c1 tracking-[0.2em] text-forest-70 uppercase">{PAUSE_SIGNAL_COPY.eyebrow}</p>
@@ -51,18 +53,6 @@ function SignalCard({ scores }: { scores: PauseScores }) {
           {p}
         </p>
       ))}
-      {highs.length > 0 ? (
-        <ul className="mt-8 space-y-4">
-          {highs.map((q) => (
-            <li key={q.key} className="border-b border-ink-10 pb-4 last:border-0 last:pb-0">
-              <p className="c1 text-forest-70">{String(q.no).padStart(2, "0")}</p>
-              <p className="b2 mt-2 text-ink-90">{q.prompt}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="b3 mt-8 text-ink-70">4점 또는 5점을 준 문항이 없습니다. 마음에 남는 문장을 다시 살펴보세요.</p>
-      )}
       <ul className="mt-8 space-y-3">
         {PAUSE_SIGNAL_COPY.questions.map((q) => (
           <li key={q} className="b2 text-forest">
@@ -109,7 +99,15 @@ function NoteCard() {
   );
 }
 
-export function PauseReport({ scores }: { scores: PauseScores }) {
+export function PauseReport({
+  scores,
+  showCta = true,
+  applicant,
+}: {
+  scores: PauseScores;
+  showCta?: boolean;
+  applicant?: LiftApplicant;
+}) {
   const [step, setStep] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const skipScroll = useRef(true);
@@ -126,8 +124,9 @@ export function PauseReport({ scores }: { scores: PauseScores }) {
 
   function renderPart(key: (typeof PARTS)[number]["key"]) {
     if (key === "score") return <ScoreCard scores={scores} />;
-    if (key === "signal") return <SignalCard scores={scores} />;
+    if (key === "signal") return <SignalCard />;
     if (key === "process") return <ProcessCard />;
+    if (key === "lift") return <LiftNextSheet showCta={showCta} applicant={applicant} />;
     return <NoteCard />;
   }
 

@@ -1,14 +1,18 @@
 import { CheckLeaveReplace } from "@/components/check/CheckLeaveReplace";
-import { PauseReport } from "@/components/pause/PauseReport";
+import { PauseReport, type LiftApplicant } from "@/components/pause/PauseReport";
 import type { PauseScores } from "@/lib/pause/compute";
 import { PAUSE_BAND_NAME } from "@/lib/pause/copy";
 
 export function PauseResultView({
   name,
   scores,
+  showCta = true,
+  applicant,
 }: {
   name?: string;
   scores: PauseScores;
+  showCta?: boolean;
+  applicant?: LiftApplicant;
 }) {
   const trimmed = name?.trim() ?? "";
 
@@ -28,7 +32,12 @@ export function PauseResultView({
         </p>
       )}
       <div className="mt-12">
-        <PauseReport key={[scores.band, scores.total, ...scores.highKeys].join("-")} scores={scores} />
+        <PauseReport
+          key={[scores.band, scores.total].join("-")}
+          scores={scores}
+          showCta={showCta}
+          applicant={applicant}
+        />
       </div>
     </>
   );

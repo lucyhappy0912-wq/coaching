@@ -66,7 +66,15 @@ export function PauseViewForm() {
 
       {state.scores ? (
         <div className="mt-12">
-          <PauseResultView name={state.name} scores={state.scores} />
+          <PauseResultView
+            name={state.name}
+            scores={state.scores}
+            applicant={
+              state.name && state.phone
+                ? { name: state.name, phone: state.phone, email: state.email ?? "" }
+                : undefined
+            }
+          />
         </div>
       ) : null}
     </>
