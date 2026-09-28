@@ -1,11 +1,10 @@
 import { LinedLink } from "@/components/ui/Buttons";
 import { Photo } from "@/components/ui/Photo";
+import { Reveal } from "@/components/ui/Reveal";
 import { sanitizeImageFocus } from "@/lib/cms/image-focus";
 import type { CmsCoach } from "@/lib/cms/types";
 import { COACH } from "@/lib/site";
 import { HOME_VISUAL, portraitOrFounder } from "@/lib/visual";
-
-const PHOTO_H = "lg:min-h-[min(960px,calc(100svh-var(--header-h)))]";
 
 export function CoachBand({ coach = { ...COACH, credentials: [...COACH.credentials] } }: { coach?: CmsCoach }) {
   const lines = coach.credentials.map((item) => item.trim()).filter(Boolean);
@@ -18,7 +17,7 @@ export function CoachBand({ coach = { ...COACH, credentials: [...COACH.credentia
   return (
     <div className="bg-[#f7f6f3] text-ink">
       <section id="coach" className="grid pt-(--header-h) lg:grid-cols-2 lg:items-start">
-        <div className={`relative aspect-4/5 overflow-hidden lg:aspect-auto ${PHOTO_H}`}>
+        <div className="relative aspect-4/5 overflow-hidden lg:sticky lg:top-(--header-h) lg:aspect-auto lg:h-[calc(100svh-var(--header-h))]">
           <Photo
             src={portraitOrFounder(coach.image)}
             tone="paper"
@@ -26,11 +25,11 @@ export function CoachBand({ coach = { ...COACH, credentials: [...COACH.credentia
             sizes="(min-width: 1025px) 50vw, 100vw"
             priority
             objectPosition={coach.image && portraitOrFounder(coach.image) !== HOME_VISUAL.founder ? sanitizeImageFocus(coach.imageFocus) : "center 40%"}
-            className="absolute inset-0 object-cover"
+            className="absolute inset-0 object-cover hero-kenburns"
           />
         </div>
 
-        <div className={`flex items-start px-(--gutter) py-16 lg:px-16 lg:py-24 ${PHOTO_H}`}>
+        <Reveal className="flex items-start px-(--gutter) py-16 lg:min-h-[calc(100svh-var(--header-h))] lg:px-16 lg:py-24">
           <div className="max-w-(--measure-narrow)">
             <p className="c1 tracking-[0.2em] text-ink-50 uppercase">Transition Coach 대표코치</p>
             <h1 className="t2 mt-3 text-ink">{coach.name}</h1>
@@ -60,7 +59,7 @@ export function CoachBand({ coach = { ...COACH, credentials: [...COACH.credentia
               LIFT – Life Architecture
             </LinedLink>
           </div>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

@@ -1,5 +1,7 @@
 import { PageHero } from "@/components/content/PageHero";
+import { ProcessPin } from "@/components/content/ProcessPin";
 import { Photo } from "@/components/ui/Photo";
+import { Reveal } from "@/components/ui/Reveal";
 import { FOUNDER_TRANSITION } from "@/lib/founder-transition";
 import { HOME_VISUAL, VISUAL_POS } from "@/lib/visual";
 
@@ -24,7 +26,7 @@ export function FounderTransition() {
       />
 
       <section className="bg-[#f7f6f3] px-(--gutter) py-16 lg:py-24">
-        <div className="mx-auto max-w-md">
+        <Reveal className="mx-auto max-w-md">
           <p className="c1 tracking-[0.22em] text-ink-50 uppercase">{copy.hero.axis}</p>
           <p className="serif mt-6 text-[26px] leading-snug text-ink lg:text-[32px]">{copy.program.body[0]}</p>
           {copy.program.body.slice(1).map((paragraph) => (
@@ -37,10 +39,11 @@ export function FounderTransition() {
               <p key={line}>{line}</p>
             ))}
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section className="px-(--gutter) py-20 lg:py-28">
+        <Reveal>
         <p className="serif text-[32px] text-ink lg:text-[48px]">{copy.after.title}</p>
         <p className="b2 mt-5 max-w-(--measure-narrow) text-ink-70">{copy.after.lead}</p>
         <ul className="b2 mt-8 max-w-(--measure) space-y-2 text-ink-70">
@@ -61,35 +64,29 @@ export function FounderTransition() {
               </span>
               <p className="serif text-[18px] leading-snug text-ink lg:text-[22px]">{pair.after}</p>
             </li>
-          ))}
-        </ul>
+            ))}
+          </ul>
+        </Reveal>
       </section>
 
-      <section className="bg-[#f7f6f3] px-(--gutter) py-16">
-        <ol className="flex flex-wrap gap-x-10 gap-y-4">
-          {copy.hero.process.map((step, index) => (
-            <li key={step} className="serif text-[22px] text-ink lg:text-[28px]">
-              <span className="mr-2 text-ink-30">{String(index + 1).padStart(2, "0")}</span>
-              {step}
-            </li>
-          ))}
-        </ol>
-      </section>
+      <ProcessPin steps={copy.hero.process} />
 
       <section className="px-(--gutter) py-20 lg:py-28">
-        <p className="serif text-[32px] text-ink lg:text-[48px]">{copy.close.eyebrow}</p>
-        <div className="b2 mt-8 max-w-(--measure-narrow) space-y-4 text-ink-70">
-          {copy.close.body.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-        </div>
+        <Reveal>
+          <p className="serif text-[32px] text-ink lg:text-[48px]">{copy.close.eyebrow}</p>
+          <div className="b2 mt-8 max-w-(--measure-narrow) space-y-4 text-ink-70">
+            {copy.close.body.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        </Reveal>
       </section>
 
       {copy.weeks.map((item) => {
         const question = questions.get(item.week);
         return (
           <section key={item.week} className="border-t border-ink-10 px-(--gutter) py-16 lg:px-16">
-            <div className="mx-auto max-w-md">
+            <Reveal className="mx-auto max-w-md">
               <p className="serif text-[36px] leading-none text-ink-10">{item.week}</p>
               <p className="c1 mt-5 tracking-[0.2em] text-ink-50 uppercase">{item.stage}</p>
               <h2 className="serif mt-3 text-[26px] leading-snug text-ink lg:text-[32px]">{item.title}</h2>
@@ -99,13 +96,13 @@ export function FounderTransition() {
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>
-            </div>
+            </Reveal>
           </section>
         );
       })}
 
       <section className="grid bg-[#f7f6f3] lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="flex flex-col justify-center px-(--gutter) py-16 lg:px-16 lg:py-24">
+        <Reveal className="flex flex-col justify-center px-(--gutter) py-16 lg:px-16 lg:py-24">
           <p className="c1 tracking-[0.22em] text-ink-50 uppercase">{copy.next.eyebrow}</p>
           <h2 className="serif mt-4 max-w-5xl text-[32px] leading-[1.1] text-ink lg:text-[48px]">{copy.next.line}</h2>
           <div className="b2 mt-8 max-w-(--measure-narrow) space-y-4 text-ink-70">
@@ -113,17 +110,17 @@ export function FounderTransition() {
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
-        </div>
-        <div className="relative min-h-[42svh] overflow-hidden lg:min-h-full">
+        </Reveal>
+        <Reveal delay={0.08} className="relative min-h-[42svh] overflow-hidden lg:min-h-full">
           <Photo
             src={HOME_VISUAL.next}
             tone="paper"
             alt=""
             objectPosition={VISUAL_POS.next}
-            className="absolute inset-0"
+            className="absolute inset-0 hero-kenburns"
             sizes="(min-width: 1025px) 42vw, 100vw"
           />
-        </div>
+        </Reveal>
       </section>
     </div>
   );

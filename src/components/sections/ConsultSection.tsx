@@ -1,4 +1,5 @@
 import { ConsultForm } from "@/components/sections/ConsultForm";
+import { Reveal } from "@/components/ui/Reveal";
 import type { CmsSite } from "@/lib/cms/types";
 import { SITE } from "@/lib/site";
 
@@ -6,13 +7,9 @@ export function ConsultSection({ site = SITE }: { site?: CmsSite }) {
   return (
     <section id="consult" className="bg-white px-(--gutter) py-16 lg:py-24">
       <div className="flex flex-col gap-10 lg:flex-row lg:gap-16">
-        <div className="lg:w-[38%]">
-          <p className="c1 tracking-[0.2em] text-stem uppercase">Coaching</p>
-          <h2 className="t2 mt-3">먼저 이야기부터 들려주세요</h2>
-          <p className="b3 mt-5 max-w-sm text-ink-70">
-            첫 상담은 무료입니다. 지금 어떤 상황인지 듣고, 코칭이 필요한지부터 솔직하게
-            말씀드립니다.
-          </p>
+        <Reveal className="lg:w-[38%]">
+          <p className="c1 tracking-[0.2em] text-ink-50 uppercase">Contact</p>
+          <p className="serif mt-3 text-[28px] leading-snug text-ink lg:text-[36px]">연락처</p>
 
           <dl className="serif mt-10 space-y-4 text-[15px] text-forest">
             <div>
@@ -38,11 +35,11 @@ export function ConsultSection({ site = SITE }: { site?: CmsSite }) {
               </dd>
             </div>
           </dl>
-        </div>
+        </Reveal>
 
-        <div className="lg:flex-1">
+        <Reveal delay={0.08} className="lg:flex-1">
           <ConsultForm />
-        </div>
+        </Reveal>
       </div>
     </section>
   );

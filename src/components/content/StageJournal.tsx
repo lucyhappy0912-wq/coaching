@@ -1,4 +1,6 @@
 import { PageHero } from "@/components/content/PageHero";
+import { ProcessPin } from "@/components/content/ProcessPin";
+import { Reveal } from "@/components/ui/Reveal";
 import type { CmsProgramPage } from "@/lib/cms/types";
 import { HOME_VISUAL, VISUAL_POS } from "@/lib/visual";
 
@@ -14,31 +16,21 @@ export function StageJournal({ page }: { page: CmsProgramPage }) {
       />
 
       <section className="bg-[#f7f6f3] px-(--gutter) py-16 lg:py-24">
-        <div className="mx-auto max-w-md">
+        <Reveal className="mx-auto max-w-md">
           <p className="serif text-[26px] leading-snug text-ink lg:text-[32px]">{page.intro[0]}</p>
           {page.intro.slice(1).map((paragraph) => (
             <p key={paragraph} className="reading b2 mt-8 text-ink-70">
               {paragraph}
             </p>
           ))}
-        </div>
+        </Reveal>
       </section>
 
-      <section className="border-y border-ink-10 px-(--gutter) py-12 lg:py-16">
-        <p className="c1 tracking-[0.2em] text-ink-50 uppercase">Process</p>
-        <ol className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
-          {page.process.map((step, index) => (
-            <li key={step} className="serif text-[22px] text-ink lg:text-[28px]">
-              <span className="mr-2 text-ink-30">{String(index + 1).padStart(2, "0")}</span>
-              {step}
-            </li>
-          ))}
-        </ol>
-      </section>
+      <ProcessPin steps={page.process} />
 
       {page.weeks.map((item) => (
         <article key={item.week} className="border-b border-ink-10 px-(--gutter) py-12 lg:px-16 lg:py-16">
-          <div className="mx-auto max-w-lg">
+          <Reveal className="mx-auto max-w-lg">
             <p className="serif text-[48px] leading-none text-ink-10 lg:text-[64px]">{item.week}</p>
             <p className="c1 mt-2 tracking-[0.2em] text-ink-50 uppercase">{item.stage}</p>
             <h2 className="t3 mt-3 text-ink">{item.title}</h2>
@@ -52,7 +44,7 @@ export function StageJournal({ page }: { page: CmsProgramPage }) {
               <span className="mx-2 text-ink-30">→</span>
               {item.to}
             </p>
-          </div>
+          </Reveal>
         </article>
       ))}
     </div>

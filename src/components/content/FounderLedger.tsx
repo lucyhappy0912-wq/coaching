@@ -1,5 +1,7 @@
 import { HashRedirect } from "@/components/content/HashRedirect";
 import { PageHero } from "@/components/content/PageHero";
+import { ProcessPin } from "@/components/content/ProcessPin";
+import { Reveal } from "@/components/ui/Reveal";
 import type { CmsProgramPage } from "@/lib/cms/types";
 import { HOME_VISUAL, VISUAL_POS } from "@/lib/visual";
 
@@ -18,7 +20,7 @@ export function FounderLedger({ page }: { page: CmsProgramPage }) {
       />
 
       <section className="bg-[#f7f6f3] px-(--gutter) py-16 lg:py-24">
-        <div className="mx-auto max-w-md">
+        <Reveal className="mx-auto max-w-md">
           {page.intro.map((paragraph, index) => (
             <p
               key={paragraph}
@@ -27,11 +29,12 @@ export function FounderLedger({ page }: { page: CmsProgramPage }) {
               {paragraph}
             </p>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {after.title ? (
         <section className="px-(--gutter) py-20 lg:py-28">
+          <Reveal>
           <p className="serif text-[32px] text-ink lg:text-[48px]">{after.title}</p>
           <p className="b2 mt-5 max-w-(--measure-narrow) text-ink-70">{after.lead}</p>
           <ul className="mt-16">
@@ -48,22 +51,14 @@ export function FounderLedger({ page }: { page: CmsProgramPage }) {
               </li>
             ))}
           </ul>
+          </Reveal>
         </section>
       ) : null}
 
-      <section className="bg-[#f7f6f3] px-(--gutter) py-16">
-        <ol className="flex flex-wrap gap-x-10 gap-y-4">
-          {page.process.map((step, index) => (
-            <li key={step} className="serif text-[22px] text-ink lg:text-[28px]">
-              <span className="mr-2 text-ink-30">{String(index + 1).padStart(2, "0")}</span>
-              {step}
-            </li>
-          ))}
-        </ol>
-      </section>
+      <ProcessPin steps={page.process} />
 
       <section className="bg-white px-(--gutter) py-20 lg:py-28">
-        <div className="mx-auto max-w-(--measure)">
+        <Reveal className="mx-auto max-w-(--measure)">
           <div className="reading b2 text-ink-70">
             {page.weeksIntro.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
@@ -85,7 +80,7 @@ export function FounderLedger({ page }: { page: CmsProgramPage }) {
               </li>
             ))}
           </ol>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

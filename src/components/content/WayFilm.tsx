@@ -1,5 +1,6 @@
 import { PageHero } from "@/components/content/PageHero";
 import { Photo } from "@/components/ui/Photo";
+import { Reveal } from "@/components/ui/Reveal";
 import type { CmsPages } from "@/lib/cms/types";
 import { HOME_VISUAL, VISUAL_POS, WAY_CYCLE } from "@/lib/visual";
 import { cn } from "@/lib/utils";
@@ -25,7 +26,7 @@ export function WayFilm({ page }: { page: CmsPages["way"] }) {
             index % 2 === 0 ? "bg-[#f7f6f3]" : "bg-white",
           )}
         >
-          <div
+          <Reveal
             className={cn(
               "flex flex-col justify-center px-(--gutter) py-16 lg:px-16 lg:py-24",
               index % 2 === 1 && "lg:order-2",
@@ -35,8 +36,9 @@ export function WayFilm({ page }: { page: CmsPages["way"] }) {
               <p>{item.body[0]}</p>
               {item.body[1] ? <p>{item.body[1]}</p> : null}
             </div>
-          </div>
-          <div
+          </Reveal>
+          <Reveal
+            delay={0.08}
             className={cn(
               "relative min-h-[42svh] overflow-hidden lg:min-h-full",
               index % 2 === 1 && "lg:order-1",
@@ -46,10 +48,10 @@ export function WayFilm({ page }: { page: CmsPages["way"] }) {
               src={WAY_CYCLE[index % WAY_CYCLE.length]}
               tone="paper"
               alt={item.title}
-              className="absolute inset-0"
+              className="absolute inset-0 hero-kenburns"
               sizes="(min-width: 1025px) 42vw, 100vw"
             />
-          </div>
+          </Reveal>
         </section>
       ))}
     </div>

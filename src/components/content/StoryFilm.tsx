@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -68,14 +69,24 @@ export function StoryFilm({
           <div className="absolute top-8 left-(--gutter) hidden lg:block">
             <AboutRail title="The Moment" links={MOMENT_LINKS} current="/story" />
           </div>
-          <h1 className="break-keep text-[26px] leading-snug whitespace-pre-line text-ink lg:text-[36px]">
-            {current.title}
-          </h1>
-          <div className="b2 mt-6 max-w-(--measure-narrow) space-y-5 text-ink-70">
-            {current.lines.map((line) => (
-              <p key={line}>{line}</p>
-            ))}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <h1 className="break-keep text-[26px] leading-snug whitespace-pre-line text-ink lg:text-[36px]">
+                {current.title}
+              </h1>
+              <div className="b2 mt-6 max-w-(--measure-narrow) space-y-5 text-ink-70">
+                {current.lines.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
         <div className="relative min-h-[42svh] overflow-hidden lg:min-h-full">
           {slides.map((slide, i) => (
@@ -92,7 +103,7 @@ export function StoryFilm({
                 tone="paper"
                 alt=""
                 objectPosition={SLIDE_POS[i] ?? VISUAL_POS.transition}
-                className="absolute inset-0"
+                className="absolute inset-0 hero-kenburns"
                 sizes="(min-width: 1025px) 46vw, 100vw"
               />
             </div>

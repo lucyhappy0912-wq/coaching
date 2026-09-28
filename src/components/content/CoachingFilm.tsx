@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/content/PageHero";
 import { LinedLink } from "@/components/ui/Buttons";
 import { Photo } from "@/components/ui/Photo";
+import { Reveal } from "@/components/ui/Reveal";
 import type { CmsHomeProgram } from "@/lib/cms/types";
 import { HOME_VISUAL } from "@/lib/visual";
 import { cn } from "@/lib/utils";
@@ -59,7 +60,7 @@ export function CoachingFilm({
               dark ? "bg-[#111] text-white" : index % 2 === 0 ? "bg-[#f7f6f3] text-ink" : "bg-white text-ink",
             )}
           >
-            <div
+            <Reveal
               className={cn(
                 "flex flex-col justify-center px-(--gutter) py-16 lg:px-16 lg:py-24",
                 index % 2 === 1 && "lg:order-1",
@@ -96,8 +97,9 @@ export function CoachingFilm({
                   {item.cta}
                 </LinedLink>
               ) : null}
-            </div>
-            <div
+            </Reveal>
+            <Reveal
+              delay={0.08}
               className={cn(
                 "relative min-h-[46svh] overflow-hidden lg:min-h-full",
                 index % 2 === 1 && "lg:order-2",
@@ -107,10 +109,10 @@ export function CoachingFilm({
                 src={PROGRAM_IMAGE[item.id] ?? HOME_VISUAL.transition}
                 tone="paper"
                 alt={item.line}
-                className="absolute inset-0"
+                className="absolute inset-0 hero-kenburns"
                 sizes="(min-width: 1025px) 40vw, 100vw"
               />
-            </div>
+            </Reveal>
           </section>
         );
       })}

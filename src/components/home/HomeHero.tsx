@@ -1,41 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import { Photo } from "@/components/ui/Photo";
 import { HOME_VISUAL } from "@/lib/visual";
 import type { CmsPages } from "@/lib/cms/types";
+import { useScrollProgress } from "@/lib/use-scroll-progress";
 import { cn } from "@/lib/utils";
 
 export function HomeHero({ moment }: { moment: CmsPages["home"]["moment"] }) {
   const track = useRef<HTMLElement>(null);
-  const [progress, setProgress] = useState(0);
-  const [reduce, setReduce] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const syncReduce = () => setReduce(media.matches);
-    syncReduce();
-    media.addEventListener("change", syncReduce);
-
-    const onScroll = () => {
-      const el = track.current;
-      if (!el) return;
-      const total = el.offsetHeight - window.innerHeight;
-      if (total <= 0) {
-        setProgress(1);
-        return;
-      }
-      setProgress(Math.min(1, Math.max(0, -el.getBoundingClientRect().top / total)));
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      media.removeEventListener("change", syncReduce);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
+  const { progress, reduce } = useScrollProgress(track);
   const show = (from: number) => reduce || progress >= from;
 
   return (
