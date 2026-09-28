@@ -1,4 +1,8 @@
+import jenga from "@/media/lift-jenga.png";
+
 import { LIFT_POSTER as copy } from "@/lib/pause/lift-poster";
+
+const jengaSrc = typeof jenga === "string" ? jenga : jenga.src;
 
 function IconCompass() {
   return (
@@ -42,31 +46,24 @@ function IconChart() {
 
 const ICONS = [IconCompass, IconBlocks, IconTarget, IconChart];
 
-function Jenga() {
-  const tones = ["#d8c7aa", "#cbb894", "#e0d0b4"] as const;
-
+function JengaPhoto() {
   return (
-    <div className="relative mx-auto flex h-[200px] w-[168px] items-end justify-center">
-      <div aria-hidden className="flex flex-col-reverse items-center gap-[3px]">
-        {Array.from({ length: 7 }, (_, row) => (
-          <div key={row} className="flex gap-[3px]">
-            {[0, 1, 2].map((col) => {
-              const lift = row === 6 && col === 1;
-              return (
-                <span
-                  key={col}
-                  className={
-                    lift
-                      ? "block h-3.5 w-[50px] -translate-y-7 translate-x-7 rotate-[14deg] rounded-[1px] bg-[#eadcc0] shadow-[0_8px_16px_rgba(0,0,0,0.28)]"
-                      : "block h-3.5 w-[50px] rounded-[1px] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]"
-                  }
-                  style={lift ? undefined : { background: tones[(row + col) % tones.length] }}
-                />
-              );
-            })}
-          </div>
+    <div className="relative">
+      <p className="c1 mb-4 text-right tracking-[0.2em] text-white/35 uppercase">
+        {copy.axis.map((item) => (
+          <span key={item} className="block">
+            {item}
+          </span>
         ))}
-      </div>
+      </p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={jengaSrc}
+        alt=""
+        width={typeof jenga === "string" ? 250 : jenga.width}
+        height={typeof jenga === "string" ? 500 : jenga.height}
+        className="mx-auto block h-auto w-full max-w-[280px]"
+      />
     </div>
   );
 }
@@ -80,22 +77,13 @@ export function LiftArchitectureBoard() {
         <h2 className="serif mt-8 text-[52px] leading-none tracking-[0.18em] sm:text-[72px]">{copy.title}</h2>
         <p className="c1 mt-3 tracking-[0.28em] text-white/70">{copy.subtitle}</p>
         <div className="mt-6 h-px w-16 bg-white/35" />
-        <div className="mt-8 grid gap-8 sm:grid-cols-[minmax(0,1fr)_180px] sm:items-end">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(220px,0.9fr)] lg:items-end">
           <div>
             <p className="serif whitespace-pre-line text-[22px] leading-snug sm:text-[28px]">{copy.line}</p>
             <p className="b3 mt-5 whitespace-pre-line text-white/70">{copy.body}</p>
             <p className="c1 mt-8 tracking-[0.16em] text-white/40 uppercase">{copy.close}</p>
           </div>
-          <div>
-            <p className="c1 mb-4 text-right tracking-[0.2em] text-white/35 uppercase">
-              {copy.axis.map((item) => (
-                <span key={item} className="block">
-                  {item}
-                </span>
-              ))}
-            </p>
-            <Jenga />
-          </div>
+          <JengaPhoto />
         </div>
       </header>
 
