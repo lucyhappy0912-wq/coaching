@@ -8,7 +8,6 @@ import { X } from "lucide-react";
 import type { CmsSite } from "@/lib/cms/types";
 import { DEFAULT_MENU_OFF, visibleMenuGroups, type MenuGroup } from "@/lib/menu";
 import { SITE } from "@/lib/site";
-import { cn } from "@/lib/utils";
 
 export function Header({
   site = SITE,
@@ -18,20 +17,10 @@ export function Header({
   groups?: MenuGroup[];
 }) {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const onHome = pathname === "/";
-  const overlayHero = onHome;
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    setScrolled(window.scrollY > 40);
+    setMenuOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -41,16 +30,8 @@ export function Header({
     };
   }, [menuOpen]);
 
-  // 히어로 위에서는 흰 글자, 스크롤하거나 메뉴를 열면 흰 배경 + 딥그린 글자
-  const solid = !overlayHero || scrolled || menuOpen;
-
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 h-(--header-h) transition-colors duration-300",
-        solid ? "bg-white/95 text-forest backdrop-blur" : "bg-transparent text-white"
-      )}
-    >
+    <header className="fixed inset-x-0 top-0 z-50 h-(--header-h) bg-white/95 text-forest backdrop-blur">
       <div className="relative flex h-full items-center justify-between px-(--gutter)">
         <Link
           href="/"

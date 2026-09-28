@@ -88,7 +88,7 @@ export function pagesSeed(): CmsPages {
   return {
     home: {
       moment: {
-        ...media("forest", "/media/home-moment.jpg"),
+        ...media("paper", "/media/visual-hero.jpg"),
         eyebrow: HOME_MOMENT.eyebrow,
         lines: [...HOME_MOMENT.lines],
         body: HOME_MOMENT.body,
@@ -103,7 +103,8 @@ export function pagesSeed(): CmsPages {
         cta: item.cta,
         ...media(
           item.tone,
-          ["/media/home-stage.jpg", "/media/home-next.jpg", "/media/home-founder.jpg"][index] ?? "/media/home-stage.jpg",
+          ["/media/visual-stairs.jpg", "/media/visual-next.jpg", "/media/visual-founder.png"][index] ??
+            "/media/visual-stairs.jpg",
         ),
       })),
     },

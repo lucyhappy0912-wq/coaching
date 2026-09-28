@@ -3,75 +3,54 @@ import { Photo } from "@/components/ui/Photo";
 import type { CmsHomeProgram } from "@/lib/cms/types";
 import { cn } from "@/lib/utils";
 
-const RAIL: Record<
-  string,
-  { bg: string; line: string; lead: string; link: string; photoScrim: boolean }
-> = {
-  sage: {
-    bg: "bg-grass-10",
-    line: "text-forest",
-    lead: "text-ink-90",
-    link: "text-forest",
-    photoScrim: false,
-  },
-  paper: {
-    bg: "bg-[#f7f4ee]",
-    line: "text-forest",
-    lead: "text-ink-90",
-    link: "text-forest",
-    photoScrim: false,
-  },
-  forest: {
-    bg: "bg-forest",
-    line: "text-white",
-    lead: "text-white/88",
-    link: "text-white",
-    photoScrim: true,
-  },
-};
-
 export function ProgramScenes({ programs }: { programs: CmsHomeProgram[] }) {
   return (
     <div>
       {programs.map((item, index) => {
-        const rail = RAIL[item.tone] ?? RAIL.sage;
-        const railLeft = index !== 1;
+        const dark = index === 2;
+        const imageRight = index % 2 === 1;
 
         return (
           <section
             key={item.id}
-            className="flex min-h-svh flex-col lg:min-h-svh lg:flex-row"
+            className={cn(
+              "grid lg:min-h-[86svh] lg:grid-cols-[1.15fr_0.85fr]",
+              dark ? "bg-[#111] text-white" : "bg-white text-ink",
+            )}
           >
             <div
               className={cn(
-                "relative min-h-[58svh] overflow-hidden lg:min-h-svh lg:w-[60%]",
-                railLeft && "lg:order-2"
+                "flex flex-col justify-center px-(--gutter) py-16 lg:px-16 lg:py-24",
+                imageRight && "lg:order-1",
               )}
             >
-              <Photo src={item.image} video={item.video} tone={item.tone} alt={item.line} className="absolute inset-0" />
-              {rail.photoScrim ? <div className="absolute inset-0 bg-black/20" /> : null}
+              <p className={cn("c1 tracking-[0.18em] uppercase", dark ? "text-white/45" : "text-ink-50")}>
+                {item.eyebrow}
+              </p>
+              <h2 className="serif mt-5 text-[30px] leading-[1.12] tracking-[-0.02em] lg:text-[44px]">
+                {item.line}
+              </h2>
+              <p className={cn("b2 mt-8 max-w-md", dark ? "text-white/78" : "text-ink-70")}>
+                {item.lead[0]}
+              </p>
+              <LinedLink href={item.href} className={cn("mt-8", dark ? "text-white" : "text-forest")}>
+                {item.cta}
+              </LinedLink>
             </div>
             <div
               className={cn(
-                "flex min-h-[42svh] items-center px-(--gutter) py-12 lg:w-[40%] lg:px-14",
-                rail.bg,
-                railLeft && "lg:order-1"
+                "relative min-h-[52svh] overflow-hidden lg:min-h-full",
+                imageRight && "lg:order-2",
               )}
             >
-              <div className="max-w-(--measure-narrow)">
-                <h2
-                  className={cn(
-                    "serif text-[26px] leading-[1.2] md:text-[32px] lg:text-[40px]",
-                    rail.line
-                  )}
-                >
-                  {item.line}
-                </h2>
-                <p className={cn("b2 mt-6", rail.lead)}>{item.lead[0]}</p>
-                <LinedLink href={item.href} className={cn("mt-8 inline-block", rail.link)}>
-                  {item.cta}
-                </LinedLink>
-              </div>
+              <Photo
+                src={item.image}
+                video={item.video}
+                tone={item.tone}
+                alt={item.line}
+                className="absolute inset-0"
+                sizes="(min-width: 1025px) 40vw, 100vw"
+              />
             </div>
           </section>
         );
