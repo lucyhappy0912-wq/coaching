@@ -10,7 +10,7 @@ export const HOME_VISUAL = {
 
 export const VISUAL_POS = {
   hero: "center 70%",
-  pause: "center",
+  pause: "32% 78%",
   transition: "center 60%",
   stairs: "center 20%",
   next: "center 40%",

@@ -1,7 +1,13 @@
 import Image from "next/image";
 
 import { LazyVideo } from "@/components/ui/LazyVideo";
+import { HOME_VISUAL } from "@/lib/visual";
 import { cn } from "@/lib/utils";
+
+/** 슬로우 줌이 회색 벽만 확대하지 않게, 사진별 기준점을 둔다. */
+const ZOOM_ORIGIN: Record<string, string> = {
+  [HOME_VISUAL.pause]: "32% 78%",
+};
 
 function supabasePublicMedia(src: string) {
   try {
@@ -46,7 +52,10 @@ export function Photo({
   priority?: boolean;
   objectPosition?: string;
 }) {
-  const fit = { objectPosition };
+  const fit = {
+    objectPosition,
+    transformOrigin: src ? ZOOM_ORIGIN[src] : undefined,
+  };
   if (video) {
     return (
       <LazyVideo
