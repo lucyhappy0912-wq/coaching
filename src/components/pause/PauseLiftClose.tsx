@@ -1,19 +1,21 @@
-import Image from "next/image";
+import poster from "@/media/lift-architecture.png";
 
 import { LiftApplyBlock, type LiftApplicant } from "@/components/check/LiftNextSheet";
 import { LinedLink } from "@/components/ui/Buttons";
 
+const posterSrc = typeof poster === "string" ? poster : poster.src;
+
 function LiftPoster() {
   return (
-    <figure className="overflow-hidden border border-forest-20 bg-white">
-      <Image
-        src="/media/lift-architecture.png"
+    <figure className="overflow-hidden bg-white">
+      {/* 정적 import. public 경로·이미지 최적화에 가리지 않게 한다. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={posterSrc}
         alt="LIFT – Life Architecture"
-        width={1080}
-        height={1920}
-        className="h-auto w-full"
-        sizes="(min-width: 768px) 42rem, 100vw"
-        priority
+        width={typeof poster === "string" ? 1080 : poster.width}
+        height={typeof poster === "string" ? 1920 : poster.height}
+        className="block h-auto w-full"
       />
     </figure>
   );
@@ -26,21 +28,25 @@ export function PauseLiftClose({
   showCta: boolean;
   applicant?: LiftApplicant;
 }) {
-  if (!showCta) return <LiftPoster />;
-
   return (
-    <div className="flex flex-col gap-10">
-      <LiftApplyBlock
-        applicant={applicant}
-        done={
-          <div className="flex flex-col gap-8">
-            <LiftPoster />
-            <LinedLink href="/" replace className="text-forest">
-              홈으로
-            </LinedLink>
-          </div>
-        }
-      />
+    <div className="flex flex-col gap-8">
+      {showCta ? (
+        <LiftApplyBlock
+          applicant={applicant}
+          done={
+            <div className="border border-forest-20 bg-white px-5 py-6 text-center">
+              <p className="serif t3">신청이 완료되었습니다.</p>
+              <p className="b3 mt-3 text-ink-70">남겨 주신 연락처로 안내드리겠습니다.</p>
+            </div>
+          }
+        />
+      ) : null}
+      <LiftPoster />
+      {showCta ? (
+        <LinedLink href="/" replace className="text-forest">
+          홈으로
+        </LinedLink>
+      ) : null}
     </div>
   );
 }
