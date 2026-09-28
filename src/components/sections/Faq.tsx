@@ -3,7 +3,7 @@ import { FAQS } from "@/lib/site";
 
 export function Faq({ faqs = FAQS }: { faqs?: readonly CmsFaq[] }) {
   return (
-    <section id="faq" className="bg-grass-10 px-(--gutter) py-16 lg:py-20">
+    <section id="faq" className="bg-[#f7f6f3] px-(--gutter) py-16 lg:py-20">
       <h2 className="t2 mb-8 lg:mb-10">FAQ</h2>
 
       <div className="border-t border-forest-20">

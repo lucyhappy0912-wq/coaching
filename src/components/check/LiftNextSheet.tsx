@@ -163,7 +163,7 @@ export function LiftNextSheet({
 }) {
   return (
     <>
-      <section className="relative overflow-hidden border border-forest-20 bg-grass-10 px-5 py-6 sm:p-7 lg:p-10">
+      <section className="relative overflow-hidden border border-forest-20 bg-[#f7f6f3] px-5 py-6 sm:p-7 lg:p-10">
         <p
           aria-hidden
           className="serif pointer-events-none absolute -right-2 top-2 select-none text-[80px] leading-none text-forest/[0.06] lg:-right-1 lg:top-0 lg:text-[128px]"

@@ -13,5 +13,13 @@ export const metadata: Metadata = {
 export default async function StoryPage() {
   await assertPublicHref("/story");
   const { pages } = await getContent();
-  return <StoryFilm slides={pages.story.slides} />;
+  return (
+    <StoryFilm
+      slides={pages.story.slides.map((slide) => ({
+        id: slide.id,
+        title: slide.title,
+        lines: slide.lines,
+      }))}
+    />
+  );
 }

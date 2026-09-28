@@ -59,7 +59,7 @@ export function PageHeader({
           )}
         >
           <div className={photo ? "lg:flex-1" : "max-w-(--measure)"}>
-            <p className="c1 tracking-[0.2em] text-stem uppercase">{eyebrow}</p>
+            <p className="c1 tracking-[0.2em] text-ink-50 uppercase">{eyebrow}</p>
             <h1 className="t1 mt-3 text-balance">{title}</h1>
             <p className="b1 mt-5 max-w-(--measure-narrow) text-ink-90">{lead}</p>
           </div>

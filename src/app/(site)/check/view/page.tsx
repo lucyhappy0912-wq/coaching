@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function CheckViewPage() {
   return (
-    <div className="bg-grass-10 pt-(--header-h)">
+    <div className="bg-[#f7f6f3] pt-(--header-h)">
       <Container className="mx-auto max-w-3xl py-8 sm:py-16 lg:py-24">
         <p className="c1 tracking-[0.2em] text-forest-70 uppercase">Founder Transition Check</p>
         <h1 className="serif t1 mt-4">분석지 다시 보기</h1>

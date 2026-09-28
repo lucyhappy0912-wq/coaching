@@ -1,58 +1,50 @@
+import { HomeSplit } from "@/components/home/HomeSplit";
 import { LinedLink } from "@/components/ui/Buttons";
-import { Photo } from "@/components/ui/Photo";
 import type { CmsHomeProgram } from "@/lib/cms/types";
+import { HOME_VISUAL, VISUAL_POS } from "@/lib/visual";
 import { cn } from "@/lib/utils";
 
-export function ProgramScenes({ programs }: { programs: CmsHomeProgram[] }) {
+const POS: Record<string, string> = {
+  [HOME_VISUAL.stairs]: VISUAL_POS.stairs,
+  [HOME_VISUAL.next]: VISUAL_POS.next,
+  [HOME_VISUAL.founder]: VISUAL_POS.founder,
+};
+
+export function ProgramScenes({
+  programs,
+  startIndex = 0,
+}: {
+  programs: CmsHomeProgram[];
+  startIndex?: number;
+}) {
   return (
     <div>
       {programs.map((item, index) => {
-        const dark = index === 2;
-        const imageRight = index % 2 === 1;
+        const order = startIndex + index;
+        const dark = item.id === "founder";
+        const imageRight = order % 2 === 1;
 
         return (
-          <section
+          <HomeSplit
             key={item.id}
-            className={cn(
-              "grid lg:min-h-[86svh] lg:grid-cols-[1.15fr_0.85fr]",
-              dark ? "bg-[#111] text-white" : "bg-white text-ink",
-            )}
+            image={item.image}
+            imageRight={imageRight}
+            dark={dark}
+            objectPosition={POS[item.image] ?? "center"}
           >
-            <div
-              className={cn(
-                "flex flex-col justify-center px-(--gutter) py-16 lg:px-16 lg:py-24",
-                imageRight && "lg:order-1",
-              )}
-            >
-              <p className={cn("c1 tracking-[0.18em] uppercase", dark ? "text-white/45" : "text-ink-50")}>
-                {item.eyebrow}
-              </p>
-              <h2 className="serif mt-5 text-[30px] leading-[1.12] tracking-[-0.02em] lg:text-[44px]">
-                {item.line}
-              </h2>
-              <p className={cn("b2 mt-8 max-w-md", dark ? "text-white/78" : "text-ink-70")}>
-                {item.lead[0]}
-              </p>
-              <LinedLink href={item.href} className={cn("mt-8", dark ? "text-white" : "text-forest")}>
-                {item.cta}
-              </LinedLink>
-            </div>
-            <div
-              className={cn(
-                "relative min-h-[52svh] overflow-hidden lg:min-h-full",
-                imageRight && "lg:order-2",
-              )}
-            >
-              <Photo
-                src={item.image}
-                video={item.video}
-                tone={item.tone}
-                alt={item.line}
-                className="absolute inset-0"
-                sizes="(min-width: 1025px) 40vw, 100vw"
-              />
-            </div>
-          </section>
+            <p className={cn("c1 tracking-[0.18em] uppercase", dark ? "text-white/45" : "text-ink-50")}>
+              {item.eyebrow}
+            </p>
+            <h2 className="serif mt-5 text-[30px] leading-[1.12] tracking-[-0.02em] lg:text-[44px]">
+              {item.line}
+            </h2>
+            <p className={cn("b2 mt-8 max-w-md", dark ? "text-white/78" : "text-ink-70")}>
+              {item.lead[0]}
+            </p>
+            <LinedLink href={item.href} className={cn("mt-8", dark ? "text-white" : "text-forest")}>
+              {item.cta}
+            </LinedLink>
+          </HomeSplit>
         );
       })}
     </div>

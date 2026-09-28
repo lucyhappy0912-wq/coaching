@@ -1,55 +1,42 @@
-import { Photo } from "@/components/ui/Photo";
+import { PageHero } from "@/components/content/PageHero";
 import type { CmsPages } from "@/lib/cms/types";
+import { HOME_VISUAL, VISUAL_POS } from "@/lib/visual";
+import { cn } from "@/lib/utils";
 
 import { AboutRail, MOMENT_LINKS } from "./HinokPage";
 
 export function BeliefCreed({ page }: { page: CmsPages["belief"] }) {
   return (
-    <div className="bg-[#111]">
-      <section className="relative h-svh min-h-[640px] overflow-hidden text-white">
-        <Photo src={page.hero.image} video={page.hero.video} tone={page.hero.tone} alt={page.hero.line} className="absolute inset-0" />
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute top-[calc(var(--header-h)+28px)] left-(--gutter) z-20 hidden lg:block">
-          <AboutRail title="The Moment" links={MOMENT_LINKS} current="/belief" variant="dark" />
-        </div>
-        <div className="pointer-events-none relative z-10 flex h-full items-end px-(--gutter) pb-16 lg:pb-24">
-          <div className="pointer-events-auto max-w-3xl">
-            <p className="serif text-[28px] leading-[1.15] lg:text-[44px]">{page.hero.chain}</p>
-            <p className="b1 mt-6 text-white/90">{page.hero.line}</p>
-          </div>
-        </div>
-      </section>
+    <div className="bg-white text-ink">
+      <PageHero
+        eyebrow={page.hero.chain}
+        title={page.hero.line}
+        image={HOME_VISUAL.pause}
+        objectPosition={VISUAL_POS.pause}
+        rail={<AboutRail title="The Moment" links={MOMENT_LINKS} current="/belief" />}
+      />
 
-      {page.items.map((item, index) => {
-        const dark = index % 2 === 0;
-        return (
-          <section
-            key={item.en}
-            className={dark ? "relative min-h-svh overflow-hidden text-white" : "min-h-svh bg-[#f7f4ee] text-forest"}
-          >
-            {dark ? (
-              <>
-                <Photo src={item.image} video={item.video} tone={item.tone} alt={item.en} className="absolute inset-0" />
-                <div className="absolute inset-0 bg-black/45" />
-              </>
-            ) : null}
-            <div className="relative z-10 mx-auto flex min-h-svh max-w-[1100px] flex-col justify-end px-(--gutter) py-20 lg:justify-center lg:py-28">
-              <p className="serif text-[56px] leading-none lg:text-[96px]">{item.en}</p>
-              <h2 className="mt-6 text-[22px] leading-snug lg:text-[28px]">{item.title}</h2>
-              <div className={`b2 mt-8 max-w-(--measure-narrow) space-y-5 ${dark ? "text-white/88" : "text-ink-90"}`}>
-                {item.body.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
-              </div>
+      {page.items.map((item, index) => (
+        <section
+          key={item.en}
+          className={cn("px-(--gutter) py-20 lg:py-28", index % 2 === 0 ? "bg-[#f7f6f3]" : "bg-white")}
+        >
+          <div className="mx-auto max-w-[1100px]">
+            <p className="serif text-[56px] leading-none text-ink lg:text-[96px]">{item.en}</p>
+            <h2 className="mt-6 text-[22px] leading-snug text-ink lg:text-[28px]">{item.title}</h2>
+            <div className="b2 mt-8 max-w-(--measure-narrow) space-y-5 text-ink-70">
+              {item.body.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
             </div>
-          </section>
-        );
-      })}
+          </div>
+        </section>
+      ))}
 
-      <section className="flex min-h-[70vh] items-center bg-forest px-(--gutter) py-24 text-white">
+      <section className="bg-[#f7f6f3] px-(--gutter) py-24 lg:py-32">
         <div className="mx-auto max-w-(--measure-narrow)">
           {page.close.map((line) => (
-            <p key={line} className="serif mt-4 text-[28px] leading-snug first:mt-0 lg:text-[40px]">
+            <p key={line} className="serif mt-4 text-[28px] leading-snug text-ink first:mt-0 lg:text-[40px]">
               {line}
             </p>
           ))}

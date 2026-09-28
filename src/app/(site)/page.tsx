@@ -68,6 +68,7 @@ const PROGRAM_IMAGE: Record<string, string> = {
 
 export default async function Home() {
   const { pages, menuOff, menuOn } = await getContent();
+  const moments = visibleByHref(momentScenes(pages), menuOff, menuOn);
   const programs = visibleByHref(pages.home.programs, menuOff, menuOn).map((item) => ({
     ...item,
     image: PROGRAM_IMAGE[item.id] ?? item.image,
@@ -80,8 +81,8 @@ export default async function Home() {
       <HomeHero moment={pages.home.moment} />
       <HomePause />
       <HomeProcess />
-      <MomentScenes scenes={visibleByHref(momentScenes(pages), menuOff, menuOn)} />
-      <ProgramScenes programs={programs} />
+      <MomentScenes scenes={moments} />
+      <ProgramScenes programs={programs} startIndex={moments.length} />
       <HomeClose />
     </>
   );

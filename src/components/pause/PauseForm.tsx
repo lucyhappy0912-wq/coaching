@@ -227,7 +227,7 @@ export function PauseForm({ source }: { source: string }) {
               </div>
             </div>
           </div>
-          <label className="b3 mt-8 flex items-start gap-3 rounded-sm bg-grass-10 px-3 py-3 text-ink-70">
+          <label className="b3 mt-8 flex items-start gap-3 rounded-sm bg-[#f7f6f3] px-3 py-3 text-ink-70">
             <input
               type="checkbox"
               checked={identity.agree}
@@ -313,7 +313,7 @@ export function PauseForm({ source }: { source: string }) {
             {LIKERT_LABELS.map((opt) => (
               <label
                 key={opt.value}
-                className="flex min-h-12 cursor-pointer items-center gap-3 border border-ink-15 bg-white px-3 py-3 transition-colors has-[:checked]:border-forest has-[:checked]:bg-grass-10"
+                className="flex min-h-12 cursor-pointer items-center gap-3 border border-ink-15 bg-white px-3 py-3 transition-colors has-[:checked]:border-forest has-[:checked]:bg-[#f7f6f3]"
               >
                 <input
                   type="radio"
@@ -339,7 +339,7 @@ export function PauseForm({ source }: { source: string }) {
         <p className="b3 text-[#c0392b]">{sectionError || state.error}</p>
       )}
 
-      <div className="sticky bottom-0 -mx-5 flex gap-2 border-t border-forest-20 bg-grass-10/95 px-5 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0">
+      <div className="sticky bottom-0 -mx-5 flex gap-2 border-t border-forest-20 bg-[#f7f6f3]/95 px-5 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0">
         {pageIndex > 0 && (
           <button
             type="button"

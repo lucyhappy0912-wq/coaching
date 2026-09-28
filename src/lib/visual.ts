@@ -8,6 +8,31 @@ export const HOME_VISUAL = {
   founder: "/media/visual-founder.png",
 } as const;
 
+export const VISUAL_POS = {
+  hero: "center 70%",
+  pause: "center",
+  transition: "center 60%",
+  stairs: "center 20%",
+  next: "center 40%",
+  founder: "center 40%",
+} as const;
+
+export const WAY_CYCLE = [
+  HOME_VISUAL.hero,
+  HOME_VISUAL.pause,
+  HOME_VISUAL.transition,
+  HOME_VISUAL.stairs,
+  HOME_VISUAL.next,
+] as const;
+
+const OLD_HERO =
+  /home-moment|belief-hero|way-hero|check-hero|founder-hero|stage-hero|chapter-hero|leadership-hero|home-stage|home-next|home-founder|story-pause|week-see|week-move/;
+
+export function portraitOrFounder(src?: string) {
+  if (!src?.trim() || OLD_HERO.test(src)) return HOME_VISUAL.founder;
+  return src;
+}
+
 export const HOME_PROCESS = [
   { key: "PAUSE", body: "잠시 멈춰 지금의 삶을 바라봅니다." },
   { key: "AWARENESS", body: "무엇이 지금의 나와 맞지 않는지 알아차립니다." },

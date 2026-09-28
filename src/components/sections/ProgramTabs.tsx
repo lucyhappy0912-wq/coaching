@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { Photo } from "@/components/ui/Photo";
 import { PROGRAM_CARDS, PROGRAM_TABS } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -35,19 +34,9 @@ export function ProgramTabs() {
             key={card.name}
             className="w-[68%] shrink-0 snap-start sm:w-[45%] lg:w-[calc((100%-3rem)/3.4)]"
           >
-            <div className="relative aspect-4/3 overflow-hidden">
-              <Photo
-                src={card.image}
-                tone={card.tone}
-                alt={card.name}
-                sizes="(min-width: 1025px) 30vw, 70vw"
-              />
-              {card.badge && (
-                <span className="c1 absolute top-3 left-3 bg-white/90 px-2 py-1 tracking-wider text-forest uppercase">
-                  {card.badge}
-                </span>
-              )}
-            </div>
+            {card.badge ? (
+              <p className="c1 tracking-wider text-ink-50 uppercase">{card.badge}</p>
+            ) : null}
 
             <div className="mt-5 text-center">
               <h3 className="serif text-[19px] lg:text-[22px]">{card.name}</h3>
@@ -65,7 +54,7 @@ export function ProgramTabs() {
 
               <a
                 href="/consult"
-                className="serif mt-5 inline-flex h-9 items-center justify-center rounded-sm bg-white px-6 text-sm text-forest shadow-[0_4px_4px_0_rgba(0,58,64,0.1)] ring-1 ring-ink-10 transition-colors hover:bg-grass-20"
+                className="serif mt-5 inline-flex h-9 items-center justify-center rounded-sm bg-white px-6 text-sm text-forest shadow-[0_4px_4px_0_rgba(0,58,64,0.1)] ring-1 ring-ink-10 transition-colors hover:bg-ink-05"
               >
                 상담 신청
               </a>
