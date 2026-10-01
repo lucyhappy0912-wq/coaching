@@ -6,7 +6,7 @@ import type { LiftApplicant } from "@/components/check/LiftNextSheet";
 import { PauseLiftClose } from "@/components/pause/PauseLiftClose";
 import { cn } from "@/lib/utils";
 import type { PauseScores } from "@/lib/pause/compute";
-import { PAUSE_BAND_COPY, PAUSE_DISCLAIMER, PAUSE_PROCESS, PAUSE_SIGNAL_COPY } from "@/lib/pause/copy";
+import { PAUSE_BAND_COPY, PAUSE_SIGNAL_COPY } from "@/lib/pause/copy";
 
 export type { LiftApplicant };
 
@@ -19,8 +19,6 @@ const NEXT_BTN =
 const PARTS = [
   { key: "score", label: "총점" },
   { key: "signal", label: "SIGNAL" },
-  { key: "process", label: "NEXT" },
-  { key: "note", label: "안내" },
   { key: "lift", label: "LIFT" },
 ] as const;
 
@@ -70,36 +68,6 @@ function SignalCard() {
   );
 }
 
-function ProcessCard() {
-  return (
-    <section className={CARD}>
-      <p className="c1 tracking-[0.2em] text-forest-70 uppercase">{PAUSE_PROCESS.eyebrow}</p>
-      <ul className="mt-8 space-y-6">
-        {PAUSE_PROCESS.items.map((item) => (
-          <li key={item.key}>
-            <p className="c1 tracking-[0.16em] text-forest-70 uppercase">{item.key}</p>
-            <p className="b2 mt-2 text-ink-90">{item.body}</p>
-          </li>
-        ))}
-      </ul>
-      {PAUSE_PROCESS.close.map((p) => (
-        <p key={p} className="b3 mt-6 text-ink-70">
-          {p}
-        </p>
-      ))}
-    </section>
-  );
-}
-
-function NoteCard() {
-  return (
-    <section className={CARD}>
-      <p className="c1 tracking-[0.2em] text-forest-70 uppercase">NOTE</p>
-      <p className="b3 mt-5 text-ink-70">{PAUSE_DISCLAIMER}</p>
-    </section>
-  );
-}
-
 export function PauseReport({
   scores,
   showCta = true,
@@ -126,9 +94,7 @@ export function PauseReport({
   function renderPart(key: (typeof PARTS)[number]["key"]) {
     if (key === "score") return <ScoreCard scores={scores} />;
     if (key === "signal") return <SignalCard />;
-    if (key === "process") return <ProcessCard />;
-    if (key === "lift") return <PauseLiftClose showCta={showCta} applicant={applicant} />;
-    return <NoteCard />;
+    return <PauseLiftClose showCta={showCta} applicant={applicant} />;
   }
 
   return (
