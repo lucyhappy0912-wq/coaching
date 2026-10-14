@@ -72,18 +72,20 @@ export function Header({
 
       {menuOpen && (
         <div className="max-h-[calc(100vh-var(--header-h))] overflow-y-auto border-t border-ink-10 bg-white text-forest">
-          <div className="grid gap-10 px-(--gutter) py-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-12 lg:gap-y-14 lg:py-14">
+          <div className="grid gap-8 px-(--gutter) py-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-12 lg:gap-y-10 lg:py-10">
             {(groups ?? visibleMenuGroups(DEFAULT_MENU_OFF)).map((group) => (
               <div key={group.title}>
-                <p className="c1 mb-5 tracking-[0.2em] text-stem uppercase">{group.title}</p>
-                <ul className="space-y-3.5">
+                <p className="mb-3 text-[15px] font-semibold tracking-[0.08em] text-stem uppercase lg:text-[16px]">
+                  {group.title}
+                </p>
+                <ul className="space-y-1.5">
                   {group.items.map((item) => (
                     <li key={item.href}>
                       {item.href.startsWith("tel:") || item.href.startsWith("mailto:") ? (
                         <a
                           href={item.href}
                           onClick={() => setMenuOpen(false)}
-                          className="serif text-[22px] leading-none transition-opacity hover:opacity-50 lg:text-[26px]"
+                          className="block text-[12px] leading-snug tracking-[0.04em] uppercase transition-opacity hover:opacity-50 lg:text-[13px]"
                         >
                           {item.label}
                         </a>
@@ -91,7 +93,7 @@ export function Header({
                         <Link
                           href={item.href}
                           onClick={() => setMenuOpen(false)}
-                          className="serif text-[22px] leading-none transition-opacity hover:opacity-50 lg:text-[26px]"
+                          className="block text-[12px] leading-snug tracking-[0.04em] uppercase transition-opacity hover:opacity-50 lg:text-[13px]"
                         >
                           {item.label}
                         </Link>
