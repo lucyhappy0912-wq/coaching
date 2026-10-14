@@ -13,12 +13,10 @@ export function MomentHero() {
         <p className="c1 tracking-[0.22em] text-white/70 uppercase">{HOME_MOMENT.eyebrow}</p>
         <h1 className="serif mt-5 max-w-3xl text-[32px] leading-[1.25] lg:text-[48px]">
           {HOME_MOMENT.lines[0]}
+          <br />
+          {HOME_MOMENT.lines[1]}
         </h1>
-        <p className="serif mt-8 text-[26px] leading-snug lg:text-[36px]">{HOME_MOMENT.lines[1]}</p>
-        <p className="serif mt-2 max-w-2xl text-[26px] leading-snug lg:text-[36px]">
-          {HOME_MOMENT.lines[2]}
-        </p>
-        <p className="b2 mt-10 max-w-(--measure-narrow) text-white/88">{HOME_MOMENT.body}</p>
+        <p className="b2 mt-10 max-w-(--measure-narrow) whitespace-pre-line text-white/88">{HOME_MOMENT.body}</p>
       </Container>
     </section>
   );
