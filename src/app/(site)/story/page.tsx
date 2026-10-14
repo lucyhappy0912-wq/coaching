@@ -6,7 +6,7 @@ import { getContent } from "@/lib/cms/store";
 import { BRAND_WHY } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "How we transition",
+  title: "About Meomchunja",
   description: BRAND_WHY.lead,
 };
 

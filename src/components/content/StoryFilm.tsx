@@ -67,7 +67,7 @@ export function StoryFilm({
       <div className="relative grid min-h-[calc(100svh-var(--header-h))] lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
         <div className="relative flex flex-col justify-end px-(--gutter) py-16 lg:py-24">
           <div className="absolute top-8 left-(--gutter) hidden lg:block">
-            <AboutRail title="The Moment" links={MOMENT_LINKS} current="/story" />
+            <AboutRail title="ABOUT" links={MOMENT_LINKS} current="/story" />
           </div>
           <AnimatePresence mode="wait">
             <motion.div

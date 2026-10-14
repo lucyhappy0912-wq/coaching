@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import type { CmsSite } from "@/lib/cms/types";
-import { DEFAULT_MENU_OFF, isMenuHrefOn, visibleMenuGroups } from "@/lib/menu";
+import { DEFAULT_MENU_OFF, visibleMenuGroups } from "@/lib/menu";
 import { SITE } from "@/lib/site";
 
 export function Footer({
@@ -21,40 +21,24 @@ export function Footer({
 
   return (
     <footer className="bg-white text-forest">
-      <div className="grid gap-10 px-(--gutter) pt-24 pb-10 lg:grid-cols-3 lg:gap-16 lg:pt-32 lg:pb-14">
-        {visibleMenuGroups(menuOff, menuOn)
-          .filter((group) => group.title !== "Transition Coach 대표코치")
-          .map((group) => (
+      <div className="grid gap-10 px-(--gutter) pt-24 pb-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-16 lg:pt-32 lg:pb-14">
+        {visibleMenuGroups(menuOff, menuOn).map((group) => (
           <nav key={group.title}>
-            {group.title === "The Moment" && isMenuHrefOn("/coach", menuOff, menuOn) ? (
-              <Link
-                href="/coach"
-                className="c1 mb-8 block tracking-[0.2em] text-stem uppercase transition-opacity hover:opacity-60"
-              >
-                Transition Coach 대표코치
-              </Link>
-            ) : null}
-            <p className="c1 mb-4 tracking-[0.2em] text-stem uppercase">
-              {group.title === "The Moment" ? "Brand" : group.title}
-            </p>
+            <p className="c1 mb-4 tracking-[0.2em] text-stem uppercase">{group.title}</p>
             <ul className="space-y-1.5">
-              {group.items.map((item) => {
-                const href = item.href === "/consult" ? "/lift" : item.href;
-                const label = item.href === "/consult" ? "LIFT – Life Architecture" : item.label;
-                return (
+              {group.items.map((item) => (
                 <li key={item.href}>
-                  {href.startsWith("tel:") || href.startsWith("mailto:") ? (
-                    <a href={href} className="serif text-[13px] transition-opacity hover:opacity-60 lg:text-[15px]">
-                      {label}
+                  {item.href.startsWith("tel:") || item.href.startsWith("mailto:") ? (
+                    <a href={item.href} className="serif text-[13px] transition-opacity hover:opacity-60 lg:text-[15px]">
+                      {item.label}
                     </a>
                   ) : (
-                    <Link href={href} className="serif text-[13px] transition-opacity hover:opacity-60 lg:text-[15px]">
-                      {label}
+                    <Link href={item.href} className="serif text-[13px] transition-opacity hover:opacity-60 lg:text-[15px]">
+                      {item.label}
                     </Link>
                   )}
                 </li>
-                );
-              })}
+              ))}
             </ul>
           </nav>
         ))}

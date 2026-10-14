@@ -143,16 +143,16 @@ export function HinokShell({
 }
 
 export const MOMENT_LINKS = [
+  { href: "/story", label: "About Meomchunja" },
   { href: "/belief", label: "Our Belief" },
-  { href: "/way", label: "Meomchunja Way" },
-  { href: "/story", label: "How we transition" },
+  { href: "/way", label: "The Meomchunja Way" },
 ];
 
 export const COACHING_LINKS = [
   { href: "/coaching/founder-transition", label: "Founder Transition" },
-  { href: "/coaching/founder", label: "6-week founder transition" },
-  { href: "/coaching/leadership", label: "from Founder to Leader" },
-  { href: "/check", label: "Founder Transition (Check)" },
-  { href: "/pause", label: "PAUSE CHECK" },
-  { href: "/lift", label: "LIFT – Life Architecture" },
+  { href: "/coaching/leadership", label: "From Founder to Leader" },
+  { href: "/coaching/founder", label: "6-Week Program" },
+  { href: "/check", label: "Founder Transition Check" },
+  { href: "/pause", label: "PAUSE Check" },
+  { href: "/lift", label: "LIFT" },
 ];

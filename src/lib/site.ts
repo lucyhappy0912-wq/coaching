@@ -33,37 +33,56 @@ export const TOP_MESSAGES = [
 /** 헤더 메가메뉴 */
 export const MENU_GROUPS = [
   {
-    title: "Transition Coach 대표코치",
-    items: [{ label: "대표코치", href: "/coach" }],
-  },
-  {
-    title: "The Moment",
+    title: "ABOUT",
     items: [
+      { label: "About Meomchunja", href: "/story" },
       { label: "Our Belief", href: "/belief" },
-      { label: "Meomchunja Way", href: "/way" },
-      { label: "How we transition", href: "/story" },
+      { label: "The Meomchunja Way", href: "/way" },
     ],
   },
   {
-    title: "Coaching",
+    title: "FOUNDER TRANSITION",
     items: [
       { label: "Founder Transition", href: "/coaching/founder-transition" },
-      { label: "6-week founder transition", href: "/coaching/founder" },
-      { label: "from Founder to Leader", href: "/coaching/leadership" },
-      { label: "Founder Transition (Check)", href: "/check" },
-      { label: "PAUSE CHECK", href: "/pause" },
-      { label: "LIFT – Life Architecture", href: "/lift" },
-      { label: "Stage Transition", href: "/coaching/stage" },
-      { label: "Next Chapter Transition", href: "/coaching/next-chapter" },
+      { label: "From Founder to Leader", href: "/coaching/leadership" },
+      { label: "6-Week Program", href: "/coaching/founder" },
     ],
   },
   {
-    title: "Q&A",
+    title: "ASSESSMENT",
     items: [
-      { label: "1:1 코칭", href: "/consult" },
-      { label: "자주묻는 질문", href: "/faq" },
-      { label: "게시판", href: "/board" },
-      { label: "전화문의", href: `tel:${SITE.phone.replace(/-/g, "")}` },
+      { label: "Founder Transition Check", href: "/check" },
+      { label: "PAUSE Check", href: "/pause" },
+    ],
+  },
+  {
+    title: "LIFE ARCHITECTURE",
+    items: [
+      { label: "LIFT", href: "/lift" },
+      { label: "Life Architecture", href: "/life-architecture" },
+    ],
+  },
+  {
+    title: "COACHING SERVICES",
+    items: [
+      { label: "1:1 Coaching", href: "/consult" },
+      { label: "Group Coaching", href: "/coaching/group" },
+      { label: "Coaching Workshop", href: "/coaching/workshop" },
+      { label: "Coaching Speaking", href: "/coaching/speaking" },
+    ],
+  },
+  {
+    title: "INSIGHTS",
+    items: [
+      { label: "Articles", href: "/board" },
+      { label: "FAQ", href: "/faq" },
+    ],
+  },
+  {
+    title: "CONTACT",
+    items: [
+      { label: "Contact", href: "/consult#consult" },
+      { label: "Tel.", href: `tel:${SITE.phone.replace(/-/g, "")}` },
     ],
   },
 ] as const;

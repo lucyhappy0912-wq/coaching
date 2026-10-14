@@ -14,6 +14,10 @@ const NOW_DEFAULT_ON = [
   "/check",
   "/pause",
   "/lift",
+  "/life-architecture",
+  "/coaching/group",
+  "/coaching/workshop",
+  "/coaching/speaking",
   "/coach",
 ] as const;
 

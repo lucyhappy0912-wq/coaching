@@ -15,7 +15,7 @@ export function WayFilm({ page }: { page: CmsPages["way"] }) {
         title={page.hero.title}
         image={HOME_VISUAL.transition}
         objectPosition={VISUAL_POS.transition}
-        rail={<AboutRail title="The Moment" links={MOMENT_LINKS} current="/way" />}
+        rail={<AboutRail title="ABOUT" links={MOMENT_LINKS} current="/way" />}
       />
 
       {page.items.map((item, index) => (

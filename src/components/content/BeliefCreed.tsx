@@ -14,7 +14,7 @@ export function BeliefCreed({ page }: { page: CmsPages["belief"] }) {
         title={page.hero.line}
         image={HOME_VISUAL.pause}
         objectPosition={VISUAL_POS.pause}
-        rail={<AboutRail title="The Moment" links={MOMENT_LINKS} current="/belief" />}
+        rail={<AboutRail title="ABOUT" links={MOMENT_LINKS} current="/belief" />}
       />
 
       {page.items.map((item, index) => (
