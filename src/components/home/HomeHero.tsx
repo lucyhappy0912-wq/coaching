@@ -8,7 +8,7 @@ export function HomeHero() {
       <div className="grid min-h-svh pt-(--header-h) lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
         <div className="flex flex-col justify-center px-(--gutter) py-8 lg:py-12">
           <p className="c1 tracking-[0.22em] text-ink-50 uppercase">{HOME_MOMENT.eyebrow}</p>
-          <h1 className="serif mt-5 text-[32px] leading-[1.12] tracking-[-0.03em] text-ink lg:text-[42px]">
+          <h1 className="serif mt-5 text-[32px] leading-[1.12] tracking-[-0.03em] text-ink uppercase lg:text-[42px]">
             {HOME_MOMENT.lines[0]}
             <br />
             {HOME_MOMENT.lines[1]}

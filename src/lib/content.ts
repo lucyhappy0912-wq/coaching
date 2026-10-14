@@ -24,7 +24,7 @@ export type ProgramTeaser = {
 
 export const HOME_MOMENT = {
   eyebrow: "멈춘자",
-  lines: ["Pause for Awareness", "Transition to Advance"],
+  lines: ["PAUSE FOR AWARENESS", "TRANSITION TO ADVANCE"],
   body: `더 나은 삶을 위해 쉬지 않고 달려오셨나요?
 
 그럼에도 채워지지 않는 무엇이 있다면 
