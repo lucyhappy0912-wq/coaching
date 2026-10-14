@@ -23,13 +23,17 @@ export type ProgramTeaser = {
 };
 
 export const HOME_MOMENT = {
-  eyebrow: "The Moment",
-  lines: [
-    "더 나은 삶을 위해 끊임없이 달리셨나요?",
-    "하지만",
-    "멈춰야 비로소 보이는 것이 있습니다.",
-  ],
-  body: "멈춘자는 삶과 사업의 중요한 전환점에서 더 나은 선택을 할 수 있도록 돕는 Transition Coaching 전문 코칭 그룹입니다.",
+  eyebrow: "멈춘자",
+  lines: ["Pause for Awareness", "Transition to Advance"],
+  body: `더 나은 삶을 위해 쉬지 않고 달려오셨나요?
+
+그럼에도 채워지지 않는 무엇이 있다면 
+이제는 멈춰,
+나만의 기준과 가치를 발견해야 할 때입니다.
+
+내가 진정으로 원하는 사업과 삶으로의 전환.
+
+그 전환의 순간에 Transition Partner 멈춘자가 함께합니다.`,
 } as const;
 
 export const PROGRAM_TEASERS: ProgramTeaser[] = [

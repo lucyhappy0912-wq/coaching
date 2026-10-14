@@ -78,7 +78,7 @@ export default async function Home() {
 
   return (
     <>
-      <HomeHero moment={pages.home.moment} />
+      <HomeHero />
       <HomePause />
       <HomeProcess />
       <MomentScenes scenes={moments} />

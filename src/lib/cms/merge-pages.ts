@@ -15,6 +15,19 @@ function pickWayEyebrow(raw: string | undefined, seed: string) {
   return raw;
 }
 
+function pickHomeMomentLines(raw: string[] | undefined, seed: string[]) {
+  const joined = raw?.join("\n") ?? "";
+  if (!raw?.length || joined.includes("끊임없이 달리셨나요") || joined.includes("멈춰야 비로소")) {
+    return seed;
+  }
+  return raw;
+}
+
+function pickHomeMomentBody(raw: string | undefined, seed: string) {
+  if (raw === undefined || raw.includes("Transition Coaching 전문 코칭 그룹")) return seed;
+  return raw;
+}
+
 function mediaOf(raw: Partial<MediaRef> | undefined, seed: MediaRef): MediaRef {
   return {
     tone: raw?.tone ?? seed.tone,
@@ -64,8 +77,8 @@ export function mergePages(raw: Partial<CmsPages> | undefined, seed: CmsPages): 
       moment: {
         ...mediaOf(raw.home?.moment, seed.home.moment),
         eyebrow: pick(raw.home?.moment?.eyebrow, seed.home.moment.eyebrow),
-        lines: raw.home?.moment?.lines?.length ? raw.home.moment.lines : seed.home.moment.lines,
-        body: pick(raw.home?.moment?.body, seed.home.moment.body),
+        lines: pickHomeMomentLines(raw.home?.moment?.lines, seed.home.moment.lines),
+        body: pickHomeMomentBody(raw.home?.moment?.body, seed.home.moment.body),
       },
       programs: seed.home.programs.map((item, index) => {
         const next = raw.home?.programs?.[index];
