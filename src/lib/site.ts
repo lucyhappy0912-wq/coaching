@@ -35,7 +35,7 @@ export const MENU_GROUPS = [
   {
     title: "ABOUT",
     items: [
-      { label: "대표소개", href: "/coach" },
+      { label: "The Coach", href: "/coach" },
       { label: "About Meomchunja", href: "/story" },
       { label: "Our Belief", href: "/belief" },
       { label: "The Meomchunja Way", href: "/way" },

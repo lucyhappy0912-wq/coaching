@@ -143,7 +143,7 @@ export function HinokShell({
 }
 
 export const MOMENT_LINKS = [
-  { href: "/coach", label: "대표소개" },
+  { href: "/coach", label: "The Coach" },
   { href: "/story", label: "About Meomchunja" },
   { href: "/belief", label: "Our Belief" },
   { href: "/way", label: "The Meomchunja Way" },
