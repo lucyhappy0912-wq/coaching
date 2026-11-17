@@ -39,7 +39,7 @@ export default async function PrivacyPage() {
 
         <h2 className="serif t3 mt-12">3. 문의</h2>
         <p className="b3 mt-4 text-ink-70">
-          {site.email} · {site.phone}
+          {site.email}
         </p>
       </Container>
     </div>

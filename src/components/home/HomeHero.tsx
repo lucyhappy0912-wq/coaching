@@ -13,9 +13,6 @@ export function HomeHero() {
             <br />
             {HOME_MOMENT.lines[1]}
           </h1>
-          <p className="serif mt-6 max-w-xl whitespace-pre-line text-[20px] leading-[1.65] text-ink-90 lg:text-[22px]">
-            {HOME_MOMENT.body}
-          </p>
         </div>
         <div className="relative min-h-[42svh] overflow-hidden lg:min-h-full">
           <Photo

@@ -13,14 +13,6 @@ export function ConsultSection({ site = SITE }: { site?: CmsSite }) {
 
           <dl className="serif mt-10 space-y-4 text-[15px] text-forest">
             <div>
-              <dt className="text-ink-70">Tel.</dt>
-              <dd>
-                <a href={`tel:${site.phone.replace(/-/g, "")}`} className="lined">
-                  {site.phone}
-                </a>
-              </dd>
-            </div>
-            <div>
               <dt className="text-ink-70">Email.</dt>
               <dd>
                 <a href={`mailto:${site.email}`} className="lined">

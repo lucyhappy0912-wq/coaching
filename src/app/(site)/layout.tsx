@@ -37,7 +37,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     >
       <Header site={content.site} groups={groups} />
       <main className="flex-1">{children}</main>
-      <Footer site={content.site} menuOff={content.menuOff} menuOn={content.menuOn} />
+      <Footer menuOff={content.menuOff} menuOn={content.menuOn} />
     </div>
   );
 }

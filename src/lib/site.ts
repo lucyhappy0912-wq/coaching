@@ -83,7 +83,6 @@ export const MENU_GROUPS = [
     title: "CONTACT",
     items: [
       { label: "Contact", href: "/consult#consult" },
-      { label: "Tel.", href: `tel:${SITE.phone.replace(/-/g, "")}` },
     ],
   },
 ] as const;
@@ -336,7 +335,6 @@ export const FOOTER_LINKS = [
       { label: "PAUSE CHECK", href: "/pause" },
       { label: "개인정보처리방침", href: "/privacy" },
       { label: SITE.email, href: `mailto:${SITE.email}` },
-      { label: SITE.phone, href: `tel:${SITE.phone.replace(/-/g, "")}` },
     ],
   },
 ] as const;

@@ -3,16 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import type { CmsSite } from "@/lib/cms/types";
 import { DEFAULT_MENU_OFF, visibleMenuGroups } from "@/lib/menu";
-import { SITE } from "@/lib/site";
 
 export function Footer({
-  site = SITE,
   menuOff = DEFAULT_MENU_OFF,
   menuOn = [],
 }: {
-  site?: CmsSite;
   menuOff?: readonly string[];
   menuOn?: readonly string[];
 }) {
@@ -45,14 +41,6 @@ export function Footer({
       </div>
 
       <div className="serif space-y-1 border-t border-ink-10 px-(--gutter) py-8 text-[13px] leading-relaxed text-forest-70 lg:text-[15px]">
-        <p>{site.company}</p>
-        <p>
-          Owner. {site.owner} Business Reg N. {site.bizNo}
-        </p>
-        <p>
-          Tel. {site.phone} Email. {site.email}
-        </p>
-        <p>Address. {site.addressLine}</p>
         <p className="pt-4">
           <Link href="/privacy" className="transition-opacity hover:opacity-60">
             개인정보처리방침
